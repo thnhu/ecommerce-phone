@@ -6,6 +6,7 @@ import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import Hero from './components/Hero/Hero';
 import NewArrivals from './components/NewArrivals/NewArrivals';
+import Section from './components/Section/Section';
 const App = () => {
   return (
     <div>
@@ -23,6 +24,7 @@ const App = () => {
         </Routes>
       </Router>
       <NewArrivals />
+      <Section />
       <Footer />
     </div>
   )

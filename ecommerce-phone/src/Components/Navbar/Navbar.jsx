@@ -1,31 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Navbar.css';
 
-function Navbar() {
-    return (
-        <header className="navbar">
-            <div className="navbar__main">
-                <div className="navbar__logo">
-                    <h1>THEGIOIDIDONG</h1>
-                </div>
-                <nav className="navbar__links">
-                    <ul>
-                        <li><a href="#">Trang chủ</a></li>
-                        <li><a href="#">Giảm giá</a></li>
-                        <li><a href="#">Hàng mới về</a></li>
-                        <li><a href="#">Thương hiệu</a></li>
-                    </ul>
-                </nav>
-                <div className="navbar__search">
-                    <input type="text" placeholder="Tìm kiếm sản phẩm" />
-                </div>
-                <div className="navbar__icons">
-                    <button className="navbar__cart">🛒</button>
-                    <button className="navbar__user">👤</button>
-                </div>
-            </div>
-        </header>
-    );
-}
+const Navbar = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  return (
+    <nav className="navbar">
+      <div className="navbar-container">
+        <div className="navbar-logo">THEGIOIDIDONG</div>
+        
+        <div className={`navbar-menu ${menuOpen ? 'open' : ''}`}>
+          <ul>
+            <li><a href="#">Trang chủ</a></li>
+            <li><a href="#">Giảm giá</a></li>
+            <li><a href="#">Hàng mới về</a></li>
+            <li><a href="#">Thương hiệu</a></li>
+          </ul>
+        </div>
+
+        <div className="navbar-icons">
+          <input 
+            type="text" 
+            placeholder="Tìm kiếm" 
+            className="navbar-search"
+          />
+          {/* <span className="icon">🔍</span> */}
+          <span className="icon">🛒</span>
+          <span className="icon">👤</span>
+        </div>
+
+        <div className="navbar-toggle" onClick={toggleMenu}>
+          <span className="hamburger">☰</span>
+        </div>
+      </div>
+    </nav>
+  );
+};
 
 export default Navbar;
