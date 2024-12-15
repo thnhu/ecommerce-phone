@@ -6,8 +6,8 @@ const Navbar = () => {
       <ul>
         <li><a href="#">Trang chủ</a></li>
         <li><a href="#">Sản phẩm</a></li>
-        <li><a href="#">Giỏ hàng</a></li>
-        <li><a href="#">Đăng nhập</a></li>
+        <li><a href="#">Khuyến mãi</a></li>
+        <li><a href="#">Thương hiệu</a></li>
       </ul>
     </nav>
   );
