@@ -1,0 +1,75 @@
+/* Navbar Styles */
+
+.navbar {
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+/* Top Banner */
+.navbar__close {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Main Navbar */
+.navbar__main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.navbar__logo h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+/* Navigation Links */
+.navbar__links ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar__links li {
+    margin: 0 15px;
+}
+
+.navbar__links a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.navbar__links a:hover {
+    color: #007BFF;
+}
+
+/* Search Box */
+.navbar__search input {
+    padding: 5px 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 250px;
+}
+
+/* Icons */
+.navbar__icons button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    margin-left: 10px;
+    cursor: pointer;
+    color: #333;
+}
+
+.navbar__icons button:hover {
+    color: #007BFF;
+}
