@@ -8,7 +8,7 @@ const ProductImagesSelection = () => {
 
   return (
     <>
-      <div className="w-1/2 bg-pink-300 mt-4 ml-[100px] flex gap-0">
+      <div className="w-1/2 bg-pink-300 mt-4 ml-[100px] flex flex-shrink-0 gap-0">
         <div className="bg-orange-300 h-[530px] grid grid-cols-1 gap-[14px] mr-[14px]">
 
         <img src={Sprigatito} alt="Failed to load" className="w-[152px] h-[167px] border"></img>

@@ -12,8 +12,12 @@ const ProductDetail = () => {
         </div>
         <div>
           <div className="border-t-2 border-b-2 mt-[20px] mb-[20px] pt-4 pb-4">
-            <p className="opacity-60">Select Colors</p>
-            <button className="rounded-full bg-black">jjkasfjlkajfla</button>
+            <p className="p-font text-[16px] opacity-60">Select Colors</p>
+            <div className="color-selector pt-1 m-0 flex flex-auto gap-3">
+              <button className="rounded-full bg-[#000000] size-7"></button>
+              <button className="rounded-full bg-[#00FF00] size-7"></button>
+              <button className="rounded-full bg-[#FF0000] size-7"></button>
+            </div>
           </div>
         </div>
       </div>
