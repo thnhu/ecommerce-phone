@@ -49,7 +49,7 @@ const ReviewSection = () => {
           />
         </div>
         <div className="flex items-center justify-center">
-          <button className="p-font text-[14px] md:text-[16px] lg:text-[18px] border-opacity-10 border-black border-2 rounded-3xl px-5 py-1">
+          <button className="p-font text-[16px] md:text-[18px] lg:text-[20px] border-opacity-10 border-black border-2 rounded-3xl px-5 py-1">
             Load more reviews
           </button>
         </div>

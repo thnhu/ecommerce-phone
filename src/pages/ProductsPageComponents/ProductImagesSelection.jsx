@@ -22,7 +22,7 @@ const ProductImagesSelection = () => {
       }
     } else {
       setSelectedImage(0)
-      setStartIndex(0); // Loop back to the start
+      setStartIndex(0);
     }
   };
 
@@ -40,8 +40,8 @@ const ProductImagesSelection = () => {
   };
 
   return (
-    <div className="flex flex-col-reverse md:w-1/2 bg-pink-300 mt-4 md:flex-row gap-0">
-      <div className="flex justify-between items-center bg-orange-300 md:h-[530px] gap-3  md:grid md:grid-cols-1 md:gap-[14px] md:mr-[14px] relative">
+    <div className="flex flex-col-reverse md:w-1/2 mt-4 md:flex-row gap-0">
+      <div className="flex justify-between items-center  md:h-[530px] gap-3  md:grid md:grid-cols-1 md:gap-[14px] md:mr-[14px] relative">
         {/* Previous Button */}
         <button
           onClick={prevImages}
@@ -51,7 +51,7 @@ const ProductImagesSelection = () => {
         </button>
 
         {/* Images carousel */}
-        <div className="w-full flex gap-3 md:flex-col justify-evenly align-middle">
+        <div className="w-full flex gap-3 md:flex-col justify-evenly align-middle mt-2 md:mt-0">
           {arrayOfImage
             .slice(startIndex, startIndex + 3)
             .map((image, index) => (

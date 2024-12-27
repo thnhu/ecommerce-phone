@@ -1,6 +1,5 @@
 
 .bloc-tabs{
-  margin-top: 80px;
   align-items: center;
   justify-content: space-around;
 }
@@ -51,4 +50,34 @@
 
 .product-active-content {
   display: block;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f4f4f4;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.delete-btn {
+  background-color: #ff5c5c;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  visibility: hidden;
+}
+
+.list-item.swiped .delete-btn {
+  visibility: visible;
+}
+
+.list-item:active {
+  cursor: grabbing;
 }

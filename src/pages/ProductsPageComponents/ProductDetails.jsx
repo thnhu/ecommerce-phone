@@ -30,7 +30,7 @@ const ProductDetail = ({ starsRating }) => {
 
   return (
     <>
-      <div className="md:ml-[40px] bg-blue-400 md:w-1/2 mt-4 block">
+      <div className="md:ml-[40px] md:w-1/2 mt-4 block">
         {/* Basic info name price rate description */}
         <div className="basic-info">
           <p className="header-font text-[24px] md:text-3xl lg:text-[33px]">
@@ -72,7 +72,7 @@ const ProductDetail = ({ starsRating }) => {
             </div>
           </div>
           {/* add to cart */}
-          <div className="border-b-2 mb-[20px] pb-4 flex size-full">
+          <div className="md:border-b-2 mb-[20px] pb-4 flex size-full">
             <div
               className="relative quantity-selector flex justify-center items-center gap-4 w-[170px] h-[52px] rounded-[62px]"
               style={{ backgroundColor: theme.colors.unselectedButton }}
