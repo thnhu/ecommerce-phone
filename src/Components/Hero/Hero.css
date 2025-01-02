@@ -47,8 +47,8 @@
 
 .hero-stats .stat {
   text-align: center;
-  flex: 0 0 auto; /* Ensures fixed size */
-  min-width: 150px; /* Optional: Adjust size */
+  flex: 0 0 auto; 
+  min-width: 150px;
 }
 
 .hero-stats h2 {
@@ -114,7 +114,7 @@
 
 @media (max-width: 768px) {
   .hero-stats {
-    flex-wrap: wrap; /* Reverts to wrapping on smaller screens */
+    flex-wrap: wrap;
     gap: 20px;
   }
 
@@ -131,7 +131,7 @@
     height: 25px;
   }
 }
-/* Update for .stat to stay in one row */
+
 
 
 
