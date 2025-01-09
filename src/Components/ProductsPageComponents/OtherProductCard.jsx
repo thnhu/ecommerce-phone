@@ -1,8 +1,9 @@
 import PropTypes from "prop-types";
 
-const OtherProductCard = ({ image, name, rateImage, price }) => {
+const OtherProductCard = ({ image, name, rateImage, price, minH = 290, minW = 200 }) => {
   return (
-    <div className="flex-col mt-8 md:mt-12 lg:mt-14 min-h-[290px] min-w-[200px]">
+    // mt-8 md:mt-12 lg:mt-14
+    <div className={`flex-col  min-h-[${minH}px] min-w-[${minW}px]`}>
       <a href="#">
         <div className="w-full flex items-center justify-center">
           <img
@@ -22,12 +23,12 @@ const OtherProductCard = ({ image, name, rateImage, price }) => {
 };
 
 OtherProductCard.propTypes = {
-  id: PropTypes.number.isRequired,
   image: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   rateImage: PropTypes.string.isRequired,
+  minH: PropTypes.number,
+  minW: PropTypes.number,
   price: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  onSwipe: PropTypes.func.isRequired,
 };
 
 export default OtherProductCard;

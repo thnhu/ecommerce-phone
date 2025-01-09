@@ -1,4 +1,4 @@
-import equalizer from "../../assets/sampleImages/equalizer-buttons-icon-outline-dj-music-vector.jpg";
+import Equalizer from "../../assets/sampleImages/equalizer-buttons-icon-outline-dj-music-vector.jpg";
 import DropdownButton from "./DropdownButton";
 import Review from "./Review";
 const totalRatings = 432;
@@ -20,7 +20,7 @@ const ReviewSection = () => {
           <div className="flex gap-1 md:gap-5 items-center justify-center ">
             <button className="size-8 md:size-10 rounded-full overflow-clip flex items-center justify-center">
               <img
-                src={equalizer}
+                src={Equalizer}
                 alt=""
                 className="size-5 md:size-10"
                 draggable="false"

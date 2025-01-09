@@ -2,12 +2,13 @@
 // import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // import { routes } from './routes'
 
-import ProductsPage from "./pages/ProductsPage"
+import CategoryPage from "./pages/CategoryPage"
+// import ProductsPage from "./pages/ProductsPage"
 
 // import Header from './components/Header';
 const App = () => {
   return (
-    <div>
+    <div className="bg-red-400 md:bg-slate-400 lg:bg-green-400">
       {/* <Header />
       <Router>
         <Routes>
@@ -21,7 +22,7 @@ const App = () => {
       </Router> */
       }
 
-      <ProductsPage></ProductsPage>
+      <CategoryPage/>
     </div>
   )
 }
