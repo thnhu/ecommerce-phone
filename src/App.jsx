@@ -1,10 +1,10 @@
-// import React from 'react'
-// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import { routes } from './routes'
+import React from 'react'
+import { RouterProvider } from "react-router-dom";
 
 import ProductsPage from "./pages/ProductsPage"
+import HomePage from './pages/HomePage';
+import CartPage from './pages/CartPage';
 
-// import Header from './components/Header';
 const App = () => {
   return (
     <div>
@@ -21,7 +21,10 @@ const App = () => {
       </Router> */
       }
 
-      <ProductsPage></ProductsPage>
+      {/* <ProductsPage></ProductsPage> */}
+      {/* <HomePage></HomePage> */}
+      <CartPage></CartPage>
+
     </div>
   )
 }

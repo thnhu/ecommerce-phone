@@ -2,21 +2,19 @@
 import React from 'react';
 import Navbar from '../Components/Navbar/Navbar';
 import Footer from '../Components/Footer/Footer';
-import Hero from '../Components/Hero/Hero';
-import NewArrivals from '../Components/NewArrivals/NewArrivals';
-import Section from '../Components/Section/Section';
 import Newsletter from '../Components/Newsletter';
-import Review from '../pages/ProductsPageComponents/ReviewSection';
+import Cart from './CartPageComponents/Cart';
+// import OrderSummary from './CartPageComponents/OrderSummary';
+// import PaymentOptions from './CartPageComponents/PaymentOptions';
 
 const HomePage = () => {
   return (
     <>
-      <Navbar />
-      <Hero />
-      <NewArrivals />
-      <Review />
+      {/* <Navbar /> */}
+      <Cart />
+      {/* <OrderSummary /> */}
+      {/* <PaymentOptions /> */}
       <Newsletter />
-      {/* <Section /> */}
       <Footer />
     </>
 

@@ -1,5 +1,10 @@
 import React from 'react';
 import './Hero.css';
+import samsungLogo from "../../assets/images/logo-samsung.png";
+import iPhoneLogo from "../../assets/images/logo-iPhone.png";
+import xiaomiLogo from "../../assets/images/logo-xiaomi.png";
+import huaweiLogo from "../../assets/images/logo-huawei.jpg";
+import oppoLogo from "../../assets/images/logo-oppo.png";
 
 const Hero = () => {
   return (
@@ -28,11 +33,11 @@ const Hero = () => {
       </div>
 
       <div className="hero-logos">
-        <img src="" alt="Samsung" />
-        <img src="" alt="iPhone" />
-        <img src="" alt="Xiaomi" />
-        <img src="" alt="Hwawei" />
-        <img src="" alt="Oppo" />
+        <img src={samsungLogo} alt="Samsung" />
+        <img src={iPhoneLogo} alt="iPhone" />
+        <img src={xiaomiLogo} alt="Xiaomi" />
+        <img src={oppoLogo} alt="Oppo" />
+        <img src={huaweiLogo} alt="Hwawei" />       
       </div>
     </section>
   );
