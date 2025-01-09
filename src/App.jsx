@@ -3,6 +3,8 @@ import { RouterProvider } from "react-router-dom";
 
 import ProductsPage from "./pages/ProductsPage"
 import HomePage from './pages/HomePage';
+import CartPage from './pages/CartPage';
+
 const App = () => {
   return (
     <div>
@@ -20,7 +22,9 @@ const App = () => {
       }
 
       {/* <ProductsPage></ProductsPage> */}
-      <HomePage></HomePage>
+      {/* <HomePage></HomePage> */}
+      <CartPage></CartPage>
+
     </div>
   )
 }
