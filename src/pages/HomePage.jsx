@@ -4,9 +4,9 @@ import Navbar from '../Components/Navbar/Navbar';
 import Footer from '../Components/Footer/Footer';
 import Hero from '../Components/Hero/Hero';
 import NewArrivals from '../Components/NewArrivals/NewArrivals';
-import Section from '../Components/Section/Section';
+// import Section from '../Components/Section/Section';
 import Newsletter from '../Components/Newsletter';
-import Review from '../pages/ProductsPageComponents/ReviewSection';
+// import Review from '../pages/ProductsPageComponents/ReviewSection';
 
 const HomePage = () => {
   return (
@@ -14,7 +14,7 @@ const HomePage = () => {
       <Navbar />
       <Hero />
       <NewArrivals />
-      <Review />
+      {/* <Review /> */}
       <Newsletter />
       {/* <Section /> */}
       <Footer />

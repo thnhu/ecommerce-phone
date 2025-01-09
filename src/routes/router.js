@@ -2,10 +2,10 @@ import React from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 // import CategoryPage from "./pages/CategoryPage"
-import ProductsPage from "./pages/ProductsPage"
-import HomePage from './pages/HomePage';
-import CartPage from './pages/CartPage';
-import NotFoundPage from './pages/NotFoundPage';
+import ProductsPage from "../pages/ProductsPage"
+import HomePage from '../pages/HomePage';
+import CartPage from '../pages/CartPage';
+import NotFoundPage from '../pages/NotFoundPage';
 
 const router = createBrowserRouter([
   {
@@ -27,8 +27,4 @@ const router = createBrowserRouter([
 
 ]);
 
-function App() {
-  return <RouterProvider router={router} />;
-}
-
-export default App
+export default router
