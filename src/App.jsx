@@ -1,11 +1,12 @@
-// import React from 'react'
-// import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import { routes } from './routes'
+import React from 'react'
+import { RouterProvider } from "react-router-dom";
 
 import CategoryPage from "./pages/CategoryPage"
-// import ProductsPage from "./pages/ProductsPage"
+import ProductsPage from "./pages/ProductsPage"
+import ProductsPage from "./pages/ProductsPage"
+import HomePage from './pages/HomePage';
+import CartPage from './pages/CartPage';
 
-// import Header from './components/Header';
 const App = () => {
   return (
     <div className="bg-red-400 md:bg-slate-400 lg:bg-green-400">
@@ -23,6 +24,10 @@ const App = () => {
       }
 
       <CategoryPage/>
+      {/* <ProductsPage></ProductsPage> */}
+      {/* <HomePage></HomePage> */}
+      <CartPage></CartPage>
+
     </div>
   )
 }
