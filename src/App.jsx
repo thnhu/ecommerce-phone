@@ -1,8 +1,15 @@
+
 // eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import axios from 'axios';
 // import CategoryPage from "./pages/CategoryPage"
+
+import { RouterProvider } from "react-router-dom";
+
+import CategoryPage from "./pages/CategoryPage"
+
+
 import ProductsPage from "./pages/ProductsPage"
 import HomePage from './pages/HomePage';
 import CartPage from './pages/CartPage';

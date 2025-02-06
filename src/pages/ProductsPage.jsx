@@ -1,9 +1,9 @@
 // eslint-disable-next-line no-unused-vars
 import React from "react";
-import ProductImagesSelection from "./ProductsPageComponents/ProductImagesSelection";
-import ProductDetail from "./ProductsPageComponents/ProductDetails";
-import ProductTabs from "./ProductsPageComponents/ProductTabs";
-import OtherProducts from "./ProductsPageComponents/OtherProducts";
+import ProductImagesSelection from "../Components/ProductsPageComponents/ProductImagesSelection";
+import ProductDetail from "../Components/ProductsPageComponents/ProductDetails";
+import ProductTabs from "../Components/ProductsPageComponents/ProductTabs";
+import OtherProducts from "../Components/ProductsPageComponents/OtherProducts";
 
 const ProductsPage = () => {
   return (
