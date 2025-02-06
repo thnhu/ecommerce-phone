@@ -28,13 +28,12 @@ const Navbar = () => {
             placeholder="Tìm kiếm" 
             className="navbar-search"
           />
-          {/* <span className="icon">🔍</span> */}
-          <span className="icon">🛒</span>
-          <span className="icon">👤</span>
+          <span className="icon">Cart</span>
+          <span className="icon">User</span>
         </div>
 
         <div className="navbar-toggle" onClick={toggleMenu}>
-          <span className="hamburger">☰</span>
+          <span className="hamburger">Menu</span>
         </div>
       </div>
     </nav>

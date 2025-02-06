@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import Button from "../../Components/Button/Button";
 const Cart = () => {
   const [cartItems, setCartItems] = useState([
     { id: 1, name: "iPhone 16 Pro", size: "6.7 inches", color: "gold", price: 28, quantity: 1 },
@@ -32,8 +32,26 @@ const Cart = () => {
     setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
   };
 
+  const [promoCode, setPromoCode] = useState("");
+  const [appliedPromo, setAppliedPromo] = useState(null);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const availablePromos = {
+    SAVE20: 0.2, // 20% discount
+    DISCOUNT50: 0.5, // 50% discount
+  };
+
+  const handleApplyPromo = () => {
+    if (availablePromos[promoCode]) {
+      setAppliedPromo(promoCode);
+      setErrorMessage("");
+    } else {
+      setErrorMessage("Mã giảm giá không hợp lệ");
+    }
+  };
+
   const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-  const discount = subtotal * discountRate;
+  const discount = appliedPromo ? subtotal * availablePromos[appliedPromo] : 0;
   const total = subtotal - discount + deliveryFee;
 
   return (
@@ -99,7 +117,27 @@ const Cart = () => {
           <p>Tổng thanh toán</p>
           <p>{total.toFixed(2)}</p>
         </div>
-        <button className="w-full bg-black text-white py-2 mt-4 rounded-lg">Đặt hàng</button>
+        <div className="mt-4">
+          <input
+            type="text"
+            placeholder="Nhập mã giảm giá"
+            value={promoCode}
+            onChange={(e) => setPromoCode(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-lg mb-2"
+          />
+      
+          <Button 
+        variant="secondary" 
+        label="Áp dụng" 
+        onClick={() => handleClick('secondary') && handleApplyPromo} 
+      />
+          {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
+        </div>
+        <Button 
+        variant="primary" 
+        label="Đặt hàng" 
+        onClick={() => handleClick('primary')} 
+      />
       </div>
     </div>
   );

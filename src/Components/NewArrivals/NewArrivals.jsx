@@ -3,7 +3,7 @@ import './NewArrivals.css';
 import Sprigatito from "../../assets/sampleImages/Sprigatito.png";
 import Samsung from "../../assets/images/samsung-galaxy-a16-5g-gold-thumbnew-600x600.jpg";
 import iPhone from "../../assets/images/iphone-16-pro-titan-sa-mac.png";
-
+import Button from '../Button/Button';
 function NewArrivals() {
     const products = [
         {
@@ -61,7 +61,11 @@ function NewArrivals() {
                     </div>
                 ))}
             </div>
-            <button className="new-arrivals__button">Xem thêm sản phẩm</button>
+            <Button 
+                variant="secondary" 
+                label="Xem thêm sản phẩm" 
+                onClick={() => handleClick('secondary')} 
+            />
         </section>
     );
 }

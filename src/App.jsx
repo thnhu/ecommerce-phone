@@ -1,34 +1,55 @@
-import React from 'react'
+
+// eslint-disable-next-line no-unused-vars
+import React, { useEffect, useState } from 'react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import axios from 'axios';
+// import CategoryPage from "./pages/CategoryPage"
+
 import { RouterProvider } from "react-router-dom";
 
 import CategoryPage from "./pages/CategoryPage"
-import ProductsPage from "./pages/ProductsPage"
+
+
 import ProductsPage from "./pages/ProductsPage"
 import HomePage from './pages/HomePage';
 import CartPage from './pages/CartPage';
+import NotFoundPage from './pages/NotFoundPage';
 
-const App = () => {
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <HomePage />,
+  },
+  {
+    path: '/product',
+    element: <ProductsPage />,
+  },
+  {
+    path: '/cart',
+    element: <CartPage />,
+  },
+  {
+    path: "*",
+    element: <NotFoundPage />,
+  },
+
+]);
+function App() {
+  const [getCategory, setCategory] = useState([]);
+  useEffect(() => {
+    const getAPI = async () => {
+      const result = await axios.get("http://localhost:8080/phone/category");
+      setCategory(result.data);
+    }
+    getAPI();
+  },[])
+  // return <RouterProvider router={router} />;
   return (
-    <div className="bg-red-400 md:bg-slate-400 lg:bg-green-400">
-      {/* <Header />
-      <Router>
-        <Routes>
-          {routes.map((route) => {
-            const Page = route.page
-            return (
-              <Route path={route.path} element={<Page />} />
-            )
-          })}
-        </Routes>
-      </Router> */
-      }
-
-      <CategoryPage/>
-      {/* <ProductsPage></ProductsPage> */}
-      {/* <HomePage></HomePage> */}
-      <CartPage></CartPage>
-
-    </div>
+    <>
+      <ul>
+        {getCategory.map((value) => <li key={value.id}>{value.name}</li>)}
+      </ul>
+    </>
   )
 }
 

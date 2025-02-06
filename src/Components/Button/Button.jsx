@@ -1,12 +1,12 @@
-// Button.jsx
 import React from 'react';
 import './Button.css';
 
-const Button = ({ label, onClick, variant = 'primary', className = '' }) => {
+const Button = ({ variant = 'primary', label, onClick, disabled }) => {
   return (
     <button 
-      className={`button ${variant} ${className}`} 
-      onClick={onClick}
+      className={`button ${variant}`} 
+      onClick={onClick} 
+      disabled={disabled}
     >
       {label}
     </button>

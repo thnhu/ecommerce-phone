@@ -7,7 +7,7 @@ import Cart from './CartPageComponents/Cart';
 // import OrderSummary from './CartPageComponents/OrderSummary';
 // import PaymentOptions from './CartPageComponents/PaymentOptions';
 
-const HomePage = () => {
+const CartPage = () => {
   return (
     <>
       {/* <Navbar /> */}
@@ -21,4 +21,4 @@ const HomePage = () => {
   )
 }
 
-export default HomePage
+export default CartPage
