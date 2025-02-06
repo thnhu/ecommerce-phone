@@ -5,7 +5,7 @@ import iPhoneLogo from "../../assets/images/logo-iPhone.png";
 import xiaomiLogo from "../../assets/images/logo-xiaomi.png";
 import huaweiLogo from "../../assets/images/logo-huawei.jpg";
 import oppoLogo from "../../assets/images/logo-oppo.png";
-
+import Button from '../Button/Button';
 const Hero = () => {
   return (
     <section className="hero">
@@ -14,7 +14,11 @@ const Hero = () => {
         <p>
             Hệ thống bán lẻ điện thoại với mạng lưới hàng ngàn cửa hàng trên toàn quốc
         </p>
-        <button className="shop-now">Mua ngay</button>
+        <Button 
+        variant="primary" 
+        label="Mua ngay" 
+        onClick={() => handleClick('primary')} 
+      />
       </div>
 
       <div className="hero-stats">

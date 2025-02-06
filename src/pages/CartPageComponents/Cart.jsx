@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import DeleteIcon from '@mui/icons-material/Delete';
+import Button from "../../Components/Button/Button";
 const Cart = () => {
   const [cartItems, setCartItems] = useState([
     { id: 1, name: "iPhone 16 Pro", size: "6.7 inches", color: "gold", price: 28, quantity: 1 },
@@ -125,15 +125,19 @@ const Cart = () => {
             onChange={(e) => setPromoCode(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg mb-2"
           />
-          <button
-            onClick={handleApplyPromo}
-            className="w-full bg-black text-white py-2 rounded-lg"
-          >
-            Apply
-          </button>
+      
+          <Button 
+        variant="secondary" 
+        label="Áp dụng" 
+        onClick={() => handleClick('secondary') && handleApplyPromo} 
+      />
           {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
         </div>
-        <button className="w-full bg-black text-white py-2 mt-4 rounded-lg">Đặt hàng</button>
+        <Button 
+        variant="primary" 
+        label="Đặt hàng" 
+        onClick={() => handleClick('primary')} 
+      />
       </div>
     </div>
   );
