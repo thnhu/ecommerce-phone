@@ -28,8 +28,8 @@ const Navbar = () => {
             placeholder="Tìm kiếm" 
             className="navbar-search"
           />
-          <span className="icon">Cart</span>
-          <span className="icon">User</span>
+          <span className="icon">Giỏ hàng</span>
+          <span className="icon">Đăng nhập</span>
         </div>
 
         <div className="navbar-toggle" onClick={toggleMenu}>

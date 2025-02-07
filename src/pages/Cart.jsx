@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Button from "../../Components/Button/Button";
+import Button from '../Components/Button/Button';
 const Cart = () => {
   const [cartItems, setCartItems] = useState([
     { id: 1, name: "iPhone 16 Pro", size: "6.7 inches", color: "gold", price: 28, quantity: 1 },
@@ -55,7 +55,7 @@ const Cart = () => {
   const total = subtotal - discount + deliveryFee;
 
   return (
-    <div className="flex flex-col md:flex-row justify-between p-4 md:p-8">
+    <div className="flex flex-col md:flex-row justify-between p-4 md:p-8 mt-12">
       {/* Cart Items */}
       <div className="flex-1 md:mr-8">
         <h2 className="text-2xl font-bold mb-4">Giỏ hàng</h2>

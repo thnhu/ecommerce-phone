@@ -3,14 +3,12 @@ import React from 'react';
 import Navbar from '../Components/Navbar/Navbar';
 import Footer from '../Components/Footer/Footer';
 import Newsletter from '../Components/Newsletter';
-import Cart from './CartPageComponents/Cart';
-// import OrderSummary from './CartPageComponents/OrderSummary';
-// import PaymentOptions from './CartPageComponents/PaymentOptions';
+import Cart from './Cart';
 
 const CartPage = () => {
   return (
     <>
-      {/* <Navbar /> */}
+      <Navbar />
       <Cart />
       {/* <OrderSummary /> */}
       {/* <PaymentOptions /> */}
