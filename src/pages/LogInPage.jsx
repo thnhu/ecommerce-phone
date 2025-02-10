@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navbar from "../Components/Navbar/Navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import LogoutButton from "../Components/LogoutButton";
 const LogInPage = () => {
   // const [phone, setPhone] = useState("");
   // const [password, setPassword] = useState("");
@@ -14,8 +15,7 @@ const LogInPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      axios
+    axios
       .post("http://localhost:8080/phone/auth/token", reqLogin)
       .then((response) => {
         console.log("Response:", response.data.data.token);
@@ -32,9 +32,6 @@ const LogInPage = () => {
       .catch((error) => {
         console.error("Error:", error);
       });
-    } catch (error){
-      alert("Đăng nhập thất bại, vui lòng thử lại.")
-    }
   };
 
   const handleInputChange = (e) => {
@@ -102,6 +99,7 @@ const LogInPage = () => {
           </p>
         </div>
       </div>
+      <LogoutButton></LogoutButton>
     </>
   );
 };
