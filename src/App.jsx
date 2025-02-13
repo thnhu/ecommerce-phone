@@ -9,6 +9,7 @@ import CartPage from './pages/CartPage';
 import NotFoundPage from './pages/NotFoundPage';
 import LogInPage from './pages/LogInPage';
 import RegisterPage from './pages/RegisterPage';
+import AdminPage from './pages/AdminPage';
 
 
 const router = createBrowserRouter([
@@ -39,8 +40,8 @@ const router = createBrowserRouter([
 
 ]);
 function App() {
-  return <RouterProvider router={router} />;
-
+  // return <RouterProvider router={router} />;
+  return <AdminPage></AdminPage>;
   // const [getCategory, setCategory] = useState([]);
   // useEffect(() => {
   //   const getAPI = async () => {
@@ -56,6 +57,7 @@ function App() {
   //     </ul>
   //   </>
   // )
+  
 }
 
 export default App
