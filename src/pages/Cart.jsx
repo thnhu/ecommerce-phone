@@ -117,13 +117,13 @@ const Cart = () => {
           <p>Tổng thanh toán</p>
           <p>{total.toFixed(2)}</p>
         </div>
-        <div className="mt-4">
+        {/* <div className="mt-2 flex items-center gap-2">
           <input
             type="text"
             placeholder="Nhập mã giảm giá"
             value={promoCode}
             onChange={(e) => setPromoCode(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg mb-2"
+            className="flex-1 w-auto p-3 border border-gray-300 rounded-lg mb-2"
           />
       
           <Button 
@@ -131,8 +131,23 @@ const Cart = () => {
         label="Áp dụng" 
         onClick={() => handleClick('secondary') && handleApplyPromo} 
       />
+ 
           {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
-        </div>
+        </div> */}
+        <div className="flex items-center gap-2">
+  <input
+    type="text"
+    placeholder="Nhập mã giảm giá"
+    className="flex-1 h-12 px-3 border border-gray-300 rounded-full"
+  />
+  <Button 
+        variant="secondary" 
+        label="Áp dụng" 
+        onClick={() => handleClick('secondary')} 
+      />
+        {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
+
+</div>
         <Button 
         variant="primary" 
         label="Đặt hàng" 

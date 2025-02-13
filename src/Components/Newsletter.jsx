@@ -9,6 +9,7 @@ const Newsletter = () => {
         </h2>
         <form className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <div className="flex items-center w-full sm:w-auto border border-gray-300 rounded-full overflow-hidden bg-white">
+
             <input
               type="email"
               placeholder="Nhập email của bạn tại đây"

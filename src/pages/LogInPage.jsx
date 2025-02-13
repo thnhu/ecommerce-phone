@@ -38,15 +38,14 @@ const LogInPage = () => {
           <div className="flex justify-between items-center mb-4">
             <a href="#" className="text-blue-500 text-sm">Quên mật khẩu?</a>
           </div>
-          <button
-            type="submit"
-            className="w-full bg-black text-white p-2 rounded-lg hover:bg-gray-800 transition"
-          >
-            Đăng nhập
-          </button>
+          <Button 
+        variant="primary" 
+        label="Đăng nhập" 
+        onClick={() => handleClick('primary')} 
+      />
         </form>
         <p className="text-center text-sm text-gray-600 mt-4">
-          Chưa có tài khoản? <a href="#" className="text-blue-500">Đăng ký</a>
+          Chưa có tài khoản? <a href="/register" className="text-blue-500">Đăng ký</a>
         </p>
       </div>
     </div>

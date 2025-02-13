@@ -15,9 +15,9 @@ const Hero = () => {
             Hệ thống bán lẻ điện thoại với mạng lưới hàng ngàn cửa hàng trên toàn quốc
         </p>
         <Button 
-        variant="primary" 
+        variant="secondary" 
         label="Mua ngay" 
-        onClick={() => handleClick('primary')} 
+        onClick={() => handleClick('secondary')} 
       />
       </div>
 

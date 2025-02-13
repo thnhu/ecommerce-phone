@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Navbar from '../Components/Navbar/Navbar';
-
+import Button from "../Components/Button/Button";
 export default function Signup() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -77,15 +77,14 @@ export default function Signup() {
               onChange={(e) => setDob(e.target.value)}
             />
           </div>
-          <button
-            type="submit"
-            className="w-full bg-black text-white p-2 rounded-lg hover:bg-gray-800 transition"
-          >
-            Đăng ký
-          </button>
+          <Button 
+        variant="primary" 
+        label="Đăng ký" 
+        onClick={() => handleClick('primary')} 
+      />
         </form>
         <p className="text-center text-sm text-gray-600 mt-4">
-          Đã có tài khoản? <a href="#" className="text-blue-500">Đăng nhập</a>
+          Đã có tài khoản? <a href="/login" className="text-blue-500">Đăng nhập</a>
         </p>
       </div>
     </div>

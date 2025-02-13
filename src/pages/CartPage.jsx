@@ -10,8 +10,6 @@ const CartPage = () => {
     <>
       <Navbar />
       <Cart />
-      {/* <OrderSummary /> */}
-      {/* <PaymentOptions /> */}
       <Newsletter />
       <Footer />
     </>

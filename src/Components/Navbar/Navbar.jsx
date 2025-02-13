@@ -11,11 +11,12 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        <div className="navbar-logo">THEGIOIDIDONG</div>
+        <a href="/"><div className="navbar-logo">THEGIOIDIDONG</div></a>
+        
         
         <div className={`navbar-menu ${menuOpen ? 'open' : ''}`}>
           <ul>
-            <li><a href="#">Trang chủ</a></li>
+            <li><a href="/">Trang chủ</a></li>
             <li><a href="#">Giảm giá</a></li>
             <li><a href="#">Hàng mới về</a></li>
             <li><a href="#">Thương hiệu</a></li>
@@ -28,8 +29,8 @@ const Navbar = () => {
             placeholder="Tìm kiếm" 
             className="navbar-search"
           />
-          <span className="icon">Giỏ hàng</span>
-          <span className="icon">Đăng nhập</span>
+          <a href="/cart"><span className="icon">Giỏ hàng</span></a>
+          <a href="/login"><span className="icon">Đăng nhập</span></a>
         </div>
 
         <div className="navbar-toggle" onClick={toggleMenu}>
