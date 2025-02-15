@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import UsersTable from '../Components/AdminPageComponents/UsersTable'
-
+import CategoriesTable from '../Components/AdminPageComponents/CategoriesTable'
+import ProductsTable from '../Components/AdminPageComponents/ProductsTable'
 const AdminPage = () => {
   const [selectedTab, setSelectedTab] = useState('')
-
   const handleClick = (e) => {
     setSelectedTab(e.target.id)
   }
@@ -41,13 +41,15 @@ const AdminPage = () => {
             key="nhacungcap"
             className={`w-full px-5 py-3 text-xl ${selectedTab === 'nhacungcap' ? 'bg-gray-800 rounded-md' : ''}`}
           >
-            <button
-              id="nhacungcap"
-              className="w-full text-left"
-              onClick={handleClick}
-            >
-              Nhà cung cấp
-            </button>
+            
+              <button
+                id="nhacungcap"
+                className="w-full text-left"
+                onClick={handleClick}
+              >
+                Nhà cung cấp
+              </button>
+            
           </li>
           <li
             key="nguoidung"
@@ -70,6 +72,8 @@ const AdminPage = () => {
     <div className='w-full h-screen flex'>
       <SideBar></SideBar>
       {selectedTab === "nguoidung" && <UsersTable />}
+      {selectedTab === "nhacungcap" && <CategoriesTable />}
+      {selectedTab === "thietbi" && <ProductsTable />}
     </div>
   )
 }
