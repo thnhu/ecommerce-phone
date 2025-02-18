@@ -20,7 +20,6 @@ const LogInPage = () => {
       .then((response) => {
         console.log("Response:", response.data.data.token);
         const token = response.data.data.token;
-
         if (token) {
           localStorage.setItem("authToken", token); // Save token to localStorage
           console.log("Token saved:", token); // Log the token after saving it
