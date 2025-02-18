@@ -1,19 +1,34 @@
 import axios from "axios";
 import React, {useEffect, useState} from "react";
 const ProductsTable = () => {
-    const [getProduct, setProduct] = useState([]);
-    useEffect(() => {
-        const getProduct = async () => {
-        const result = await axios.get("http://localhost:8080/phone/product?page=0&size=10");
-        getProduct(result.data);
+    const [products, setProducts] = useState([]);
+    const fetchProducts = async () => {
+        try {
+          const response = await axios.get('http://localhost:8080/phone/product?page=0&size=10');
+          setProducts(response.data);
+        } catch (error) {
+          console.error('Lỗi khi lấy danh mục:', error);
         }
-        getProduct();
-    },[])
+      };
+    
+      useEffect(() => {
+        fetchProducts();
+      }, []);
+    
     return (
         <>
-        <ul>
-            {getProduct.map((value) => <li key={value.id}>{value.name}</li>)}
-        </ul>
+       {/* <div> 
+      <h2>Danh sách thiết bị</h2>
+      <ul>
+        {products.map((value) => (
+          <li key={value.id}>
+            {value.name}
+            
+          </li>
+        ))}
+      </ul>
+    </div> */}
+
         </>
     )
 }
