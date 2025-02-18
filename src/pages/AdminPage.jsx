@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import UsersTable from '../Components/AdminPageComponents/UsersTable'
-
+import CategoriesTable from '../Components/AdminPageComponents/CategoriesTable'
+import ProductsTable from '../Components/AdminPageComponents/ProductsTable'
+// import LogInPage from '../pages/LogInPage'
 const AdminPage = () => {
-  const [selectedTab, setSelectedTab] = useState('nguoidung')
-
+  const [selectedTab, setSelectedTab] = useState('')
   const handleClick = (e) => {
     setSelectedTab(e.target.id)
   }
@@ -67,10 +68,17 @@ const AdminPage = () => {
   }
 
   return (
-    <div className='w-full h-screen flex'>
-      <SideBar></SideBar>
-      {selectedTab === "nguoidung" && <UsersTable />}
-    </div>
+    <>
+      {/* <LogInPage /> */}
+      <div className='w-full h-screen flex'>
+        <SideBar></SideBar>
+        {selectedTab === "nguoidung" && <UsersTable />}
+        {selectedTab === "nhacungcap" && <CategoriesTable />}
+        {selectedTab === "thietbi" && <ProductsTable />}
+      </div>
+      
+    </>
+    
   )
 }
 
