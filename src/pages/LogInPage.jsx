@@ -93,7 +93,7 @@ const LogInPage = () => {
           </form>
           <p className="text-center text-sm text-gray-600 mt-4">
             Chưa có tài khoản?{" "}
-            <a href="#" className="text-blue-500">
+            <a href="/register" className="text-blue-500">
               Đăng ký
             </a>
           </p>
