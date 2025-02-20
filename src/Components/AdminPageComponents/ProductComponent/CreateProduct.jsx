@@ -33,19 +33,13 @@ const CreateProduct = () => {
     //   return;
     // }
 
-    // Tạo FormData với 2 key: product (JSON) và files (file ảnh)
-    const formData = new FormData();
-    // const productData = {
-    //   name,
-    //   description,
-    //   category,
-    // };
+    
 
     // formData.append('product', JSON.stringify(productData));
     //formData.append('files', file);
 
     try {
-      const response = await axios.post("http://localhost:8080/phone/product", formData, {
+      const response = await axios.post("http://localhost:8080/phone/product", addProduct, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${token}`,
@@ -74,6 +68,7 @@ const CreateProduct = () => {
               value={addProduct.name}
               onChange={handleInputChange}
               placeholder="Nhập tên sản phẩm"
+              name="name"
             />
           </div>
           <div>
@@ -82,9 +77,10 @@ const CreateProduct = () => {
               value={addProduct.description}
               onChange={handleInputChange}
               placeholder="Nhập mô tả sản phẩm"
+              name="description"
             />
           </div>
-          <div>
+          {/* <div>
             <label>Tên nhà cung cấp:</label>
             <input
               type="text"
@@ -92,7 +88,7 @@ const CreateProduct = () => {
               onChange={handleInputChange}
               placeholder="Nhập tên nhà cung cấp"
             />
-          </div>
+          </div> */}
           {/* <div>
             <label>Ảnh sản phẩm:</label>
             <input
