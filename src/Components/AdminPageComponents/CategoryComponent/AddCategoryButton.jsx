@@ -1,13 +1,8 @@
-import { useState } from "react";
-import Navbar from "../Components/Navbar/Navbar";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import LogoutButton from "../Components/LogoutButton";
-const LogInPage = () => {
-  // const [phone, setPhone] = useState("");
-  // const [password, setPassword] = useState("");
-  const navigate = useNavigate();
-
+import React, { useState } from 'react';
+import axios from 'axios';
+const AddCategoryButton = () => {
+  const [showInput, setShowInput] = useState(false);
+  const [category, setCategory] = useState("");
   const [reqLogin, setReqLogin] = useState({
     phoneNumber: "",
     password: "",
@@ -20,10 +15,10 @@ const LogInPage = () => {
       .then((response) => {
         console.log("Response:", response.data.data.token);
         const token = response.data.data.token;
+
         if (token) {
           localStorage.setItem("authToken", token); // Save token to localStorage
           console.log("Token saved:", token); // Log the token after saving it
-          navigate("/");
         } else {
           console.error("No token found in the response");
         }
@@ -40,20 +35,47 @@ const LogInPage = () => {
       [name]: value,
     }));
   };
+  const handleShowInput = () => {
+    setShowInput(true);
+  };
+
+  const handleAddCategory = async () => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.error("Token không tồn tại. Hãy đăng nhập lại.");
+      return;
+    }
+    if (category.trim() === "") {
+        console.log("Ten thuong hieu khong duoc de trong")
+        return;
+    }
+    try {
+      const response = await axios.post("http://localhost:8080/phone/category",{ name: category },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Thêm thương hiệu thành công!", response.data);
+      setCategory("");
+      setShowInput(false);
+        
+    } 
+     
+    catch (err) {
+      if (err.response && err.response.status === 401) {
+        console.error("Không có quyền truy cập. Kiểm tra token của bạn hoặc đăng nhập lại.");
+      } else {
+        console.error("Có lỗi xảy ra:", err);
+      }
+    }
+  };
 
   return (
     <>
-      <Navbar />
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <div className="bg-white p-8 rounded-2xl shadow-lg w-96">
-          <div className="text-center mb-6">
-            <div className="text-xl font-bold">Thegioididong</div>
-            <h2 className="text-2xl font-semibold mt-2">Chào mừng trở lại</h2>
-            <p className="text-gray-500 text-sm">
-              Vui lòng nhập thông tin để đăng nhập
-            </p>
-          </div>
-          <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="text-sm text-gray-600">Số điện thoại</label>
               <input
@@ -70,18 +92,13 @@ const LogInPage = () => {
             <div className="mb-4 relative">
               <label className="text-sm text-gray-600">Mật khẩu</label>
               <input
-              type="password"
+               type="password"
                 placeholder="Nhập mật khẩu"
                 className="w-full mt-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={reqLogin.password}
                 onChange={handleInputChange}
                 name="password"
               />
-            </div>
-            <div className="flex justify-between items-center mb-4">
-              <a href="#" className="text-blue-500 text-sm">
-                Quên mật khẩu?
-              </a>
             </div>
             <button
               type="submit"
@@ -91,17 +108,27 @@ const LogInPage = () => {
               Đăng nhập
             </button>
           </form>
-          <p className="text-center text-sm text-gray-600 mt-4">
-            Chưa có tài khoản?{" "}
-            <a href="/register" className="text-blue-500">
-              Đăng ký
-            </a>
-          </p>
+          <div>
+      <button onClick={handleShowInput}>Thêm thương hiệu</button>
+      
+      {showInput && (
+        <div style={{ marginTop: '10px' }}>
+          <input
+            type="text"
+            placeholder="Nhập tên thương hiệu"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          />
+          <button onClick={handleAddCategory} style={{ marginLeft: '5px' }}>
+            Thêm
+          </button>
         </div>
-      </div>
-      <LogoutButton></LogoutButton>
+      )}
+
+    </div>
+
     </>
   );
 };
 
-export default LogInPage;
+export default AddCategoryButton;
