@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+
+import api from "../../services/api";
+// import api from "../../interceptor"
 
 const UsersTable = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -13,13 +15,8 @@ const UsersTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/phone/user?page=${currentIndex}&size=${size}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-            },
-          }
+        const response = await api.get(
+          `/phone/user?page=${currentIndex}&size=${size}`
         );
         setUserData(response.data.content);
         //disable over indexing
@@ -75,7 +72,7 @@ const UsersTable = () => {
                   key={index}
                 >
                   <p className="border border-gray-300 p-2 text-center">
-                    {index + 1}
+                    {index + 1 + currentIndex * size}
                   </p>
                   <p className="border border-gray-300 p-2 col-span-2 overflow-auto">
                     {user.displayName}
