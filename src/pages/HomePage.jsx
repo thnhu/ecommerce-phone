@@ -7,6 +7,7 @@ import NewArrivals from '../Components/NewArrivals/NewArrivals';
 // import Section from '../Components/Section/Section';
 import Newsletter from '../Components/Newsletter';
 // import Review from '../pages/ProductsPageComponents/ReviewSection';
+import RefreshToken from "../Components/ProductsPageComponents/RefreshToken";
 
 const HomePage = () => {
   return (
@@ -18,8 +19,9 @@ const HomePage = () => {
       <Newsletter />
       {/* <Section /> */}
       <Footer />
+      <RefreshToken></RefreshToken>
     </>
-
+    
   )
 }
 

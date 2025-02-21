@@ -117,23 +117,6 @@ const Cart = () => {
           <p>Tổng thanh toán</p>
           <p>{total.toFixed(2)}</p>
         </div>
-        {/* <div className="mt-2 flex items-center gap-2">
-          <input
-            type="text"
-            placeholder="Nhập mã giảm giá"
-            value={promoCode}
-            onChange={(e) => setPromoCode(e.target.value)}
-            className="flex-1 w-auto p-3 border border-gray-300 rounded-lg mb-2"
-          />
-      
-          <Button 
-        variant="secondary" 
-        label="Áp dụng" 
-        onClick={() => handleClick('secondary') && handleApplyPromo} 
-      />
- 
-          {errorMessage && <p className="text-red-500 text-sm mt-2">{errorMessage}</p>}
-        </div> */}
         <div className="flex items-center gap-2">
   <input
     type="text"

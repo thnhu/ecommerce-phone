@@ -42,6 +42,8 @@ const LogInPage = () => {
     }));
   };
 
+
+
   return (
     <>
       <Navbar />
@@ -90,6 +92,7 @@ const LogInPage = () => {
             >
               Đăng nhập
             </button>
+
           </form>
           <p className="text-center text-sm text-gray-600 mt-4">
             Chưa có tài khoản?{" "}
@@ -100,6 +103,7 @@ const LogInPage = () => {
         </div>
       </div>
       <LogoutButton></LogoutButton>
+
     </>
   );
 };
