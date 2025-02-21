@@ -1,0 +1,35 @@
+    <div className="bg-white p-4 rounded-lg shadow-md w-full max-w-md">
+      <h2 className="text-xl font-semibold mb-4">Hình sản phẩm</h2>
+      <div className="flex flex-wrap gap-2">
+        {/* Hiển thị preview các hình đã chọn */}
+        {images.map((img, idx) => (
+          <div
+            key={idx}
+            className="w-20 h-20 border rounded-lg overflow-hidden"
+          >
+            <img
+              src={img.preview}
+              alt="Preview"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ))}
+        {/* Nút thêm hình */}
+        <button
+          type="button"
+          onClick={handleAddMore}
+          className="w-20 h-20 border rounded-lg flex items-center justify-center text-gray-500 hover:bg-gray-100"
+        >
+          +
+        </button>
+        {/* Input file ẩn (multiple) */}
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          ref={fileInputRef}
+          onChange={handleFilesChange}
+          className="hidden"
+        />
+      </div>
+    </div>      

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import UsersTable from '../Components/AdminPageComponents/UsersTable'
 import CategoriesTable from '../Components/AdminPageComponents/CategoryComponent/CategoriesTable'
-import ProductsTable from '../Components/AdminPageComponents/ProductsTable'
+import ProductsTable from '../Components/AdminPageComponents/ProductComponent/CreateProduct'
 const AdminPage = () => {
   const [selectedTab, setSelectedTab] = useState('')
   const handleClick = (e) => {
