@@ -9,6 +9,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import LogInPage from './pages/LogInPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminPage from './pages/AdminPage';
+import PersonalPage from './pages/PersonalPage';
 
 const router = createBrowserRouter([
   {
@@ -32,14 +33,21 @@ const router = createBrowserRouter([
     element: <RegisterPage />,
   },
   {
+    path: '/user',
+    element: <PersonalPage />
+  },
+  {
+    path: '/admin',
+    element: <AdminPage />
+  },
+  {
     path: "*",
     element: <NotFoundPage />,
   },
 
 ]);
 function App() {
-  // return <RouterProvider router={router} />;
-  return <AdminPage></AdminPage>;
+  return <RouterProvider router={router} />;
 }
 
 export default App

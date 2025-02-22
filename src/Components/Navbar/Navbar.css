@@ -20,7 +20,7 @@
 
 /* Logo */
 .navbar-logo {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: bold;
 }
 
@@ -68,7 +68,7 @@
 }
 
 .navbar-search {
-  padding: 5px;
+  padding: 5px 5px 5px 15px;
   border: 1px solid #ccc;
   border-radius: 20px;
   font-size: 14px;

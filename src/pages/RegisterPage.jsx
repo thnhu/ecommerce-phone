@@ -5,42 +5,73 @@ import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const [reqSignup, setReqSignup] = useState({
-    fullName: "",
+    displayName: "",
     email: "",
-    phone: "",
     password: "",
-    confirmPassword: "",
+    phoneNumber: "",
     dob: "",
   });
-  const [error, setError] = useState(""); 
+  const [confirmPassword, setConfirmedPassword] = useState("");
+  const [avatar, setAvatar] = useState(null); // To hold the uploaded image
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (reqSignup.password !== reqSignup.confirmPassword) {
-      setError("Mật khẩu và xác nhận mật khẩu không khớp.");
+    // Check if passwords match
+    if (reqSignup.password !== confirmPassword) {
+      setError("Xác nhận mật khẩu không khớp.");
+      return;
+    }
+
+    // Create a new FormData object
+    const formData = new FormData();
+
+    formData.append("user", reqSignup);
+
+    if (avatar) {
+      formData.append("avatar", avatar);
+    } else {
+      setError("Vui lòng chọn ảnh đại diện.");
       return;
     }
 
     try {
-      const response = await axios.post("http://localhost:8080/api/register", reqSignup);
+      // Send the form data with multipart/form-data header
+      // for (let [key, value] of formData.entries()) {
+      //   console.log(key, value);
+      // }
+      const response = await axios.post(
+        "http://localhost:8080/phone/user",
+        formData
+      );
 
       if (response.status === 200) {
         navigate("/login");
+      } else {
+        setError("Đăng ký thất bại. Vui lòng thử lại sau.");
       }
     } catch (error) {
       console.error("Registration failed:", error);
+      for (let [key, value] of formData.entries()) {
+        console.log("Data type: " + typeof value);
+        console.log(key, value);
+      }
       setError("Đăng ký thất bại. Vui lòng thử lại sau.");
     }
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setReqSignup(prevState => ({
+    setReqSignup((prevState) => ({
       ...prevState,
       [name]: value,
     }));
+  };
+
+  const handleFileChange = (e) => {
+    setAvatar(e.target.files[0]); // Get the first file object
   };
 
   return (
@@ -51,7 +82,9 @@ export default function Signup() {
           <div className="text-center mb-6">
             <div className="text-xl font-bold">Thegioididong</div>
             <h2 className="text-2xl font-semibold mt-2">Tạo tài khoản</h2>
-            <p className="text-gray-500 text-sm">Vui lòng nhập thông tin để đăng ký</p>
+            <p className="text-gray-500 text-sm">
+              Vui lòng nhập thông tin để đăng ký
+            </p>
           </div>
           {error && (
             <div className="text-red-500 text-center mb-4">{error}</div>
@@ -61,10 +94,10 @@ export default function Signup() {
               <label className="text-sm text-gray-600">Họ và tên</label>
               <input
                 type="text"
-                name="fullName"
+                name="displayName"
                 placeholder="Nhập họ và tên"
                 className="w-full mt-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={reqSignup.fullName}
+                value={reqSignup.displayName}
                 onChange={handleInputChange}
               />
             </div>
@@ -83,12 +116,12 @@ export default function Signup() {
               <label className="text-sm text-gray-600">Số điện thoại</label>
               <input
                 type="tel"
-                name="phone"
+                name="phoneNumber"
                 maxLength="10"
                 minLength="1"
                 placeholder="Nhập số điện thoại"
                 className="w-full mt-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={reqSignup.phone}
+                value={reqSignup.phoneNumber}
                 onChange={handleInputChange}
               />
             </div>
@@ -110,8 +143,8 @@ export default function Signup() {
                 name="confirmPassword"
                 placeholder="Nhập lại mật khẩu"
                 className="w-full mt-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={reqSignup.confirmPassword}
-                onChange={handleInputChange}
+                value={confirmPassword}
+                onChange={(e) => setConfirmedPassword(e.target.value)}
               />
             </div>
             <div className="mb-4">
@@ -124,6 +157,19 @@ export default function Signup() {
                 onChange={handleInputChange}
               />
             </div>
+
+            {/* Avatar image input */}
+            <div className="mb-4">
+              <label className="text-sm text-gray-600">Ảnh đại diện</label>
+              <input
+                type="file"
+                name="avatar"
+                accept="image/*"
+                className="w-full mt-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={handleFileChange}
+              />
+            </div>
+
             <button
               type="submit"
               className="w-full bg-black text-white p-2 rounded-lg hover:bg-gray-800 transition"
