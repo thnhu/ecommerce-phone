@@ -16,49 +16,89 @@ export default function Signup() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   // Check if passwords match
+  //   if (reqSignup.password !== confirmPassword) {
+  //     setError("Xác nhận mật khẩu không khớp.");
+  //     return;
+  //   }
+
+  //   // Create a new FormData object
+  //   const formData = new FormData();
+
+  //   formData.append("user", reqSignup);
+
+  //   if (avatar) {
+  //     formData.append("avatar", avatar);
+  //   } else {
+  //     setError("Vui lòng chọn ảnh đại diện.");
+  //     return;
+  //   }
+
+  //   try {
+  //     // Send the form data with multipart/form-data header
+  //     // for (let [key, value] of formData.entries()) {
+  //     //   console.log(key, value);
+  //     // }
+  //     const response = await axios.post(
+  //       "http://localhost:8080/phone/user",
+  //       formData
+  //     );
+
+  //     if (response.status === 200) {
+  //       navigate("/login");
+  //     } else {
+  //       setError("Đăng ký thất bại. Vui lòng thử lại sau.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Registration failed:", error);
+  //     for (let [key, value] of formData.entries()) {
+  //       console.log("Data type: " + typeof value);
+  //       console.log(key, value);
+  //     }
+  //     setError("Đăng ký thất bại. Vui lòng thử lại sau.");
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check if passwords match
     if (reqSignup.password !== confirmPassword) {
-      setError("Xác nhận mật khẩu không khớp.");
+      setError("Mật khẩu không khớp");
       return;
     }
 
-    // Create a new FormData object
     const formData = new FormData();
-
-    formData.append("user", reqSignup);
-
+    formData.append(
+      "user",
+      new Blob(
+        [
+          JSON.stringify({
+            displayName: reqSignup.displayName,
+            email: reqSignup.email,
+            password: reqSignup.password,
+            phoneNumber: reqSignup.phoneNumber,
+            dob: reqSignup.dob,
+          }),
+        ],
+        { type: "application/json" }
+      )
+    );
     if (avatar) {
       formData.append("avatar", avatar);
-    } else {
-      setError("Vui lòng chọn ảnh đại diện.");
-      return;
+    }
+    console.log(reqSignup)
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ": " + pair[1]);
     }
 
     try {
-      // Send the form data with multipart/form-data header
-      // for (let [key, value] of formData.entries()) {
-      //   console.log(key, value);
-      // }
-      const response = await axios.post(
-        "http://localhost:8080/phone/user",
-        formData
-      );
-
-      if (response.status === 200) {
-        navigate("/login");
-      } else {
-        setError("Đăng ký thất bại. Vui lòng thử lại sau.");
-      }
+      const response = await axios('/phone/user', formData);
+      console.log(response);
     } catch (error) {
-      console.error("Registration failed:", error);
-      for (let [key, value] of formData.entries()) {
-        console.log("Data type: " + typeof value);
-        console.log(key, value);
-      }
-      setError("Đăng ký thất bại. Vui lòng thử lại sau.");
+      console.log(error);
     }
   };
 
@@ -188,3 +228,148 @@ export default function Signup() {
     </>
   );
 }
+
+
+// import { useState } from "react";
+// import { Link } from "react-router-dom";
+// import api from "../services/api";
+
+// export const Register = () => {
+//   const [userData, setUserData] = useState({
+//     displayName: "",
+//     email: "",
+//     password: "",
+//     repeatPassword: "",
+//     phoneNumber: "",
+//     dob: "",
+//     avatar: null,
+//   });
+//   const [errors, setErrors] = useState({});
+
+//   const handleChange = (e) => {
+//     const { name, value, type, files } = e.target;
+//     setUserData({
+//       ...userData,
+//       [name]: type === "file" ? files[0] : value,
+//     });
+//     setErrors({
+//       ...errors,
+//       [name]: "",
+//     });
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+
+//     if (userData.password !== userData.repeatPassword) {
+//       setErrors({ ...errors, repeatPassword: "Mật khẩu không khớp" });
+//       return;
+//     }
+
+//     const formData = new FormData();
+//     formData.append(
+//       "user",
+//       new Blob(
+//         [
+//           JSON.stringify({
+//             displayName: userData.displayName,
+//             email: userData.email,
+//             password: userData.password,
+//             phoneNumber: userData.phoneNumber,
+//             dob: userData.dob,
+//           }),
+//         ],
+//         { type: "application/json" }
+//       )
+//     );
+//     if (userData.avatar) {
+//       formData.append("avatar", userData.avatar);
+//     }
+
+//     try {
+//       const response = await api('/phone/user', formData);
+//       console.log(response);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   };
+
+//   return (
+//     <div className="w-1/2 flex flex-col items-center justify-center gap-3">
+//       <div className="uppercase text-3xl font-extrabold text-sky-500">
+//         ĐĂNG KÝ
+//       </div>
+//       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-3">
+//         <input
+//           type="text"
+//           name="displayName"
+//           placeholder="Họ và tên"
+//           className="bg-gray-200 w-full h-10 rounded-3xl p-3 outline-none"
+//           value={userData.displayName}
+//           onChange={handleChange}
+//         />
+//         <input
+//           type="text"
+//           name="phoneNumber"
+//           placeholder="Số điện thoại"
+//           className="bg-gray-200 w-full h-10 rounded-3xl p-3 outline-none"
+//           value={userData.phoneNumber}
+//           onChange={handleChange}
+//         />
+//         <input
+//           type="email"
+//           name="email"
+//           placeholder="Email"
+//           className="bg-gray-200 w-full h-10 rounded-3xl p-3 outline-none"
+//           value={userData.email}
+//           onChange={handleChange}
+//         />
+//         <input
+//           type="date"
+//           name="dob"
+//           placeholder="Ngày sinh"
+//           className="bg-gray-200 w-full h-10 rounded-3xl p-3 outline-none"
+//           value={userData.dob}
+//           onChange={handleChange}
+//         />
+//         <input
+//           type="password"
+//           name="password"
+//           placeholder="Mật khẩu"
+//           className="bg-gray-200 w-full h-10 rounded-3xl p-3 outline-none"
+//           value={userData.password}
+//           onChange={handleChange}
+//         />
+//         <input
+//           type="password"
+//           name="repeatPassword"
+//           placeholder="Nhập lại mật khẩu"
+//           className="bg-gray-200 w-full h-10 rounded-3xl p-3 outline-none"
+//           value={userData.repeatPassword}
+//           onChange={handleChange}
+//         />
+//         {errors.repeatPassword && (
+//           <span className="text-red-500">{errors.repeatPassword}</span>
+//         )}
+//         <input
+//           type="file"
+//           name="avatar"
+//           accept="image/*"
+//           className="w-full"
+//           onChange={handleChange}
+//         />
+//         <button
+//           type="submit"
+//           className="bg-sky-500 w-full h-10 rounded-3xl text-white font-bold"
+//         >
+//           Tạo tài khoản
+//         </button>
+//       </form>
+//       <Link to="/login" className="text-sky-500">
+//         Đăng nhập
+//       </Link>
+//     </div>
+//   );
+// };
+
+// export default Register

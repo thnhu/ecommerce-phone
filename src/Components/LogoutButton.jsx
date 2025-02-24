@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ClassNames } from "@emotion/react";
 
-const LogoutButton = () => {
+const LogoutButton = ({style}) => {
   const navigate = useNavigate(); 
   const handleLogOut = () => {
     const authToken = localStorage.getItem("authToken");
@@ -28,7 +29,7 @@ const LogoutButton = () => {
     }
   };
 
-  return <button onClick={handleLogOut}>Log out</button>;
+  return  <button className={`${style}`} onClick={handleLogOut}>Log out</button>;
 };
 
 export default LogoutButton;
