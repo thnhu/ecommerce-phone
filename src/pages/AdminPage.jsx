@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import UsersTable from '../Components/AdminPageComponents/UsersTable'
-import CategoryList from '../Components/AdminPageComponents/CategoryManagement/CategoryList'
+// import CategoryList from '../Components/AdminPageComponents/CategoryManagement/CategoryList'
 // import ProductsTable from '../Components/AdminPageComponents/ProductsTable'
 const AdminPage = () => {
   const [selectedTab, setSelectedTab] = useState('')
@@ -74,7 +74,7 @@ const AdminPage = () => {
       <div className='w-full h-screen flex'>
         <SideBar></SideBar>
         {selectedTab === "nguoidung" && <UsersTable />}
-        {selectedTab === "nhacungcap" && <CategoryList />}
+        {/* {selectedTab === "nhacungcap" && <CategoryList />} */}
         {/* {selectedTab === "thietbi" && <ProductsTable />} */}
       </div>
       
