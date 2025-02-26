@@ -5,11 +5,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts, addProduct } from "../redux/slices/productSlice";
-import { fetchCategorys } from "../redux/slices/categorySlice";
-import ThemeColor from "../constant/theme";
-// Hiệu ứng chuyển cảnh Dialog
+import api from '../../../services/api'
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
@@ -23,15 +19,22 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
     imagePaths: [],
     color: "",
   });
+  
   const [errors, setErrors] = useState({});
+  const [categories, setCategories] = useState([]);
 
-  const dispatch = useDispatch();
-  const { categorys } = useSelector((state) => state.category);
-
-  // Lấy danh mục từ API
+  // Lấy nhà cung cấp từ API
   useEffect(() => {
-    dispatch(fetchCategorys());
-  }, [dispatch]);
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get("/phone/category");
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Lỗi khi lấy danh mục:", error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   // Reset dữ liệu khi đóng form
   useEffect(() => {
@@ -42,13 +45,13 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
         price: "",
         categoryId: "",
         imagePaths: [],
-        color:"",
+        color: "",
       });
       setErrors({});
     }
   }, [open]);
 
-  // Cập nhật giá trị input
+  // Xử lý thay đổi input
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProductData({
@@ -58,7 +61,7 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
     setErrors({ ...errors, [name]: "" });
   };
 
-  // Cập nhật file upload
+  // Xử lý upload file
   const handleFileChange = (e) => {
     const files = e.target.files;
     setProductData({
@@ -68,7 +71,7 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
     setErrors({ ...errors, imagePaths: "" });
   };
 
-  // Kiểm tra lỗi form
+  // Validate form
   const validateForm = () => {
     const newErrors = {};
 
@@ -106,16 +109,15 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  // Xử lý submit form
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
 
-    // Chuẩn bị dữ liệu FormData
     const formData = new FormData();
     formData.append(
       "product",
@@ -126,7 +128,7 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
             description: productData.description,
             price: productData.price,
             categoryId: productData.categoryId,
-            color : productData.color
+            color: productData.color
           }),
         ],
         { type: "application/json" }
@@ -137,16 +139,21 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
       formData.append("files", file);
     });
 
-    // Gửi yêu cầu thêm sản phẩm
-    dispatch(addProduct(formData)).then(() => {
-      dispatch(fetchProducts({ pageNumber: page, pageSize: size }));
-      handleClose();
-    });
+    try {
+        const response = await api.post("/phone/product", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        return response.data;
+      } catch (error) {
+        throw error;
+      }
   };
 
   return (
     <Dialog open={open} onClose={handleClose} TransitionComponent={Transition}>
-      <DialogTitle sx={{ color: ThemeColor.DARK_GREEN }}>
+      <DialogTitle sx={{ color: "darkgreen" }}>
         Thêm sản phẩm mới
       </DialogTitle>
       <DialogContent>
@@ -213,25 +220,25 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
               )}
             </div>
 
-            {/* Danh mục */}
+            {/* Danh mục */}            
             <div>
               <select
-                name="categoryId"
-                value={productData.categoryId}
-                onChange={handleChange}
-                className="outline-none w-96 p-1"
-                style={{ borderBottom: "1px solid #E4E0E1" }}
-              >
-                <option value="" disabled>
-                  Chọn danh mục
+              name="categoryId"
+              value={productData.categoryId}
+              onChange={handleChange}
+              className="outline-none w-96 p-1"
+              style={{ borderBottom: "1px solid #E4E0E1" }}
+            >
+              <option value="" disabled>
+                Chọn nhà cung cấp
+              </option>
+              {categories.map((category) => (
+                <option value={category.id} key={category.id}>
+                  {category.name}
                 </option>
-                {categorys?.map((category) => (
-                  <option value={category.id} key={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-              {errors.categoryId && (
+              ))}
+            </select>
+            {errors.categoryId && (
                 <p className="text-red-500 text-sm">{errors.categoryId}</p>
               )}
             </div>
@@ -252,13 +259,13 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
               )}
             </div>
 
-            {/* Nút Thêm sản phẩm */}
+            
             <Button
               type="submit"
               style={{
                 marginBottom: "10px",
                 color: "white",
-                backgroundColor: ThemeColor.MAIN_BLUE,
+                backgroundColor: "blue",
               }}
             >
               Thêm sản phẩm
@@ -271,18 +278,3 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
 };
 
 export default CreateProductForm;
-
-
-///Đây là cách gọi api
-export const createProductApi = async (formData) => {
-  try {
-    const response = await axiosInstance.post("/product", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
