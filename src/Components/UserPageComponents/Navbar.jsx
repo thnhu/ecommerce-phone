@@ -128,8 +128,12 @@ const Navbar = () => {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem className="hover:text-blue-500" onClick={handleMenuClose} href='/login'>Đăng nhập</MenuItem>
-        <MenuItem className="hover:text-blue-500" onClick={handleMenuClose} href='/register'>Đăng ký</MenuItem>
+        <a href="/login">        
+          <MenuItem className="hover:text-blue-500" onClick={handleMenuClose} >Đăng nhập</MenuItem>
+        </a>
+        <a href="/register">        
+          <MenuItem className="hover:text-blue-500" onClick={handleMenuClose} >Đăng ký</MenuItem>
+        </a>
       </MuiMenu>
     </nav>
   );
