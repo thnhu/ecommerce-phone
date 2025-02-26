@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import api from '../../../services/api';
 const AddCategoryButton = () => {
-  const [showInput, setShowInput] = useState(false);
   const [category, setCategory] = useState("");
 
   const handleInputChange = (e) => {
@@ -11,17 +10,8 @@ const AddCategoryButton = () => {
       [name]: value,
     }));
   };
-  const handleShowInput = () => {
-    setShowInput(true);
-  };
 
   const handleAddCategory = async () => {
-    const token = localStorage.getItem("authToken");
-
-    if (!token) {
-      console.error("Token không tồn tại. Hãy đăng nhập lại.");
-      return;
-    }
     if (category.trim() === "") {
         console.log("Ten thuong hieu khong duoc de trong")
         return;
@@ -30,20 +20,18 @@ const AddCategoryButton = () => {
       const response = await api.post("/phone/category",{ name: category },
       {
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
       console.log("Thêm thương hiệu thành công!", response.data);
       alert("Thêm thương hiệu thành công!");
       setCategory("");
-      setShowInput(false);
-        
     } 
      
     catch (err) {
       if (err.response && err.response.status === 401) {
         console.error("Không có quyền truy cập. Kiểm tra token của bạn hoặc đăng nhập lại.");
+        alert("Không có quyền truy cập. Kiểm tra token của bạn hoặc đăng nhập lại.");
       } else {
         console.error("Có lỗi xảy ra:", err);
       }
@@ -53,9 +41,7 @@ const AddCategoryButton = () => {
   return (
     <>
       <div>
-        <button onClick={handleShowInput}>Thêm thương hiệu</button>
-        
-        {showInput && (
+        <h2>Thêm nhà cung cấp</h2>        
           <div style={{ marginTop: '10px' }}>
             <input
               type="text"
@@ -67,8 +53,6 @@ const AddCategoryButton = () => {
               Thêm
             </button>
           </div>
-        )}
-
       </div>
     </>
   );

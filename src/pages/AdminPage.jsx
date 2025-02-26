@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import UsersTable from '../Components/AdminPageComponents/UsersTable'
-import CategoriesTable from '../Components/AdminPageComponents/CategoryComponent/CategoriesTable'
-import ProductsTable from '../Components/AdminPageComponents/ProductComponent/CreateProduct'
+// import ProductData from '../Components/AdminPageComponents/ProductComponent/ProductData'
+import CategoriesList from '../Components/AdminPageComponents/CategoryManagement/CategoryList'
 const AdminPage = () => {
   const [selectedTab, setSelectedTab] = useState('')
   const handleClick = (e) => {
@@ -71,8 +71,8 @@ const AdminPage = () => {
       <div className='w-full h-screen flex'>
         <SideBar></SideBar>
         {selectedTab === "nguoidung" && <UsersTable />}
-        {selectedTab === "nhacungcap" && <CategoriesTable />}
-        {selectedTab === "thietbi" && <ProductsTable />}
+        {selectedTab === "nhacungcap" && <CategoriesList />}
+        {/* {selectedTab === "thietbi" && <ProductData />} */}
       </div>
       
     </>

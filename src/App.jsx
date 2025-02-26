@@ -9,6 +9,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import LogInPage from './pages/LogInPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminPage from './pages/AdminPage';
+import { Provider } from 'react-redux';
 
 const router = createBrowserRouter([
   {
@@ -39,7 +40,13 @@ const router = createBrowserRouter([
 ]);
 function App() {
   // return <RouterProvider router={router} />;
-  return <AdminPage></AdminPage>;
+  // return <AdminPage></AdminPage>;
+//   return (
+//     <Provider store={store}> // Set context
+//       <App /> // Now App has access to context
+//     </Provider>
+//   )
+// 
 }
 
 export default App

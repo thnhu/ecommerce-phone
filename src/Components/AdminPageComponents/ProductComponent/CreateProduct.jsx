@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../../../services/api';
-// import iPhone from "../../../assets/images/iphone-16-pro-titan-sa-mac.png";
-// import axios from 'axios';
 const CreateProduct = () => {
   //fetchCategories
   const [categories, setCategories] = useState([]);
@@ -18,14 +16,13 @@ const CreateProduct = () => {
         fetchCategories();
       }, []);
 
-  const [addProduct, setAddProduct] = useState({
+  const [product, setProduct] = useState({
     name: "",
     description: "",
+    categoryId: ""
   });
 
-  const [message, setMessage] = useState('');
-
-  const [images, setImages] = useState([]);
+  const [files, setFiles] = useState([]);
   // Tạo ref để điều khiển <input type="file"> ẩn
   const fileInputRef = useRef(null);
 
@@ -35,13 +32,13 @@ const CreateProduct = () => {
     if (!selectedFiles || selectedFiles.length === 0) return;
 
     // Tạo mảng mới chứa thông tin file + đường dẫn preview
-    const newImages = Array.from(selectedFiles).map((file) => ({
+    const newFiles = Array.from(selectedFiles).map((file) => ({
       file,
-      preview: URL.createObjectURL(file),
+      preview: URL.createObjectURL(file)
     }));
 
     // Thêm vào state
-    setImages((prevImages) => [...prevImages, ...newImages]);
+    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
   };
 
   // Khi nhấn nút “+”, click vào input file ẩn
@@ -53,7 +50,7 @@ const CreateProduct = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setAddProduct((prevState) => ({
+    setProduct((prevState) => ({
       ...prevState,
       [name]: value,
     }));
@@ -61,16 +58,32 @@ const CreateProduct = () => {
 
   const handleAddProduct = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+
+    // Thêm product object dưới dạng JSON string
+    formData.append('product', JSON.stringify(product));
+
+    // Thêm từng img vào key 'files'
+    files.forEach((file) => {
+      formData.append('files', file.file); 
+    });
+    // Debug: Kiểm tra dữ liệu trước khi gửi
+  for (let [key, value] of formData.entries()) {
+    console.log(key, value);
+  }
     try {
-      const response = await api.post("/phone/product", addProduct, 
-      );
+      const response = await api.post("/phone/product", formData);
       console.log(response.data);
       alert('Sản phẩm đã được tạo thành công!');
-      //setAddProduct
-      // setFile(null);
+      setProduct({
+        productName: "",
+        description: "",
+        categoryId: "",
+      });
+      setFiles([]);
     } catch (error) {
       console.error('Error creating product:', error);
-      setMessage('Có lỗi xảy ra khi tạo sản phẩm.');
+      alert('Có lỗi xảy ra khi tạo sản phẩm.');
     }
   };
 
@@ -81,7 +94,7 @@ const CreateProduct = () => {
         <label className="block text-gray-700">Tên sản phẩm</label>
         <input type="text" 
           className="w-full p-2 border rounded-lg mt-1 mb-4" 
-          value={addProduct.name}
+          value={product.name}
           onChange={handleInputChange}
           placeholder="Nhập tên sản phẩm"
           name="name" />
@@ -90,7 +103,7 @@ const CreateProduct = () => {
         <textarea 
           className="w-full p-2 border rounded-lg mt-1 mb-4" 
           rows="4"
-          value={addProduct.description}
+          value={product.description}
           onChange={handleInputChange}
           placeholder="Nhập mô tả sản phẩm"
           name="description">
@@ -98,10 +111,15 @@ const CreateProduct = () => {
         
         <div>
               <label className="block text-gray-700 mb-1">Nhà cung cấp</label>
-              <select className="w-full border rounded p-2">
-                {categories.map((value) => (
-                  <option key={value.name} value={addProduct.category}>
-                    {value.name}
+              <select className="w-full border rounded p-2"
+              name="categoryId"
+              value={product.categoryId}
+              onChange={handleInputChange}
+              required>
+                <option value="">Chọn nhà cung cấp</option>
+                {categories.map((category) => (
+                  <option key={category.name} value={category.id}>
+                    {category.name}
                   </option>
                 ))}
               </select>
@@ -109,13 +127,13 @@ const CreateProduct = () => {
       <h2 className="text-xl font-semibold mb-4">Hình sản phẩm</h2>
       <div className="flex flex-wrap gap-2">
         {/* Hiển thị preview các hình đã chọn */}
-        {images.map((img, idx) => (
+        {files.map((file, idx) => (
           <div
             key={idx}
             className="w-20 h-20 border rounded-lg overflow-hidden"
           >
             <img
-              src={img.preview}
+              src={file.preview}
               alt="Preview"
               className="w-full h-full object-cover"
             />
@@ -141,28 +159,10 @@ const CreateProduct = () => {
       </div>
 
         <button onClick={handleAddProduct}
-          className="bg-green-500 text-white px-4 py-2 rounded-lg w-full" >
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg w-full" >
               Thêm
         </button>
       </div>
-
-      {/* <div className="bg-gray-100 p-6 rounded-2xl shadow-md">
-        <h2 className="font-bold text-lg mb-4">Giá bán</h2>
-        <label className="block text-gray-700">Giá gốc</label>
-        <input type="text" 
-        className="w-full p-2 border rounded-lg mt-1 mb-4" 
-        value={addProduct.price}
-        onChange={handleInputChange} />
-        
-      <label className="block text-gray-700 mb-2">Trạng thái</label>
-          <select className="w-full border rounded p-2">
-            <option>Active</option>
-            <option>Inactive</option>
-            <option>Draft</option>
-          </select>
-      
-      </div> */}
-      
     </>
   );
   
