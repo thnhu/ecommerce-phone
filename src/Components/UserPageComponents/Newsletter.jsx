@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from './Button/Button'
+import Button from '../Button/Button'
 const Newsletter = () => {
   return (
     <div className="bg-black text-white py-8 px-4 sm:px-8 lg:px-16">

@@ -1,7 +1,4 @@
 import React from 'react';
-import './NewArrivals.css';
-import Sprigatito from "../../assets/sampleImages/Sprigatito.png";
-import Samsung from "../../assets/images/samsung-galaxy-a16-5g-gold-thumbnew-600x600.jpg";
 import iPhone from "../../assets/images/iphone-16-pro-titan-sa-mac.png";
 import Button from '../Button/Button';
 function NewArrivals() {
@@ -41,21 +38,21 @@ function NewArrivals() {
     ];
 
     return (
-        <section className="new-arrivals">
-            <h2 className="new-arrivals__title">HÀNG MỚI VỀ</h2>
-            <div className="new-arrivals__grid">
+        <section className="text-center p-5 bg-gray-100">
+            <h2 className="text-2xl font-bold mb-5">HÀNG MỚI VỀ</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 px-2">
                 {products.map((product) => (
-                    <div key={product.id} className="product-card">
-                        <img src={iPhone} alt={product.name} className="product-card__image" />
-                        <h3 className="product-card__name">{product.name}</h3>
-                        <p className="product-card__rating">⭐ {product.rating}</p>
-                        <p className="product-card__price">
+                    <div key={product.id} className="bg-white rounded-lg shadow-md p-4 text-center">
+                        <img src={iPhone} alt={product.name} className="w-full rounded mb-3" />
+                        <h3 className="text-lg font-medium mb-2">{product.name}</h3>
+                        <p className="text-yellow-500 text-sm mb-2">⭐ {product.rating}</p>
+                        <p className="text-gray-800 text-lg">
                             {product.price}{' '}
                             {product.originalPrice && (
-                                <span className="product-card__original-price">{product.originalPrice}</span>
+                                <span className="line-through text-gray-500 text-sm ml-2">{product.originalPrice}</span>
                             )}
                             {product.discount && (
-                                <span className="product-card__discount">-{product.discount}</span>
+                                <span className="text-red-500 text-sm ml-2">-{product.discount}</span>
                             )}
                         </p>
                     </div>

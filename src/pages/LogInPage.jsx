@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Navbar from "../Components/Navbar/Navbar";
+import Navbar from "../Components/UserPageComponents/Navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import LogoutButton from "../Components/LogoutButton";
+import LogoutButton from "../Components/UserPageComponents/LogoutButton";
 const LogInPage = () => {
   // const [phone, setPhone] = useState("");
   // const [password, setPassword] = useState("");
