@@ -1,16 +1,21 @@
 import * as React from "react";
-import Button from "@mui/material/Button";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
-import DialogTitle from "@mui/material/DialogTitle";
+import { useState, useEffect, useRef } from "react";
+import api from '../../../services/api';
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Snackbar,
+  Alert
+} from '@mui/material';
 import Slide from "@mui/material/Slide";
-import { useState, useEffect } from "react";
-import api from '../../../services/api'
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const CreateProductForm = ({ page, size, open, handleClose }) => {
+const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
   const [productData, setProductData] = useState({
     name: "",
     description: "",
@@ -21,7 +26,10 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
   });
   
   const [errors, setErrors] = useState({});
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [categories, setCategories] = useState([]);
+  const fileInputRef = useRef(null);
+  const [images, setImages] = useState([]);
 
   // Lấy nhà cung cấp từ API
   useEffect(() => {
@@ -50,7 +58,6 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
       setErrors({});
     }
   }, [open]);
-
   // Xử lý thay đổi input
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,8 +76,23 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
       imagePaths: files,
     });
     setErrors({ ...errors, imagePaths: "" });
-  };
+    if (files) {
+      // Chuyển đổi FileList thành mảng và tạo URL preview cho từng file
+      const imagesArray = Array.from(files).map((file) => ({
+        file,
+        preview: URL.createObjectURL(file),
+      }));
+      // Cập nhật state, ghép thêm các file mới đã chọn (nếu cần xóa thì tùy chỉnh lại)
+      setImages((prevImages) => [...prevImages, ...imagesArray]);
+    }
 
+  };
+  // Khi nhấn nút "Thêm hình", trigger click cho input file ẩn
+  const handleSelectImages = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
   // Validate form
   const validateForm = () => {
     const newErrors = {};
@@ -145,14 +167,25 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
             "Content-Type": "multipart/form-data",
           },
         });
-        return response.data;
+        handleClose();
+        alert("Thêm sản phẩm thành công");
+        // setSnackbar({
+        //   open: true, message: 'Them thanh cong', severity: 'success'
+        // })
+
       } catch (error) {
-        throw error;
+        console.error(response.message);
+        alert("them That bai");
+
+        // setSnackbar({
+        //   open: true, message: 'Them that bai', severity: 'error'
+        // })
       }
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} TransitionComponent={Transition}>
+    <div>
+      <Dialog open={open} onClose={handleClose} TransitionComponent={Transition}>
       <DialogTitle sx={{ color: "darkgreen" }}>
         Thêm sản phẩm mới
       </DialogTitle>
@@ -195,7 +228,7 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
                 name="color"
                 value={productData.color}
                 onChange={handleChange}
-                placeholder="Màu sắc mặc định"
+                placeholder="Màu sắc"
                 className="outline-none w-96 p-1"
                 style={{ borderBottom: "1px solid #E4E0E1" }}
               />
@@ -245,21 +278,41 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
 
             {/* Ảnh sản phẩm */}
             <div>
-              <input
-                type="file"
-                name="imagePaths"
-                multiple
-                onChange={handleFileChange}
-                className="outline-none w-96 p-1"
-                style={{ borderBottom: "1px solid #E4E0E1" }}
-                accept="image/*"
-              />
-              {errors.imagePaths && (
-                <p className="text-red-500 text-sm">{errors.imagePaths}</p>
-              )}
+            <h2 className="text-m font-semibold mb-4">Chọn ảnh sản phẩm</h2>
+      <div className="flex flex-wrap gap-2">
+        {/* Hiển thị preview các hình đã chọn */}
+        {images.map((img, index) => (
+          <div
+            key={index}
+            className="w-20 h-20 border rounded overflow-hidden"
+          >
+            <img
+              src={img.preview}
+              alt={`image-${index}`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ))}
+        {/* Nút thêm hình */}
+        <button
+          type="button"
+          onClick={handleSelectImages}
+          className="w-20 h-20 border rounded flex items-center justify-center text-gray-500 hover:bg-gray-100"
+        >
+          +
+        </button>
+        {/* Input file ẩn, cho phép chọn nhiều hình */}
+        <input
+          type="file"
+          name="imagePaths"
+          accept="image/*"
+          multiple
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          className="hidden"
+        />
             </div>
-
-            
+            </div>
             <Button
               type="submit"
               style={{
@@ -274,6 +327,17 @@ const CreateProductForm = ({ page, size, open, handleClose }) => {
         </div>
       </DialogContent>
     </Dialog>
+            <Snackbar
+              open={snackbar.open}
+              autoHideDuration={3000}
+              onClose={() => setSnackbar({ ...snackbar, open: false })}
+              anchorOrigin={{vertical:'top', horizontal:'center'}}
+            >
+              <Alert severity={snackbar.severity} sx={{ width: '100%'}}>
+                {snackbar.message}
+              </Alert>
+            </Snackbar>
+    </div>
   );
 };
 

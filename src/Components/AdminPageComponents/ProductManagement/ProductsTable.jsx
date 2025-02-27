@@ -10,9 +10,10 @@ import {
   IconButton,
   Button,
   Dialog,
+  Snackbar,
+  Alert
 } from "@mui/material";
-import { Edit, Delete } from "@mui/icons-material";
-import { ArrowBack, ArrowForward } from "@mui/icons-material";
+import { Edit, Delete, ArrowBack, ArrowForward } from "@mui/icons-material";
 import CreateProductForm from "./CreateProductForm";
 import api from "../../../services/api";
 
@@ -25,6 +26,7 @@ const ProductsTable = () => {
   const [error, setError] = useState("");
   const [openCreateForm, setOpenCreateForm] = useState(false);
   const size = 10;
+  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
 
   const fetchData = async () => {
     try {
@@ -54,12 +56,16 @@ const ProductsTable = () => {
   };
 
   const handleDelete = async (productId) => {
-    try {
-      await api.delete(`/phone/product/${productId}`);
-      fetchData();
-    } catch (err) {
-      console.error("Delete error:", err);
-    }
+    if (window.confirm('Bạn chắc chắn muốn xóa?')) {
+        try {
+          await api.delete(`/phone/product/${productId}`);
+          fetchData();
+          setSnackbar({ open: true, message: 'Xóa thành công!', severity:'success' });
+        } catch (err) {
+          setError('Xóa thất bại');
+          setSnackbar({ open: true, message: 'Xóa thất bại!', severity:'error' });
+        }
+      }
   };
 
   useEffect(() => {
@@ -90,8 +96,8 @@ const ProductsTable = () => {
                 <TableCell>#</TableCell>
                 <TableCell>Tên sản phẩm</TableCell>
                 <TableCell>Mô tả</TableCell>
-                <TableCell>Giá</TableCell>
-                <TableCell>Màu sắc</TableCell>
+                {/* <TableCell>Giá</TableCell> */}
+                {/* <TableCell>Màu sắc</TableCell> */}
                 <TableCell>Nhà cung cấp</TableCell>
                 <TableCell>Hình ảnh</TableCell>
                 <TableCell>Cập nhật</TableCell>
@@ -102,18 +108,18 @@ const ProductsTable = () => {
                 <TableRow key={product.id} hover>
                   <TableCell>{index + 1 + currentIndex * size}</TableCell>
                   <TableCell>{product.name}</TableCell>
-                  <TableCell className="max-w-xs truncate">
+                  <TableCell className="max-w-xs">
                     {product.description}
                   </TableCell>
-                  <TableCell>
-                    {Number(product?.price || 0).toLocaleString()} VNĐ
-                  </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
+                    {Number(product?.price || 0).toLocaleString()} VNĐ 
+                  </TableCell> */}
+                  {/* <TableCell>
                     <div 
                       className="w-6 h-6 rounded-full mx-auto"
                       style={{ backgroundColor: product.color }}
                     />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>{getCategoryName(product.categoryId)}</TableCell>
                   <TableCell>
                     <div className="flex space-x-1">
@@ -185,6 +191,17 @@ const ProductsTable = () => {
           }}
         />
       </Dialog>
+                  <Snackbar
+                    open={snackbar.open}
+                    autoHideDuration={3000}
+                    onClose={() => setSnackbar({ ...snackbar, open: false })}
+                    anchorOrigin={{vertical:'top', horizontal:'center'}}
+                  >
+                    <Alert severity={snackbar.severity} sx={{ width: '100%'}}>
+                      {snackbar.message}
+                    </Alert>
+                  </Snackbar>
+      
     </div>
   );
 };

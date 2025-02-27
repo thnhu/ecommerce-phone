@@ -9,7 +9,6 @@ import {
   TableRow,
   Paper,
   IconButton,
-  CircularProgress,
   Button,
   Dialog,
   DialogTitle,
@@ -19,7 +18,7 @@ import {
   Snackbar,
   Alert
 } from '@mui/material';
-import { Delete, Add } from '@mui/icons-material';
+import { Delete} from '@mui/icons-material';
 
 const CategoriesTable = () => {
   const [categories, setCategories] = useState([]);
@@ -28,7 +27,7 @@ const CategoriesTable = () => {
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [newCategory, setNewCategory] = useState("");
   const [addError, setAddError] = useState('');
-  const [snackbar, setSnackbar] = useState({ open: false, message: '' });
+  const [snackbar, setSnackbar] = useState({ open: false, message: ''});
 
   useEffect(() => {
     fetchCategories();
@@ -130,7 +129,7 @@ const CategoriesTable = () => {
           <TableBody>
             {categories.map((value, index) => (
               <TableRow
-                key={value.name}
+                key={value.id}
                 className="hover:bg-gray-100 even:bg-gray-50"
               >
                 <TableCell>{index + 1}</TableCell>
