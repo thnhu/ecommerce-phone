@@ -3,7 +3,9 @@ import Sprigatito from "../../assets/sampleImages/Sprigatito.png";
 import Fuecoco from "../../assets/sampleImages/Fuecoco.png";
 import Quaxly from "../../assets/sampleImages/Quaxly.png";
 
-const arrayOfImage = [Sprigatito, Fuecoco, Quaxly, Sprigatito]; 
+import iphoneImg from "../../assets/images/iphone-16-pro-titan-sa-mac.png"
+
+const arrayOfImage = [iphoneImg, iphoneImg, iphoneImg, iphoneImg]; 
 
 const ProductImagesSelection = () => {
   const [selectedImage, setSelectedImage] = useState(0);
