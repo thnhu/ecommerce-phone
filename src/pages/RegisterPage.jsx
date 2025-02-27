@@ -95,7 +95,7 @@ export default function Signup() {
     }
 
     try {
-      const response = await axios('/phone/user', formData);
+      const response = await axios.post('http://localhost:8080/phone/user', formData);
       console.log(response);
     } catch (error) {
       console.log(error);
