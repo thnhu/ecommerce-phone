@@ -8,7 +8,6 @@ function NewArrivals() {
             name: 'OPPO Find X8 5G 16GB/512GB',
             price: '22.990.000₫',
             rating: '4.5/5',
-            //image: '../../assets/images/oppo-find-x8-grey-thumb-600x600.jpg',
         },
         {
             id: 2,
@@ -17,15 +16,13 @@ function NewArrivals() {
             originalPrice: '28.990.000₫',
             discount: '1%',
             rating: '3.5/5',
-            //image: '../../assets/images/iphone-16-pro-titan-sa-mac.png',
         },
         {
             id: 3,
             name: 'Samsung Galaxy A16 5G',
             price: '6.990.000₫',
             rating: '4.5/5',
-            //image: '../../assets/images/samsung-galaxy-a16-5g-gold-thumbnew-600x600.jpg',
-        },
+    },
         {
             id: 4,
             name: 'OPPO Reno12 5G 12GB/256GB Hồng',
@@ -33,7 +30,6 @@ function NewArrivals() {
             originalPrice: '12.990.000₫',
             discount: '7%',
             rating: '4/5',
-            //image: '../../assets/images/oppo-reno12-5g-pink-thumb-600x600.jpg',
         },
     ];
 

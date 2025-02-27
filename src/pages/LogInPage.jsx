@@ -20,7 +20,6 @@ const LogInPage = () => {
       .then((response) => {
         console.log("Response:", response.data.data.token);
         const token = response.data.data.token;
-
         if (token) {
           localStorage.setItem("authToken", token); // Save token to localStorage
           console.log("Token saved:", token); // Log the token after saving it
@@ -73,6 +72,7 @@ const LogInPage = () => {
             <div className="mb-4 relative">
               <label className="text-sm text-gray-600">Mật khẩu</label>
               <input
+              type="password"
                 placeholder="Nhập mật khẩu"
                 className="w-full mt-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={reqLogin.password}
