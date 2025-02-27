@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import Navbar from "../Components/Navbar/Navbar";
-import Footer from "../Components/Footer/Footer";
+import Navbar from "../Components/UserPageComponents/Navbar.jsx";
+import Footer from "../Components/UserPageComponents/Footer.jsx";
 import api from "../services/api";
 import { IconButton } from "@mui/material";
 import { ContactMail, CreditCard } from "@mui/icons-material";
-import LogoutButton from "../Components/LogoutButton";
+import LogoutButton from "../Components/UserPageComponents/LogoutButton.jsx";
 import InfoTab from "../Components/PersonalPage/InfoTab";
 import BillTab from "../Components/PersonalPage/BillTab";
 
@@ -34,7 +34,6 @@ const SideBar = ({ userData, setSelectedTab }) => {
     </div>
   );
 };
-
 
 const PersonalPage = () => {
   const [userData, setUserData] = useState({});

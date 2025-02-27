@@ -4,8 +4,8 @@ import ProductImagesSelection from "../Components/ProductsPageComponents/Product
 import ProductDetail from "../Components/ProductsPageComponents/ProductDetails";
 import ProductTabs from "../Components/ProductsPageComponents/ProductTabs";
 import OtherProducts from "../Components/ProductsPageComponents/OtherProducts";
-import Navbar from "../Components/Navbar/Navbar";
-import Footer from "../Components/Footer/Footer";
+import Navbar from "../Components/UserPageComponents/Navbar.jsx";
+import Footer from "../Components/UserPageComponents/Footer.jsx";
 
 const ProductsPage = () => {
   return (
