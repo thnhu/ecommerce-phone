@@ -6,8 +6,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  Snackbar,
-  Alert
 } from '@mui/material';
 import Slide from "@mui/material/Slide";
 
@@ -19,14 +17,17 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
   const [productData, setProductData] = useState({
     name: "",
     description: "",
-    price: "",
     categoryId: "",
+    status: "",
     imagePaths: [],
-    color: "",
+    variants:[{
+      color:"",
+      price:"",
+      stock:""
+    }]
   });
   
   const [errors, setErrors] = useState({});
-  const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const [categories, setCategories] = useState([]);
   const fileInputRef = useRef(null);
   const [images, setImages] = useState([]);
@@ -50,10 +51,14 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
       setProductData({
         name: "",
         description: "",
-        price: "",
         categoryId: "",
+        status: "",
         imagePaths: [],
-        color: "",
+        variants:[{
+          color: "",
+          price: "",
+          stock: ""
+        }]
       });
       setErrors({});
     }
@@ -169,17 +174,13 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
         });
         handleClose();
         alert("Thêm sản phẩm thành công");
-        // setSnackbar({
-        //   open: true, message: 'Them thanh cong', severity: 'success'
-        // })
+        if (typeof onSuccess === 'function') {
+          onSuccess();
+        }
 
       } catch (error) {
         console.error(response.message);
-        alert("them That bai");
-
-        // setSnackbar({
-        //   open: true, message: 'Them that bai', severity: 'error'
-        // })
+        alert("Thêm sản phẩm thất bại");
       }
   };
 
@@ -327,16 +328,6 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
         </div>
       </DialogContent>
     </Dialog>
-            <Snackbar
-              open={snackbar.open}
-              autoHideDuration={3000}
-              onClose={() => setSnackbar({ ...snackbar, open: false })}
-              anchorOrigin={{vertical:'top', horizontal:'center'}}
-            >
-              <Alert severity={snackbar.severity} sx={{ width: '100%'}}>
-                {snackbar.message}
-              </Alert>
-            </Snackbar>
     </div>
   );
 };

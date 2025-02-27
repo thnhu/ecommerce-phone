@@ -44,7 +44,6 @@ const CategoriesTable = () => {
     }
   };
 
-
   //Hàm kiểm tra nhà cung cấp đã tồn tại
   const checkCategoryExists = (name) => {
     return categories.some(category =>
@@ -106,7 +105,7 @@ const CategoriesTable = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Quản lý Nhà cung cấp</h1>
+        <h1 className="text-2xl font-bold">Quản lý nhà cung cấp</h1>
         <Button
           variant="contained"
           onClick={handleOpenDialog}

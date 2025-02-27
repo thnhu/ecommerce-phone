@@ -20,7 +20,6 @@ import api from "../../../services/api";
 const ProductsTable = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [productData, setProductData] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [maxIndex, setMaxIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -31,13 +30,10 @@ const ProductsTable = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [productsRes, categoriesRes] = await Promise.all([
-        api.get(`/phone/product?page=${currentIndex}&size=${size}`),
-        api.get("/phone/category")
-      ]);
+      const productsRes = await 
+        api.get(`/phone/product?page=${currentIndex}&size=${size}`);
 
       setProductData(productsRes.data.content);
-      setCategories(categoriesRes.data);
 
       if (productsRes.data.content.length < size) {
         setMaxIndex(currentIndex);
@@ -50,11 +46,6 @@ const ProductsTable = () => {
     }
   };
 
-  const getCategoryName = (categoryId) => {
-    const category = categories.find((cat) => cat.id === categoryId);
-    return category?.name || "Không xác định";
-  };
-
   const handleDelete = async (productId) => {
     if (window.confirm('Bạn chắc chắn muốn xóa?')) {
         try {
@@ -63,7 +54,6 @@ const ProductsTable = () => {
           setSnackbar({ open: true, message: 'Xóa thành công!', severity:'success' });
         } catch (err) {
           setError('Xóa thất bại');
-          setSnackbar({ open: true, message: 'Xóa thất bại!', severity:'error' });
         }
       }
   };
@@ -96,10 +86,10 @@ const ProductsTable = () => {
                 <TableCell>#</TableCell>
                 <TableCell>Tên sản phẩm</TableCell>
                 <TableCell>Mô tả</TableCell>
-                {/* <TableCell>Giá</TableCell> */}
-                {/* <TableCell>Màu sắc</TableCell> */}
                 <TableCell>Nhà cung cấp</TableCell>
                 <TableCell>Hình ảnh</TableCell>
+                {/* <TableCell>Giá</TableCell>
+                <TableCell>Màu sắc</TableCell> */}
                 <TableCell>Cập nhật</TableCell>
               </TableRow>
             </TableHead>
@@ -111,7 +101,16 @@ const ProductsTable = () => {
                   <TableCell className="max-w-xs">
                     {product.description}
                   </TableCell>
-                  {/* <TableCell>
+                  <TableCell>{product.category.name || "-"}</TableCell>
+                  <TableCell>
+                    <div className="flex space-x-1">
+                        <img
+                          src={`data:image/*;base64,${product.images[0].data}`}
+                          className="w-10 h-10 object-cover rounded"
+                        />
+                    </div>
+                  </TableCell>
+                 {/* <TableCell>
                     {Number(product?.price || 0).toLocaleString()} VNĐ 
                   </TableCell> */}
                   {/* <TableCell>
@@ -120,19 +119,7 @@ const ProductsTable = () => {
                       style={{ backgroundColor: product.color }}
                     />
                   </TableCell> */}
-                  <TableCell>{getCategoryName(product.categoryId)}</TableCell>
-                  <TableCell>
-                    <div className="flex space-x-1">
-                      {product.imagePaths?.slice(0, 3).map((img, idx) => (
-                        <img
-                          key={idx}
-                          src={img}
-                          alt={`Hình ${idx + 1}`}
-                          className="w-10 h-10 object-cover rounded"
-                        />
-                      ))}
-                    </div>
-                  </TableCell>
+
                   <TableCell>
                     <div className="flex space-x-2">
                       <IconButton color="primary">
