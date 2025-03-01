@@ -9,6 +9,8 @@ import LogInPage from './pages/LogInPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminPage from './pages/AdminPage';
 import PersonalPage from './pages/PersonalPage';
+import ReviewPage from './pages/ReviewPage';
+import OrderPage from './pages/OrderPage';
 
 const router = createBrowserRouter([
   {
@@ -19,6 +21,15 @@ const router = createBrowserRouter([
     path: '/product',
     element: <ProductsPage />,
   },
+  {
+    path: '/order',
+    element: <OrderPage />,
+  },
+  {
+    path: '/review',
+    element: <ReviewPage />,
+  },
+
   {
     path: '/cart',
     element: <CartPage />,

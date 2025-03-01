@@ -1,6 +1,5 @@
 import React from 'react';
 import iPhone from "../../assets/images/iphone-16-pro-titan-sa-mac.png";
-import Button from '../Button/Button';
 function NewArrivals() {
     const products = [
         {
@@ -54,11 +53,12 @@ function NewArrivals() {
                     </div>
                 ))}
             </div>
-            <Button 
-                variant="secondary" 
-                label="Xem thêm sản phẩm" 
-                onClick={() => handleClick('secondary')} 
-            />
+            <button
+  className="mt-4 bg-white text-black border border-black hover:bg-blue-500 hover:text-white px-8 py-3 rounded-full font-medium transition-colors"
+>
+  Xem thêm sản phẩm
+</button>
+
         </section>
     );
 }

@@ -1,5 +1,4 @@
 import React from 'react';
-import Button from '../Button/Button'
 const Newsletter = () => {
   return (
     <div className="bg-black text-white py-8 px-4 sm:px-8 lg:px-16">
@@ -16,11 +15,11 @@ const Newsletter = () => {
               className="w-full sm:w-72 px-4 py-2 outline-none bg-transparent text-black"
             />
           </div>
-          <Button 
-        variant="secondary" 
-        label="Đăng ký" 
-        onClick={() => handleClick('secondary')} 
-      />
+          <button
+  className="bg-white text-black border border-black hover:bg-blue-500 hover:text-white px-8 py-3 rounded-full font-medium transition-colors"
+>
+  Đăng ký
+</button>
         </form>
       </div>
     </div>
