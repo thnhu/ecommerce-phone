@@ -35,7 +35,7 @@ function Order() {
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       {/* Thông tin nhận hàng */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-bold text-blue-600 mb-4">Thông tin nhận hàng</h2>
+        <h2 className="text-xl font-bold text-black-600 mb-4">Thông tin nhận hàng</h2>
         <hr className="border-t border-gray-200 mb-4" />
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -57,7 +57,7 @@ function Order() {
 
       {/* Chi tiết đơn hàng */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-bold text-blue-600 mb-4">Chi tiết đơn hàng</h2>
+        <h2 className="text-xl font-bold text-black-600 mb-4">Chi tiết đơn hàng</h2>
         <hr className="border-t border-gray-200 mb-4" />
 
         <div className="overflow-x-auto">
@@ -97,7 +97,7 @@ function Order() {
 
       {/* Ghi chú đơn hàng */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-bold text-blue-600 mb-4">Ghi chú đơn hàng</h2>
+        <h2 className="text-xl font-bold text-black-600 mb-4">Ghi chú đơn hàng</h2>
         <hr className="border-t border-gray-200 mb-4" />
         
         <textarea
@@ -113,7 +113,7 @@ function Order() {
       <div className="text-right">
         <button
           onClick={handlePlaceOrder}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium transition-colors"
         >
           Xác nhận đặt hàng
         </button>
@@ -123,7 +123,7 @@ function Order() {
       {showSuccess && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 flex items-center bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in">
           <CheckCircle className="mr-2" />
-          Đặt hàng thành công! Đang chuyển về trang chủ...
+          Đặt hàng thành công! Điều hướng về trang chủ...
         </div>
       )}
     </div>

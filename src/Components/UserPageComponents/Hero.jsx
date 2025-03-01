@@ -4,20 +4,20 @@ import iPhoneLogo from "../../assets/images/logo-iPhone.png";
 import xiaomiLogo from "../../assets/images/logo-xiaomi.png";
 import huaweiLogo from "../../assets/images/logo-huawei.jpg";
 import oppoLogo from "../../assets/images/logo-oppo.png";
-import Button from '../Button/Button';
 const Hero = () => {
   return (
-    <section className="py-12 bg-gray-100 text-center mt-4">
+    <section className="py-12 bg-gray-100 text-center">
       <div className="mb-10">
         <h1 class="text-4xl font-bold text-gray-800">ĐIỆN THOẠI DI ĐỘNG CHÍNH HÃNG</h1>
         <p class="text-lg text-gray-600 my-5">
             Hệ thống bán lẻ điện thoại với mạng lưới hàng ngàn cửa hàng trên toàn quốc
         </p>
-        <Button 
-        variant="secondary" 
-        label="Mua ngay" 
-        onClick={() => handleClick('secondary')} 
-      />
+        <button
+  className="bg-black text-white hover:bg-blue-500 hover:text-white px-8 py-3 rounded-full font-medium transition-colors"
+>
+  Mua ngay
+</button>
+
       </div>
 
       <div className="flex justify-evenly items-center gap-5 flex-wrap mt-8">

@@ -154,7 +154,7 @@ const Cart = () => {
 
         {/* Thanh toán */}
         <div className="lg:w-96 bg-white p-6 rounded-lg shadow-md h-fit sticky top-8">
-          <h2 className="text-xl font-bold mb-4">TỔNG TIỀN</h2>
+          <h2 className="text-xl font-bold mb-4">Tổng thanh toán</h2>
 
           <div className="space-y-4">
             <div className="flex justify-between items-center">
@@ -168,7 +168,7 @@ const Cart = () => {
 
             <button
               onClick={handleCheckout}
-              className={`w-full py-3 rounded-lg font-semibold text-white transition-colors
+              className={`w-full py-3 rounded-full font-semibold text-white transition-colors
                 ${selectedItems.length > 0 
                   ? "bg-blue-600 hover:bg-blue-700" 
                   : "bg-gray-400 cursor-not-allowed"}`
