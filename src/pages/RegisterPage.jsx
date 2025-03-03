@@ -117,7 +117,7 @@ export default function Signup() {
   return (
     <>
       <Navbar />
-      <div className="flex items-center justify-center min-h-screen bg-gray-100 mt-12">
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 pt-2 pb-2">
         <div className="bg-white p-8 rounded-2xl shadow-lg w-96">
           <div className="text-center mb-6">
             <div className="text-xl font-bold">Thegioididong</div>
@@ -212,7 +212,7 @@ export default function Signup() {
 
             <button
               type="submit"
-              className="w-full bg-black text-white p-2 rounded-lg hover:bg-gray-800 transition"
+              className="w-full bg-black text-white p-2 rounded-full hover:bg-gray-800 transition"
             >
               Đăng ký
             </button>

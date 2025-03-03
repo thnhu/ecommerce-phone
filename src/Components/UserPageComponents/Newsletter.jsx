@@ -16,10 +16,10 @@ const Newsletter = () => {
             />
           </div>
           <button
-  className="bg-white text-black border border-black hover:bg-blue-500 hover:text-white px-8 py-3 rounded-full font-medium transition-colors"
->
-  Đăng ký
-</button>
+          className="bg-white text-black border border-black hover:bg-blue-500 hover:text-white px-8 py-3 rounded-full font-medium transition-colors"
+        >
+          Đăng ký
+        </button>
         </form>
       </div>
     </div>

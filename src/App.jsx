@@ -11,7 +11,6 @@ import AdminPage from './pages/AdminPage';
 import PersonalPage from './pages/PersonalPage';
 import ReviewPage from './pages/ReviewPage';
 import OrderPage from './pages/OrderPage';
-
 const router = createBrowserRouter([
   {
     path: '/',
@@ -29,7 +28,6 @@ const router = createBrowserRouter([
     path: '/review',
     element: <ReviewPage />,
   },
-
   {
     path: '/cart',
     element: <CartPage />,

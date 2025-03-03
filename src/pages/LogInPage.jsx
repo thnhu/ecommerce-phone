@@ -2,10 +2,7 @@ import { useState } from "react";
 import Navbar from "../Components/UserPageComponents/Navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import LogoutButton from "../Components/UserPageComponents/LogoutButton";
 const LogInPage = () => {
-  // const [phone, setPhone] = useState("");
-  // const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const [reqLogin, setReqLogin] = useState({
@@ -87,7 +84,7 @@ const LogInPage = () => {
             </div>
             <button
               type="submit"
-              className="w-full bg-black text-white p-2 rounded-lg hover:bg-gray-800 transition"
+              className="w-full bg-black text-white p-2 rounded-full hover:bg-gray-800 transition"
               onClick={handleSubmit}
             >
               Đăng nhập
@@ -102,8 +99,6 @@ const LogInPage = () => {
           </p>
         </div>
       </div>
-      <LogoutButton></LogoutButton>
-
     </>
   );
 };

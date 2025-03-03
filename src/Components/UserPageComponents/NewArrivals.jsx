@@ -54,10 +54,10 @@ function NewArrivals() {
                 ))}
             </div>
             <button
-  className="mt-4 bg-white text-black border border-black hover:bg-blue-500 hover:text-white px-8 py-3 rounded-full font-medium transition-colors"
->
-  Xem thêm sản phẩm
-</button>
+            className="mt-4 bg-white text-black border border-black hover:bg-blue-500 hover:text-white px-8 py-3 rounded-full font-medium transition-colors"
+            >
+            Xem thêm sản phẩm
+            </button>
 
         </section>
     );
