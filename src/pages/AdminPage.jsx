@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import UsersTable from '../Components/AdminPageComponents/UsersTable'
 import CategorisTable from '../Components/AdminPageComponents/CategoriesTable'
 import ProductsTable from '../Components/AdminPageComponents/ProductManagement/ProductsTable'
+import StockTable from '../Components/AdminPageComponents/StockManagement/StockTable'
 const AdminPage = () => {
   const [selectedTab, setSelectedTab] = useState('')
   const handleClick = (e) => {
@@ -61,6 +62,18 @@ const AdminPage = () => {
               Người dùng
             </button>
           </li>
+          <li
+            key="kho"
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${selectedTab === 'kho' ? 'bg-gray-800 rounded-md' : ''}`}
+          >
+            <button
+              id="kho"
+              className="md:w-full text-left"
+              onClick={handleClick}
+            >
+              Quản lý kho
+            </button>
+          </li>
         </ul>
       </aside>
     )
@@ -73,6 +86,8 @@ const AdminPage = () => {
         {selectedTab === "nguoidung" && <UsersTable />}
         {selectedTab === "nhacungcap" && <CategorisTable />}
         {selectedTab === "thietbi" && <ProductsTable />}
+        {selectedTab === "kho" && <StockTable />}
+
       </div>
       
     </>

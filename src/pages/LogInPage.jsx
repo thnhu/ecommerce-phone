@@ -102,8 +102,6 @@ const LogInPage = () => {
           </p>
         </div>
       </div>
-      <LogoutButton></LogoutButton>
-
     </>
   );
 };
