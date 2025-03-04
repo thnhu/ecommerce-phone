@@ -126,7 +126,10 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
     }
 
     if (!productData.categoryId) {
-      newErrors.categoryId = "Vui lòng chọn danh mục.";
+      newErrors.categoryId = "Vui lòng chọn nhà cung cấp.";
+    }
+    if (!productData.status) {
+      newErrors.categoryId = "Vui lòng chọn trạng thái.";
     }
 
     if (productData.imagePaths.length === 0) {
@@ -223,6 +226,51 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
                 <p className="text-red-500 text-sm">{errors.description}</p>
               )}
             </div>
+            {/* Danh mục */}            
+            <div>
+              <select
+              name="categoryId"
+              value={productData.categoryId}
+              onChange={handleChange}
+              className="outline-none w-96 p-1"
+              style={{ borderBottom: "1px solid #E4E0E1" }}
+            >
+              <option value="" disabled>
+                Chọn nhà cung cấp
+              </option>
+              {categories.map((category) => (
+                <option value={category.id} key={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+            {errors.categoryId && (
+                <p className="text-red-500 text-sm">{errors.categoryId}</p>
+              )}
+            </div>
+
+            {/* Trạng thái */}            
+            <div>
+              <select
+                name="status"
+                value={productData.status}
+                onChange={handleChange}
+                className="outline-none w-96 p-1"
+                style={{ borderBottom: "1px solid #E4E0E1" }}
+              >
+                <option value="" disabled>
+                  Chọn trạng thái
+                </option>
+                <option value="draft">Draft</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+              {errors.status && (
+                <p className="text-red-500 text-sm">{errors.status}</p>
+              )}
+            </div>
+
+
             {/* Màu sắc mặc định*/}
             <div>
               <input
@@ -251,29 +299,6 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
               />
               {errors.price && (
                 <p className="text-red-500 text-sm">{errors.price}</p>
-              )}
-            </div>
-
-            {/* Danh mục */}            
-            <div>
-              <select
-              name="categoryId"
-              value={productData.categoryId}
-              onChange={handleChange}
-              className="outline-none w-96 p-1"
-              style={{ borderBottom: "1px solid #E4E0E1" }}
-            >
-              <option value="" disabled>
-                Chọn nhà cung cấp
-              </option>
-              {categories.map((category) => (
-                <option value={category.id} key={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-            {errors.categoryId && (
-                <p className="text-red-500 text-sm">{errors.categoryId}</p>
               )}
             </div>
 
