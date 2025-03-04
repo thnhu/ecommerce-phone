@@ -12,61 +12,58 @@ export default function Signup() {
     dob: "",
   });
   const [confirmPassword, setConfirmedPassword] = useState("");
-  const [avatar, setAvatar] = useState(null); // To hold the uploaded image
-  const [error, setError] = useState("");
+  const [avatar, setAvatar] = useState(null); // To hold the upload image
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   // Check if passwords match
-  //   if (reqSignup.password !== confirmPassword) {
-  //     setError("Xác nhận mật khẩu không khớp.");
-  //     return;
-  //   }
-
-  //   // Create a new FormData object
-  //   const formData = new FormData();
-
-  //   formData.append("user", reqSignup);
-
-  //   if (avatar) {
-  //     formData.append("avatar", avatar);
-  //   } else {
-  //     setError("Vui lòng chọn ảnh đại diện.");
-  //     return;
-  //   }
-
-  //   try {
-  //     // Send the form data with multipart/form-data header
-  //     // for (let [key, value] of formData.entries()) {
-  //     //   console.log(key, value);
-  //     // }
-  //     const response = await axios.post(
-  //       "http://localhost:8080/phone/user",
-  //       formData
-  //     );
-
-  //     if (response.status === 200) {
-  //       navigate("/login");
-  //     } else {
-  //       setError("Đăng ký thất bại. Vui lòng thử lại sau.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Registration failed:", error);
-  //     for (let [key, value] of formData.entries()) {
-  //       console.log("Data type: " + typeof value);
-  //       console.log(key, value);
-  //     }
-  //     setError("Đăng ký thất bại. Vui lòng thử lại sau.");
-  //   }
-  // };
+  // Hàm validate: kiểm tra dữ liệu nhập vào từng trường
+  const validate = () => {
+    const errors = {};
+    const today = new Date().toISOString().split('T')[0];
+    if (!reqSignup.displayName.trim()) {
+      errors.displayName = "Họ và tên không được để trống";
+    }
+    if (!reqSignup.email.trim()) {
+      errors.email = "Email không được để trống";
+    } else {
+      const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+      if (!emailRegex.test(reqSignup.email)) {
+        errors.email = "Email không hợp lệ";
+      }
+    }
+    if (!reqSignup.phoneNumber.trim()) {
+      errors.phoneNumber = "Số điện thoại không được để trống";
+    } else if (reqSignup.phoneNumber.length < 10) {
+      errors.phoneNumber = "Số điện thoại phải có ít nhất 10 số";
+    }
+    if (!reqSignup.password) {
+      errors.password = "Mật khẩu không được để trống";
+    } else if (reqSignup.password.length < 6) {
+      errors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+    }
+    if (!confirmPassword) {
+      errors.confirmPassword = "Xác nhận mật khẩu không được để trống";
+    } else if (reqSignup.password !== confirmPassword) {
+      errors.confirmPassword = "Mật khẩu không khớp";
+    }
+    if (!reqSignup.dob) {
+      errors.dob = "Ngày sinh không được để trống";
+    }
+    if (reqSignup.dob > today) errors.dob = "Ngày sinh không hợp lệ";
+    if (!avatar) {
+      errors.avatar = "Vui lòng chọn một ảnh";
+    }
+    return errors;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrors({}); // Reset lỗi trước khi validate
 
-    if (reqSignup.password !== confirmPassword) {
-      setError("Mật khẩu không khớp");
+    // Validate client-side
+    const errors = validate();
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors);
       return;
     }
 
@@ -89,16 +86,22 @@ export default function Signup() {
     if (avatar) {
       formData.append("avatar", avatar);
     }
-    console.log(reqSignup)
-    for (let pair of formData.entries()) {
-      console.log(pair[0] + ": " + pair[1]);
-    }
 
     try {
-      const response = await axios.post('http://localhost:8080/phone/user', formData);
-      console.log(response);
+      const response = await axios.post("http://localhost:8080/phone/user", formData);
+      alert("Đăng ký thành công");
+      navigate("/login");
     } catch (error) {
-      console.log(error);
+      if (error.response && error.response.data) {
+        const apiErrors = error.response.data.errors;
+        if (apiErrors) {
+          setFieldErrors("Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau.");
+        } else if (error.response.data.message === "User existed! Please check your phone number or email") {
+          setErrors({ general:"Tài khoản đã tồn tại! Vui lòng sử dụng số điện thoại hoặc email khác"});
+        }
+      } else {
+        setFieldErrors({ general: "Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại sau." });
+      }
     }
   };
 
@@ -111,14 +114,14 @@ export default function Signup() {
   };
 
   const handleFileChange = (e) => {
-    setAvatar(e.target.files[0]); // Get the first file object
+    setAvatar(e.target.files[0]);
   };
 
   return (
     <>
       <Navbar />
-      <div className="flex items-center justify-center min-h-screen bg-gray-100 pt-2 pb-2">
-        <div className="bg-white p-8 rounded-2xl shadow-lg w-96">
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+        <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
           <div className="text-center mb-6">
             <div className="text-xl font-bold">Thegioididong</div>
             <h2 className="text-2xl font-semibold mt-2">Tạo tài khoản</h2>
@@ -126,8 +129,8 @@ export default function Signup() {
               Vui lòng nhập thông tin để đăng ký
             </p>
           </div>
-          {error && (
-            <div className="text-red-500 text-center mb-4">{error}</div>
+          {errors.general && (
+            <div className="text-red-500 text-center mb-4">{errors.general}</div>
           )}
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
@@ -140,6 +143,9 @@ export default function Signup() {
                 value={reqSignup.displayName}
                 onChange={handleInputChange}
               />
+              {errors.displayName && (
+                <p className="text-red-500 text-xs mt-1">{errors.displayName}</p>
+              )}
             </div>
             <div className="mb-4">
               <label className="text-sm text-gray-600">Email</label>
@@ -151,19 +157,23 @@ export default function Signup() {
                 value={reqSignup.email}
                 onChange={handleInputChange}
               />
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+              )}
             </div>
             <div className="mb-4">
               <label className="text-sm text-gray-600">Số điện thoại</label>
               <input
                 type="tel"
                 name="phoneNumber"
-                maxLength="10"
-                minLength="1"
                 placeholder="Nhập số điện thoại"
                 className="w-full mt-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 value={reqSignup.phoneNumber}
                 onChange={handleInputChange}
               />
+              {errors.phoneNumber && (
+                <p className="text-red-500 text-xs mt-1">{errors.phoneNumber}</p>
+              )}
             </div>
             <div className="mb-4">
               <label className="text-sm text-gray-600">Mật khẩu</label>
@@ -175,6 +185,9 @@ export default function Signup() {
                 value={reqSignup.password}
                 onChange={handleInputChange}
               />
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+              )}
             </div>
             <div className="mb-4">
               <label className="text-sm text-gray-600">Xác nhận mật khẩu</label>
@@ -186,6 +199,9 @@ export default function Signup() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmedPassword(e.target.value)}
               />
+              {errors.confirmPassword && (
+                <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>
+              )}
             </div>
             <div className="mb-4">
               <label className="text-sm text-gray-600">Ngày sinh</label>
@@ -196,9 +212,10 @@ export default function Signup() {
                 value={reqSignup.dob}
                 onChange={handleInputChange}
               />
+              {errors.dob && (
+                <p className="text-red-500 text-xs mt-1">{errors.dob}</p>
+              )}
             </div>
-
-            {/* Avatar image input */}
             <div className="mb-4">
               <label className="text-sm text-gray-600">Ảnh đại diện</label>
               <input
@@ -208,8 +225,10 @@ export default function Signup() {
                 className="w-full mt-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onChange={handleFileChange}
               />
+              {errors.avatar && (
+                <p className="text-red-500 text-xs mt-1">{errors.avatar}</p>
+              )}
             </div>
-
             <button
               type="submit"
               className="w-full bg-black text-white p-2 rounded-full hover:bg-gray-800 transition"
@@ -228,148 +247,3 @@ export default function Signup() {
     </>
   );
 }
-
-
-// import { useState } from "react";
-// import { Link } from "react-router-dom";
-// import api from "../services/api";
-
-// export const Register = () => {
-//   const [userData, setUserData] = useState({
-//     displayName: "",
-//     email: "",
-//     password: "",
-//     repeatPassword: "",
-//     phoneNumber: "",
-//     dob: "",
-//     avatar: null,
-//   });
-//   const [errors, setErrors] = useState({});
-
-//   const handleChange = (e) => {
-//     const { name, value, type, files } = e.target;
-//     setUserData({
-//       ...userData,
-//       [name]: type === "file" ? files[0] : value,
-//     });
-//     setErrors({
-//       ...errors,
-//       [name]: "",
-//     });
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     if (userData.password !== userData.repeatPassword) {
-//       setErrors({ ...errors, repeatPassword: "Mật khẩu không khớp" });
-//       return;
-//     }
-
-//     const formData = new FormData();
-//     formData.append(
-//       "user",
-//       new Blob(
-//         [
-//           JSON.stringify({
-//             displayName: userData.displayName,
-//             email: userData.email,
-//             password: userData.password,
-//             phoneNumber: userData.phoneNumber,
-//             dob: userData.dob,
-//           }),
-//         ],
-//         { type: "application/json" }
-//       )
-//     );
-//     if (userData.avatar) {
-//       formData.append("avatar", userData.avatar);
-//     }
-
-//     try {
-//       const response = await api('/phone/user', formData);
-//       console.log(response);
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-//   return (
-//     <div className="w-1/2 flex flex-col items-center justify-center gap-3">
-//       <div className="uppercase text-3xl font-extrabold text-sky-500">
-//         ĐĂNG KÝ
-//       </div>
-//       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-3">
-//         <input
-//           type="text"
-//           name="displayName"
-//           placeholder="Họ và tên"
-//           className="bg-gray-200 w-full h-10 rounded-3xl p-3 outline-none"
-//           value={userData.displayName}
-//           onChange={handleChange}
-//         />
-//         <input
-//           type="text"
-//           name="phoneNumber"
-//           placeholder="Số điện thoại"
-//           className="bg-gray-200 w-full h-10 rounded-3xl p-3 outline-none"
-//           value={userData.phoneNumber}
-//           onChange={handleChange}
-//         />
-//         <input
-//           type="email"
-//           name="email"
-//           placeholder="Email"
-//           className="bg-gray-200 w-full h-10 rounded-3xl p-3 outline-none"
-//           value={userData.email}
-//           onChange={handleChange}
-//         />
-//         <input
-//           type="date"
-//           name="dob"
-//           placeholder="Ngày sinh"
-//           className="bg-gray-200 w-full h-10 rounded-3xl p-3 outline-none"
-//           value={userData.dob}
-//           onChange={handleChange}
-//         />
-//         <input
-//           type="password"
-//           name="password"
-//           placeholder="Mật khẩu"
-//           className="bg-gray-200 w-full h-10 rounded-3xl p-3 outline-none"
-//           value={userData.password}
-//           onChange={handleChange}
-//         />
-//         <input
-//           type="password"
-//           name="repeatPassword"
-//           placeholder="Nhập lại mật khẩu"
-//           className="bg-gray-200 w-full h-10 rounded-3xl p-3 outline-none"
-//           value={userData.repeatPassword}
-//           onChange={handleChange}
-//         />
-//         {errors.repeatPassword && (
-//           <span className="text-red-500">{errors.repeatPassword}</span>
-//         )}
-//         <input
-//           type="file"
-//           name="avatar"
-//           accept="image/*"
-//           className="w-full"
-//           onChange={handleChange}
-//         />
-//         <button
-//           type="submit"
-//           className="bg-sky-500 w-full h-10 rounded-3xl text-white font-bold"
-//         >
-//           Tạo tài khoản
-//         </button>
-//       </form>
-//       <Link to="/login" className="text-sky-500">
-//         Đăng nhập
-//       </Link>
-//     </div>
-//   );
-// };
-
-// export default Register
