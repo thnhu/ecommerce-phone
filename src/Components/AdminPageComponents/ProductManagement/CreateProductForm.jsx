@@ -18,13 +18,7 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
     name: "",
     description: "",
     categoryId: "",
-    status: "",
     imagePaths: [],
-    variants:[{
-      color:"",
-      price:"",
-      stock:""
-    }]
   });
   
   const [errors, setErrors] = useState({});
@@ -52,13 +46,7 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
         name: "",
         description: "",
         categoryId: "",
-        status: "",
         imagePaths: [],
-        variants:[{
-          color: "",
-          price: "",
-          stock: ""
-        }]
       });
       setErrors({});
     }
@@ -106,9 +94,9 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
       newErrors.name = "Tên sản phẩm không được để trống.";
     }
 
-    if (!productData.name.trim()) {
-      newErrors.color = "Màu sắc không để trống";
-    }
+    // if (!productData.name.trim()) {
+    //   newErrors.color = "Màu sắc không để trống";
+    // }
 
     if (
       !productData.description.trim() ||
@@ -117,21 +105,17 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
       newErrors.description = "Mô tả phải có ít nhất 10 ký tự.";
     }
 
-    if (
-      !productData.price ||
-      isNaN(productData.price) ||
-      Number(productData.price) <= 0
-    ) {
-      newErrors.price = "Giá sản phẩm phải là một số lớn hơn 0.";
-    }
+    // if (
+    //   !productData.price ||
+    //   isNaN(productData.price) ||
+    //   Number(productData.price) <= 0
+    // ) {
+    //   newErrors.price = "Giá sản phẩm phải là một số lớn hơn 0.";
+    // }
 
     if (!productData.categoryId) {
       newErrors.categoryId = "Vui lòng chọn nhà cung cấp.";
     }
-    if (!productData.status) {
-      newErrors.categoryId = "Vui lòng chọn trạng thái.";
-    }
-
     if (productData.imagePaths.length === 0) {
       newErrors.imagePaths = "Vui lòng chọn ít nhất một hình ảnh.";
     }
@@ -182,7 +166,7 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
         }
 
       } catch (error) {
-        console.error(response.message);
+        // console.error(response.message);
         alert("Thêm sản phẩm thất bại");
       }
   };
@@ -248,95 +232,41 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
                 <p className="text-red-500 text-sm">{errors.categoryId}</p>
               )}
             </div>
-
-            {/* Trạng thái */}            
-            <div>
-              <select
-                name="status"
-                value={productData.status}
-                onChange={handleChange}
-                className="outline-none w-96 p-1"
-                style={{ borderBottom: "1px solid #E4E0E1" }}
-              >
-                <option value="" disabled>
-                  Chọn trạng thái
-                </option>
-                <option value="draft">Draft</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-              {errors.status && (
-                <p className="text-red-500 text-sm">{errors.status}</p>
-              )}
-            </div>
-
-
-            {/* Màu sắc mặc định*/}
-            <div>
-              <input
-                name="color"
-                value={productData.color}
-                onChange={handleChange}
-                placeholder="Màu sắc"
-                className="outline-none w-96 p-1"
-                style={{ borderBottom: "1px solid #E4E0E1" }}
-              />
-              {errors.color && (
-                <p className="text-red-500 text-sm">{errors.color}</p>
-              )}
-            </div>
-
-            {/* Giá sản phẩm */}
-            <div>
-              <input
-                type="number"
-                name="price"
-                value={productData.price}
-                onChange={handleChange}
-                placeholder="Giá sản phẩm"
-                className="outline-none w-96 p-1"
-                style={{ borderBottom: "1px solid #E4E0E1" }}
-              />
-              {errors.price && (
-                <p className="text-red-500 text-sm">{errors.price}</p>
-              )}
-            </div>
-
             {/* Ảnh sản phẩm */}
             <div>
             <h2 className="text-m font-semibold mb-4">Chọn ảnh sản phẩm</h2>
-      <div className="flex flex-wrap gap-2">
-        {/* Hiển thị preview các hình đã chọn */}
-        {images.map((img, index) => (
-          <div
-            key={index}
-            className="w-20 h-20 border rounded overflow-hidden"
-          >
-            <img
-              src={img.preview}
-              alt={`image-${index}`}
-              className="w-full h-full object-cover"
+            <div className="flex flex-wrap gap-2">
+              {/* Hiển thị preview các hình đã chọn */}
+              {images.map((img, index) => (
+                <div
+                  key={index}
+                  className="w-20 h-20 border rounded overflow-hidden"
+                >
+                  <img
+                    src={img.preview}
+                    alt={`image-${index}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
+            {/* Nút thêm hình */}
+            <button
+              type="button"
+              onClick={handleSelectImages}
+              className="w-20 h-20 border rounded flex items-center justify-center text-gray-500 hover:bg-gray-100"
+            >
+              +
+            </button>
+            {/* Input file ẩn, cho phép chọn nhiều hình */}
+            <input
+              type="file"
+              name="imagePaths"
+              accept="image/*"
+              multiple
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              className="hidden"
             />
-          </div>
-        ))}
-        {/* Nút thêm hình */}
-        <button
-          type="button"
-          onClick={handleSelectImages}
-          className="w-20 h-20 border rounded flex items-center justify-center text-gray-500 hover:bg-gray-100"
-        >
-          +
-        </button>
-        {/* Input file ẩn, cho phép chọn nhiều hình */}
-        <input
-          type="file"
-          name="imagePaths"
-          accept="image/*"
-          multiple
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          className="hidden"
-        />
             </div>
             </div>
             <Button
