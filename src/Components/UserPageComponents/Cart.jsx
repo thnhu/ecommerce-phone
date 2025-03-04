@@ -8,34 +8,14 @@ const Cart = () => {
   const [selectedItems, setSelectedItems] = useState([]);
   const [cartItems, setCartItems] = useState([
     {
-      id: 1,
-      name: "iPhone 15 Pro Max",
+      id: "20d51858-313f-43c6-a9d9-cb840dcfe88f",
+      name: "SP 2",
       size: "6.7 inches",
       color: "Titan Xanh",
       originalPrice: 35000000,
       price: 29900000,
       quantity: 1,
       image: {iPhone}
-    },
-    {
-      id: 2,
-      name: "Samsung Galaxy S24 Ultra",
-      size: "6.8 inches",
-      color: "Đen Titan",
-      originalPrice: 28000000,
-      price: 24900000,
-      quantity: 1,
-      image: "https://via.placeholder.com/100"
-    },
-    {
-      id: 3,
-      name: "Xiaomi 14 Pro",
-      size: "6.73 inches",
-      color: "Trắng",
-      originalPrice: 22000000,
-      price: 19900000,
-      quantity: 1,
-      image: "https://via.placeholder.com/100"
     },
   ]);
 
