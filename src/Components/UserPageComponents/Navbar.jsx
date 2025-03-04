@@ -23,7 +23,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-lg">
+    <nav className="bg-white shadow-lg top-0 left-0 w-full z-50">
       <div className="max-w-7xl mx-auto px-4">
         {/* Main Navbar */}
         <div className="flex justify-between items-center h-16">
@@ -36,7 +36,7 @@ const Navbar = () => {
             >
               <Menu />
             </IconButton>
-            <a href="/">            
+            <a href="/">
               <span className="text-xl font-bold text-gray-800">THEGIOIDIDONG</span>
             </a>
           </div>
@@ -76,11 +76,11 @@ const Navbar = () => {
 
             {/* Cart */}
             <a href="/cart">
-            <IconButton>
-              <Badge badgeContent={1} color="error">
-                <ShoppingCart />
-              </Badge>
-            </IconButton>
+              <IconButton>
+                <Badge badgeContent={1} color="error">
+                  <ShoppingCart />
+                </Badge>
+              </IconButton>
             </a>
 
             {/* Login */}
@@ -128,11 +128,15 @@ const Navbar = () => {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <a href="/login">        
-          <MenuItem className="hover:text-blue-500" onClick={handleMenuClose} >Đăng nhập</MenuItem>
+        <a href="/login">
+          <MenuItem className="hover:text-blue-500" onClick={handleMenuClose}>
+            Đăng nhập
+          </MenuItem>
         </a>
-        <a href="/register">        
-          <MenuItem className="hover:text-blue-500" onClick={handleMenuClose} >Đăng ký</MenuItem>
+        <a href="/register">
+          <MenuItem className="hover:text-blue-500" onClick={handleMenuClose}>
+            Đăng ký
+          </MenuItem>
         </a>
       </MuiMenu>
     </nav>
