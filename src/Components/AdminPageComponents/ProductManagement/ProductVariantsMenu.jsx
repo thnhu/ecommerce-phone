@@ -1,26 +1,45 @@
 import React from "react";
-import { Menu, MenuItem, Button } from "@mui/material";
+import { Menu, MenuItem } from "@mui/material";
 
-const ProductVariantMenu = ({ anchorEl, open, handleClose, product, onAddVariant }) => {
+const ProductVariantMenu = ({
+  anchorEl,
+  open,
+  handleClose,
+  product,
+  onAddVariant,
+  onOpenAttribute, // This function should open the attribute form and pass product to it
+}) => {
   return (
     <Menu
       anchorEl={anchorEl}
       open={open}
       onClose={handleClose}
       anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'center',
+        vertical: "bottom",
+        horizontal: "center",
       }}
       transformOrigin={{
-        vertical: 'top',
-        horizontal: 'center',
+        vertical: "top",
+        horizontal: "center",
       }}
     >
-      {/* Only show "Add Variant" option */}
-      <MenuItem onClick={() => { 
-        onAddVariant(); 
-        handleClose(); 
-      }}>
+      {/* Pass product to onOpenAttribute */}
+      <MenuItem
+        onClick={() => {
+          onOpenAttribute(product); // Pass the selected product to the parent
+          console.log(product)
+          handleClose();
+        }}
+      >
+        Thêm thuộc tính
+      </MenuItem>
+      
+      <MenuItem
+        onClick={() => {
+          onAddVariant();
+          handleClose();
+        }}
+      >
         Thêm mẫu
       </MenuItem>
     </Menu>

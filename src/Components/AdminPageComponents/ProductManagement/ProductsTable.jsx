@@ -28,6 +28,7 @@ import api from "../../../services/api";
 import ProductVariantMenu from "./ProductVariantsMenu"; // Import the new component
 import VariantForm from "./VariantForm"; // Import the VariantForm component
 import UpdateDiscountVariant from "./UpdateDiscountVariant";
+import ProductAttributeForm from "./ProductAttributeForm";
 
 const ProductsTable = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -41,7 +42,7 @@ const ProductsTable = () => {
     message: "",
     severity: "success",
   });
-  const [anchorEl, setAnchorEl] = useState(null); // For variant options menu
+  const [anchorEl, setAnchorEl] = useState(false); // For variant options menu
   const [selectedProduct, setSelectedProduct] = useState(null); // Track selected product for variants
   const [openVariantForm, setOpenVariantForm] = useState(false); // To control the VariantForm dialog
   const [variantActionType, setVariantActionType] = useState("create"); // 'create' or 'update'
@@ -49,6 +50,8 @@ const ProductsTable = () => {
   const size = 10;
 
   const [expandedProducts, setExpandedProducts] = useState({});
+  const [openProductAttributeForm, setOpenProductAttributeForm] = useState();
+  const [attributes, setAttributes] = useState([]);
 
   const toggleProductVariants = (productId) => {
     setExpandedProducts((prevExpanded) => ({
@@ -75,6 +78,33 @@ const ProductsTable = () => {
       setLoading(false);
     }
   };
+
+  //Fetch data của phone và lưu vào mảng
+  useEffect(() => {
+    const fetchAttributes = async () => {
+      try {
+        const attributePromises = productData.map(async (phone) => {
+          setLoading(true)
+          const attRes = await api.get(`/phone/product/${phone.id}/attribute`);
+          return attRes.data; // Return the attribute data for each product
+        });
+
+        // Wait for all promises to resolve
+        const resolvedAttributes = await Promise.all(attributePromises);
+        
+        // Set the attributes once all promises are resolved
+        setAttributes(resolvedAttributes);
+        console.log(resolvedAttributes)
+        setLoading(false)
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    if (productData && productData.length > 0) {
+      fetchAttributes(); // Only fetch attributes if productData is not empty
+    }
+  }, [productData]);
 
   const handleDelete = async (productId) => {
     if (window.confirm("Bạn chắc chắn muốn xóa?")) {
@@ -115,6 +145,15 @@ const ProductsTable = () => {
     setSelectedVariant(variant); // Set selected variant for update
     console.log(selectedVariant);
     setOpenVariantForm(true); // Open the variant form
+  };
+
+  const handleOpenProductAttributeForm = (product) => {
+    setSelectedProduct(product); // Set the product that was clicked
+    setOpenProductAttributeForm(true); // Open the dialog
+  };
+
+  const handleCloseProductAttributeForm = () => {
+    setOpenProductAttributeForm(false); // Close the dialog
   };
 
   useEffect(() => {
@@ -215,6 +254,42 @@ const ProductsTable = () => {
                       </div>
                     </TableCell>
                   </TableRow>
+
+                  {/* Display Product Attributes */}
+                  {attributes.length > 0 && (<TableRow>
+                    <TableCell colSpan={6}>
+                      <div className="bg-gray-100 p-2">
+                        <h3 className="font-semibold">Thuộc tính sản phẩm:</h3>
+                        <ul className="list-none">
+                          <li>
+                          {/* JSON.stringify(attributes[0]) */}
+                            <strong>OS:</strong> {attributes[index].os || "Chưa xác định"}
+                          </li>
+                          <li>
+                            <strong>CPU:</strong> {attributes[index].cpu || "Chưa xác định"}
+                          </li>
+                          <li>
+                            <strong>RAM:</strong> {attributes[index].ram || "Chưa xác định"}
+                          </li>
+                          <li>
+                            <strong>ROM:</strong> {attributes[index].rom || "Chưa xác định"}
+                          </li>
+                          <li>
+                            <strong>Camera:</strong> {attributes[index].camera || "Chưa xác định"}
+                          </li>
+                          <li>
+                            <strong>Pin:</strong> {attributes[index].pin || "Chưa xác định"}
+                          </li>
+                          <li>
+                            <strong>SIM:</strong> {attributes[index].sim || "Chưa xác định"}
+                          </li>
+                          <li>
+                            <strong>Others:</strong> {attributes[index].others || "Chưa xác định"}
+                          </li>
+                        </ul>
+                      </div>
+                    </TableCell>
+                  </TableRow>)}
 
                   {/* Display Variants of this product */}
                   {product.variants && product.variants.length > 0 && (
@@ -344,13 +419,29 @@ const ProductsTable = () => {
       {/* Product Variant Menu Component */}
       <ProductVariantMenu
         anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
+        open={anchorEl}
         handleClose={handleCloseVariantMenu}
         product={selectedProduct}
         onAddVariant={handleAddVariant}
         onUpdateVariant={handleUpdateVariant}
         onDeleteVariant={handleDeleteVariant}
+        onOpenAttribute={handleOpenProductAttributeForm}
+        onCloseAttribute={handleCloseProductAttributeForm}
       />
+
+      {/* Product Variant Menu Component */}
+      <Dialog
+        open={openProductAttributeForm}
+        onClose={handleCloseProductAttributeForm} // Closes the dialog
+        maxWidth="md"
+        fullWidth
+      >
+        <ProductAttributeForm
+          open={openProductAttributeForm}
+          handleClose={handleCloseProductAttributeForm}
+          product={selectedProduct} // Pass the selected product
+        />
+      </Dialog>
 
       {/* Variant Form (Create/Update Variant) */}
       <VariantForm
