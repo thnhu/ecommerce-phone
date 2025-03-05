@@ -21,11 +21,13 @@ import {
   MoreVert,
   ExpandMore,
   ExpandLess,
+  LocalOffer,
 } from "@mui/icons-material";
 import CreateProductForm from "./CreateProductForm";
 import api from "../../../services/api";
 import ProductVariantMenu from "./ProductVariantsMenu"; // Import the new component
 import VariantForm from "./VariantForm"; // Import the VariantForm component
+import UpdateDiscountVariant from "./UpdateDiscountVariant";
 
 const ProductsTable = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -93,7 +95,7 @@ const ProductsTable = () => {
   const handleVariantMenuClick = (event, product) => {
     setAnchorEl(event.currentTarget);
     setSelectedProduct(product); // Set the selected product for variants
-    console.log(product);
+    // console.log(product);
   };
 
   const handleCloseVariantMenu = () => {
@@ -122,7 +124,9 @@ const ProductsTable = () => {
   const handleDeleteVariant = async (variantId, product) => {
     if (window.confirm("Bạn chắc chắn muốn xóa mẫu này?")) {
       try {
-        await api.delete(`/phone/product/variant/${product.id}?variantId=${variantId}`);
+        await api.delete(
+          `/phone/product/variant/${product.id}?variantId=${variantId}`
+        );
         setSnackbar({
           open: true,
           message: "Xóa mẫu thành công!",
@@ -130,11 +134,13 @@ const ProductsTable = () => {
         });
         fetchData(); // Refresh product data after deletion
       } catch (error) {
-        console.log(error)
+        console.log(error);
         setError("Xóa mẫu thất bại");
       }
     }
   };
+
+  const handleCreateOfferVariant = async (variantId, product) => {};
 
   useEffect(() => {
     fetchData();
@@ -170,105 +176,132 @@ const ProductsTable = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-            {productData.map((product, index) => (
-  <React.Fragment key={product.id}>
-    <TableRow hover>
-      <TableCell>{index + 1 + currentIndex * size}</TableCell>
-      <TableCell>{product.name}</TableCell>
-      <TableCell className="max-w-xs">{product.description}</TableCell>
-      <TableCell>{product.category.name || "-"}</TableCell>
-      <TableCell>
-        <div className="flex space-x-1">
-          <img
-            src={`data:image/*;base64,${product.images[0].data}`}
-            className="w-10 h-10 object-cover rounded"
-          />
-        </div>
-      </TableCell>
-      <TableCell>
-        <div className="flex space-x-2">
-          <IconButton color="primary">
-            <Edit />
-          </IconButton>
-          <IconButton
-            color="error"
-            onClick={() => handleDelete(product.id)}
-          >
-            <Delete />
-          </IconButton>
-          <IconButton
-            color="default"
-            onClick={(event) => handleVariantMenuClick(event, product)}
-          >
-            <MoreVert />
-          </IconButton>
-        </div>
-      </TableCell>
-    </TableRow>
-
-    {/* Display Variants of this product */}
-    {product.variants && product.variants.length > 0 && (
-      <TableRow>
-        <TableCell colSpan={6}>
-          <div className="bg-gray-100 p-2">
-            <h4 className="text-lg font-semibold">Mẫu:</h4>
-
-            {/* Toggle button to expand or collapse variants */}
-            <Button
-              variant="contained"
-              color={expandedProducts[product.id] ? "secondary" : "primary"}
-              onClick={() => toggleProductVariants(product.id)} // Toggle expansion for the specific product
-              startIcon={expandedProducts[product.id] ? <ExpandLess /> : <ExpandMore />}
-            >
-              {expandedProducts[product.id] ? "Thu gọn" : "Hiển thị"}
-            </Button>
-
-            {/* Conditionally render the variants section and its header */}
-            {expandedProducts[product.id] && (
-              <Table className="w-full">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Màu</TableCell>
-                    <TableCell>Giá</TableCell>
-                    <TableCell>Số lượng</TableCell>
-                    <TableCell>Cập nhật</TableCell>
+              {productData.map((product, index) => (
+                <React.Fragment key={product.id}>
+                  <TableRow hover>
+                    <TableCell>{index + 1 + currentIndex * size}</TableCell>
+                    <TableCell>{product.name}</TableCell>
+                    <TableCell className="max-w-xs">
+                      {product.description}
+                    </TableCell>
+                    <TableCell>{product.category.name || "-"}</TableCell>
+                    <TableCell>
+                      <div className="flex space-x-1">
+                        <img
+                          src={`data:image/*;base64,${product.images[0].data}`}
+                          className="w-10 h-10 object-cover rounded"
+                        />
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <IconButton color="primary">
+                          <Edit />
+                        </IconButton>
+                        <IconButton
+                          color="error"
+                          onClick={() => handleDelete(product.id)}
+                        >
+                          <Delete />
+                        </IconButton>
+                        <IconButton
+                          color="default"
+                          onClick={(event) =>
+                            handleVariantMenuClick(event, product)
+                          }
+                        >
+                          <MoreVert />
+                        </IconButton>
+                      </div>
+                    </TableCell>
                   </TableRow>
-                </TableHead>
-                <TableBody>
-                  {/* Map over the variants */}
-                  {product.variants.map((variant) => (
-                    <TableRow key={variant.id}>
-                      <TableCell>{variant.color}</TableCell>
-                      <TableCell>{variant.price}</TableCell>
-                      <TableCell>{variant.stock}</TableCell>
-                      <TableCell>
-                        <div className="flex space-x-2">
-                          <IconButton
-                            color="primary"
-                            onClick={() => handleUpdateVariant(variant, product)}
+
+                  {/* Display Variants of this product */}
+                  {product.variants && product.variants.length > 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6}>
+                        <div className="bg-gray-100 p-2">
+                          {/* Toggle button to expand or collapse variants */}
+                          <Button
+                            variant="contained"
+                            color={
+                              expandedProducts[product.id]
+                                ? "secondary"
+                                : "primary"
+                            }
+                            onClick={() => toggleProductVariants(product.id)} // Toggle expansion for the specific product
+                            startIcon={
+                              expandedProducts[product.id] ? (
+                                <ExpandLess />
+                              ) : (
+                                <ExpandMore />
+                              )
+                            }
                           >
-                            <Edit />
-                          </IconButton>
-                          <IconButton
-                            color="error"
-                            onClick={() => handleDeleteVariant(variant.id, product)}
-                          >
-                            <Delete />
-                          </IconButton>
+                            {expandedProducts[product.id]
+                              ? "Thu gọn"
+                              : "Hiển thị mẫu"}
+                          </Button>
+
+                          {/* Conditionally render the variants section and its header */}
+                          {expandedProducts[product.id] && (
+                            <Table className="w-full">
+                              <TableHead>
+                                <TableRow>
+                                  <TableCell>Màu</TableCell>
+                                  <TableCell>Giá</TableCell>
+                                  <TableCell>Số lượng</TableCell>
+                                  <TableCell>Cập nhật</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {/* Map over the variants */}
+                                {product.variants.map((variant) => (
+                                  <TableRow key={variant.id}>
+                                    <TableCell>{variant.color}</TableCell>
+                                    <TableCell>{variant.price}</TableCell>
+                                    <TableCell>{variant.stock}</TableCell>
+                                    <TableCell>
+                                      <div className="flex space-x-2">
+                                        <IconButton
+                                          color="primary"
+                                          onClick={() =>
+                                            handleUpdateVariant(
+                                              variant,
+                                              product
+                                            )
+                                          }
+                                        >
+                                          <Edit />
+                                        </IconButton>
+                                        <IconButton
+                                          color="error"
+                                          onClick={() =>
+                                            handleDeleteVariant(
+                                              variant.id,
+                                              product
+                                            )
+                                          }
+                                        >
+                                          <Delete />
+                                        </IconButton>
+                                        <UpdateDiscountVariant
+                                          variantId={variant.id}
+                                          product={product}
+                                        ></UpdateDiscountVariant>
+                                      </div>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          )}
                         </div>
                       </TableCell>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </div>
-        </TableCell>
-      </TableRow>
-    )}
-  </React.Fragment>
-))}
-
+                  )}
+                </React.Fragment>
+              ))}
             </TableBody>
           </Table>
         </div>
@@ -329,7 +362,7 @@ const ProductsTable = () => {
               await api.post(`/phone/product/variant`, variantData);
               setSnackbar({
                 open: true,
-                message: "Tạo variant thành công!",
+                message: "Tạo mẫu thành công!",
                 severity: "success",
               });
             } else if (variantActionType === "update" && selectedVariant) {
@@ -340,7 +373,7 @@ const ProductsTable = () => {
                 );
                 setSnackbar({
                   open: true,
-                  message: "Cập nhật variant thành công!",
+                  message: "Cập nhật mẫu thành công!",
                   severity: "success",
                 });
               } catch (e) {

@@ -1,17 +1,27 @@
-import React, { useState } from 'react';
-import { Menu, Search, ShoppingCart, Person } from '@mui/icons-material';
-import { Badge, IconButton, InputBase, MenuItem, Menu as MuiMenu } from '@mui/material';
+import React, { useEffect, useState } from "react";
+import { Menu, Search, ShoppingCart, Person } from "@mui/icons-material";
+import { Link } from "react-router-dom";
+import api from "../../services/api";
+import defaultAvatar from "../../assets/images/default-avatar.png";
+import {
+  Badge,
+  IconButton,
+  InputBase,
+  MenuItem,
+  Menu as MuiMenu,
+} from "@mui/material";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [userData, setUserData] = useState({});
 
   const navLinks = [
-    { title: 'Trang chủ', path: '/' },
-    { title: 'Giảm giá', path: '/promotion' },
-    { title: 'Hàng mới về', path: '/newarrivals' },
-    { title: 'Thương hiệu', path: '/category' },
+    { title: "Trang chủ", path: "/" },
+    { title: "Giảm giá", path: "/promotion" },
+    { title: "Hàng mới về", path: "/newarrivals" },
+    { title: "Thương hiệu", path: "/category" },
   ];
 
   const handleProfileMenuOpen = (event) => {
@@ -22,6 +32,21 @@ const Navbar = () => {
     setAnchorEl(null);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get("/phone/user/myInfo");
+        setUserData((prevState) => ({ ...prevState, ...response.data }));
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => console.log(userData), [userData]);
+
   return (
     <nav className="bg-white shadow-lg">
       <div className="max-w-7xl mx-auto px-4">
@@ -31,13 +56,15 @@ const Navbar = () => {
           <div className="flex items-center">
             <IconButton
               edge="start"
-              className="md:hidden"
+              className="md:hidden " // This ensures the button is hidden on medium and larger screens
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               <Menu />
             </IconButton>
-            <a href="/">            
-              <span className="text-xl font-bold text-gray-800">THEGIOIDIDONG</span>
+            <a href="/">
+              <span className="text-xl font-bold text-gray-800">
+                THEGIOIDIDONG
+              </span>
             </a>
           </div>
 
@@ -62,7 +89,7 @@ const Navbar = () => {
               <InputBase
                 placeholder="Bạn muốn tìm gì..."
                 className="ml-2"
-                inputProps={{ 'aria-label': 'search' }}
+                inputProps={{ "aria-label": "search" }}
               />
             </div>
 
@@ -75,18 +102,35 @@ const Navbar = () => {
             </IconButton>
 
             {/* Cart */}
-            <a href="/cart">
-            <IconButton>
-              <Badge badgeContent={1} color="error">
-                <ShoppingCart />
-              </Badge>
-            </IconButton>
-            </a>
+            {Object.keys(userData).length > 0 && (
+              <a href="/cart">
+                <IconButton>
+                  <Badge badgeContent={1} color="error">
+                    <ShoppingCart />
+                  </Badge>
+                </IconButton>
+              </a>
+            )}
 
             {/* Login */}
-            <IconButton onClick={handleProfileMenuOpen}>
-              <Person />
-            </IconButton>
+            {Object.keys(userData).length === 0 && (
+              <IconButton onClick={handleProfileMenuOpen}>
+                <Person />
+              </IconButton>
+            )}
+            {Object.keys(userData).length > 0 && (
+              <Link to="/user">
+                {/* <h1 className="font-bold">{userData.displayName}</h1> */}
+                {/* <img src={defaultAvatar} alt="" className=""/> */}
+                <div className="w-9 h-9 overflow-hidden rounded-lg">
+                  <img
+                    src={userData.avatar || defaultAvatar}
+                    alt="Avatar"
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+              </Link>
+            )}
           </div>
         </div>
 
@@ -98,7 +142,7 @@ const Navbar = () => {
               <InputBase
                 placeholder="Tìm kiếm..."
                 className="ml-2 flex-1"
-                inputProps={{ 'aria-label': 'search' }}
+                inputProps={{ "aria-label": "search" }}
               />
             </div>
           </div>
@@ -123,18 +167,24 @@ const Navbar = () => {
       </div>
 
       {/* Profile Dropdown Menu */}
-      <MuiMenu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
-      >
-        <a href="/login">        
-          <MenuItem className="hover:text-blue-500" onClick={handleMenuClose} >Đăng nhập</MenuItem>
-        </a>
-        <a href="/register">        
-          <MenuItem className="hover:text-blue-500" onClick={handleMenuClose} >Đăng ký</MenuItem>
-        </a>
-      </MuiMenu>
+      {Object.keys(userData).length > 0 && (
+        <MuiMenu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <a href="/login">
+            <MenuItem className="hover:text-blue-500" onClick={handleMenuClose}>
+              Đăng nhập
+            </MenuItem>
+          </a>
+          <a href="/register">
+            <MenuItem className="hover:text-blue-500" onClick={handleMenuClose}>
+              Đăng ký
+            </MenuItem>
+          </a>
+        </MuiMenu>
+      )}
     </nav>
   );
 };

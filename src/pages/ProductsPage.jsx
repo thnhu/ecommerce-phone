@@ -8,6 +8,8 @@ import Navbar from "../Components/UserPageComponents/Navbar.jsx";
 import Footer from "../Components/UserPageComponents/Footer.jsx";
 
 const ProductsPage = () => {
+  //A sample Product
+
   return (
     <>
     {/* md:bg-slate-400 lg:bg-red-400 */}

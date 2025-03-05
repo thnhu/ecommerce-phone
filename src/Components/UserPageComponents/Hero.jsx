@@ -8,8 +8,8 @@ const Hero = () => {
   return (
     <section className="py-12 bg-gray-100 text-center">
       <div className="mb-10">
-        <h1 class="text-4xl font-bold text-gray-800">ĐIỆN THOẠI DI ĐỘNG CHÍNH HÃNG</h1>
-        <p class="text-lg text-gray-600 my-5">
+        <h1 className="text-4xl font-bold text-gray-800">ĐIỆN THOẠI DI ĐỘNG CHÍNH HÃNG</h1>
+        <p className="text-lg text-gray-600 my-5">
             Hệ thống bán lẻ điện thoại với mạng lưới hàng ngàn cửa hàng trên toàn quốc
         </p>
         <button
@@ -36,11 +36,11 @@ const Hero = () => {
       </div>
 
       <div className="flex justify-center gap-8 flex-wrap mt-10">
-        <img class="h-10 object-contain" src={samsungLogo} alt="Samsung" />
-        <img class="h-10 object-contain" src={iPhoneLogo} alt="iPhone" />
-        <img class="h-10 object-contain" src={xiaomiLogo} alt="Xiaomi" />
-        <img class="h-10 object-contain" src={oppoLogo} alt="Oppo" />
-        <img class="h-10 object-contain" src={huaweiLogo} alt="Hwawei" />       
+        <img className="h-10 object-contain" src={samsungLogo} alt="Samsung" />
+        <img className="h-10 object-contain" src={iPhoneLogo} alt="iPhone" />
+        <img className="h-10 object-contain" src={xiaomiLogo} alt="Xiaomi" />
+        <img className="h-10 object-contain" src={oppoLogo} alt="Oppo" />
+        <img className="h-10 object-contain" src={huaweiLogo} alt="Hwawei" />       
       </div>
     </section>
 

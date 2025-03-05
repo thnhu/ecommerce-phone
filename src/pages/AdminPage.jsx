@@ -1,33 +1,41 @@
-import React, { useState } from 'react'
-import UsersTable from '../Components/AdminPageComponents/UsersTable'
-import CategorisTable from '../Components/AdminPageComponents/CategoriesTable'
-import ProductsTable from '../Components/AdminPageComponents/ProductManagement/ProductsTable'
+import React, { useState } from "react";
+import UsersTable from "../Components/AdminPageComponents/UsersTable";
+import CategorisTable from "../Components/AdminPageComponents/CategoriesTable";
+import ProductsTable from "../Components/AdminPageComponents/ProductManagement/ProductsTable";
+import { Link } from "react-router-dom";
+
 const AdminPage = () => {
-  const [selectedTab, setSelectedTab] = useState('')
+  const [selectedTab, setSelectedTab] = useState("");
   const handleClick = (e) => {
-    setSelectedTab(e.target.id)
-  }
+    setSelectedTab(e.target.id);
+  };
 
   const SideBar = () => {
     return (
-      <aside className=' lg:w-1/6 bg-gray-900 min-w-[100px] md:min-w-[200px] h-full text-white pl-4 pr-1 md:pt-3'>
-        <p className='font-p text-xl lg:text-2xl py-3'>Quản lý chung</p>
+      <aside className="lg:w-1/6 bg-gray-900 min-w-[100px] md:min-w-[200px] text-white pl-4 pr-1 md:pt-3 h-full">
+        <p className="font-p text-xl lg:text-2xl py-3">Quản lý chung</p>
         <ul>
           <li
             key="trangchu"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${selectedTab === 'trangchu' ? 'bg-gray-800 rounded-md' : ''}`}
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${
+              selectedTab === "trangchu" ? "bg-gray-800 rounded-md" : ""
+            }`}
           >
-            <button
-              id="trangchu"
-              className="md:w-full text-left"
-              onClick={handleClick}
-            >
-              Trang chủ
-            </button>
+            <Link to="/">
+              <button
+                id="trangchu"
+                className="md:w-full text-left"
+                onClick={handleClick}
+              >
+                Trang chủ
+              </button>
+            </Link>
           </li>
           <li
             key="thietbi"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${selectedTab === 'thietbi' ? 'bg-gray-800 rounded-md' : ''}`}
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${
+              selectedTab === "thietbi" ? "bg-gray-800 rounded-md" : ""
+            }`}
           >
             <button
               id="thietbi"
@@ -39,7 +47,9 @@ const AdminPage = () => {
           </li>
           <li
             key="nhacungcap"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${selectedTab === 'nhacungcap' ? 'bg-gray-800 rounded-md' : ''}`}
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${
+              selectedTab === "nhacungcap" ? "bg-gray-800 rounded-md" : ""
+            }`}
           >
             <button
               id="nhacungcap"
@@ -51,7 +61,9 @@ const AdminPage = () => {
           </li>
           <li
             key="nguoidung"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${selectedTab === 'nguoidung' ? 'bg-gray-800 rounded-md' : ''}`}
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${
+              selectedTab === "nguoidung" ? "bg-gray-800 rounded-md" : ""
+            }`}
           >
             <button
               id="nguoidung"
@@ -63,21 +75,25 @@ const AdminPage = () => {
           </li>
         </ul>
       </aside>
-    )
-  }
+    );
+  };
 
   return (
     <>
-      <div className='w-full h-screen flex'>
-        <SideBar></SideBar>
-        {selectedTab === "nguoidung" && <UsersTable />}
-        {selectedTab === "nhacungcap" && <CategorisTable />}
-        {selectedTab === "thietbi" && <ProductsTable />}
-      </div>
-      
-    </>
-    
-  )
-}
+      {/* Full height container */}
+      <div className="w-full h-screen flex">
+        {/* Sidebar will take full height of screen */}
+        <SideBar />
 
-export default AdminPage
+        {/* Main content with flexible height */}
+        <div className="flex-grow h-full overflow-auto">
+          {selectedTab === "nguoidung" && <UsersTable />}
+          {selectedTab === "nhacungcap" && <CategorisTable />}
+          {selectedTab === "thietbi" && <ProductsTable />}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default AdminPage;
