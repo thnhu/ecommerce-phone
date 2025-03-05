@@ -120,7 +120,7 @@ export default function Signup() {
   return (
     <>
       <Navbar />
-      <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+      <div className="pt-20 pb-12 flex items-center justify-center min-h-screen bg-gray-100 p-4">
         <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
           <div className="text-center mb-6">
             <div className="text-xl font-bold">Thegioididong</div>

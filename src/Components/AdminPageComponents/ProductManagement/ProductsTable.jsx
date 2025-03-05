@@ -155,16 +155,15 @@ const ProductsTable = () => {
           Thêm sản phẩm
         </Button>
       </div>
-
+      <div className="overflow-x-auto">
       <TableContainer component={Paper} className="shadow-lg">
-        <div className="overflow-x-auto">
-          <Table className="w-full" aria-label="product table">
+          <Table className="min-w-max w-full" aria-label="product table">
             <TableHead className="bg-gray-50">
               <TableRow>
                 <TableCell>#</TableCell>
                 <TableCell>Tên sản phẩm</TableCell>
-                <TableCell>Mô tả</TableCell>
-                <TableCell>Nhà cung cấp</TableCell>
+                <TableCell className="hidden sm:table-cell">Mô tả</TableCell>
+                <TableCell className="hidden sm:table-cell">Nhà cung cấp</TableCell>
                 <TableCell>Hình ảnh</TableCell>
                 <TableCell>Cập nhật</TableCell>
               </TableRow>
@@ -175,8 +174,8 @@ const ProductsTable = () => {
     <TableRow hover>
       <TableCell>{index + 1 + currentIndex * size}</TableCell>
       <TableCell>{product.name}</TableCell>
-      <TableCell className="max-w-xs">{product.description}</TableCell>
-      <TableCell>{product.category.name || "-"}</TableCell>
+      <TableCell className="hidden sm:table-cell truncate max-w-xs">{product.description}</TableCell>
+      <TableCell className="hidden md:table-cell">{product.category.name || "-"}</TableCell>
       <TableCell>
         <div className="flex space-x-1">
           <img
@@ -271,8 +270,9 @@ const ProductsTable = () => {
 
             </TableBody>
           </Table>
-        </div>
+        
       </TableContainer>
+      </div>
 
       <div className="flex items-center justify-center mt-4 gap-2">
         <IconButton

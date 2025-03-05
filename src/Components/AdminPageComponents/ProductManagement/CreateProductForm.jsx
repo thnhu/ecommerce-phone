@@ -6,6 +6,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import Slide from "@mui/material/Slide";
 
@@ -25,6 +27,8 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
   const [categories, setCategories] = useState([]);
   const fileInputRef = useRef(null);
   const [images, setImages] = useState([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
 
   // Lấy nhà cung cấp từ API
   useEffect(() => {
@@ -94,24 +98,12 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
       newErrors.name = "Tên sản phẩm không được để trống.";
     }
 
-    // if (!productData.name.trim()) {
-    //   newErrors.color = "Màu sắc không để trống";
-    // }
-
     if (
       !productData.description.trim() ||
       productData.description.length < 10
     ) {
       newErrors.description = "Mô tả phải có ít nhất 10 ký tự.";
     }
-
-    // if (
-    //   !productData.price ||
-    //   isNaN(productData.price) ||
-    //   Number(productData.price) <= 0
-    // ) {
-    //   newErrors.price = "Giá sản phẩm phải là một số lớn hơn 0.";
-    // }
 
     if (!productData.categoryId) {
       newErrors.categoryId = "Vui lòng chọn nhà cung cấp.";
@@ -140,9 +132,7 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
           JSON.stringify({
             name: productData.name,
             description: productData.description,
-            price: productData.price,
             categoryId: productData.categoryId,
-            color: productData.color
           }),
         ],
         { type: "application/json" }
@@ -160,13 +150,13 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
           },
         });
         handleClose();
-        alert("Thêm sản phẩm thành công");
+        setSnackbar({ open: true});
         if (typeof onSuccess === 'function') {
           onSuccess();
         }
 
       } catch (error) {
-        // console.error(response.message);
+        //console.error(response.data.message);
         alert("Thêm sản phẩm thất bại");
       }
   };
@@ -283,6 +273,16 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
         </div>
       </DialogContent>
     </Dialog>
+    <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={3000}
+            onClose={() => setSnackbarOpen(false)}
+            anchorOrigin={{vertical:'top', horizontal:'center'}}  
+          >
+            <Alert severity="success" sx={{ width: '100%'}}>
+              Thêm sản phẩm thành công
+          </Alert>
+          </Snackbar>
     </div>
   );
 };
