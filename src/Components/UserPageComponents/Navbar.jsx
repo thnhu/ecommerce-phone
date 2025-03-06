@@ -16,6 +16,8 @@ const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [userData, setUserData] = useState({});
+  //Tracking the change of token
+  const [tokenTracker, setTokenTracker] = useState(localStorage.getItem("authToken"))
 
   const navLinks = [
     { title: "Trang chủ", path: "/" },
@@ -33,17 +35,33 @@ const Navbar = () => {
   };
 
   useEffect(() => {
+    const handleStorageChange = () => {
+      // Update the state whenever the token in localStorage changes
+      setTokenTracker(localStorage.getItem("authToken"));
+    };
+
+    // Add event listener for storage changes (triggered across all tabs/windows)
+    window.addEventListener("storage", handleStorageChange);
+
+    // Clean up the event listener when the component is unmounted
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await api.get("/phone/user/myInfo");
         setUserData((prevState) => ({ ...prevState, ...response.data }));
       } catch (e) {
         console.log(e);
+        setUserData({})
       }
     };
 
     fetchData();
-  }, []);
+  }, [tokenTracker]);
 
   useEffect(() => console.log(userData), [userData]);
 
@@ -167,7 +185,7 @@ const Navbar = () => {
       </div>
 
       {/* Profile Dropdown Menu */}
-      {Object.keys(userData).length > 0 && (
+      {Object.keys(userData).length == 0 && (
         <MuiMenu
           anchorEl={anchorEl}
           open={Boolean(anchorEl)}

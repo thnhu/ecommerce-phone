@@ -67,11 +67,9 @@ const VariantForm = ({
     ) {
       newErrors.stock = "Số lượng hàng phải lớn là số dương";
     }
-    
+
     if (actionType === "update") {
-      if (!formData.sold ||
-        isNaN(formData.sold) ||
-        Number(formData.sold) < 0) {
+      if (!formData.sold || isNaN(formData.sold) || Number(formData.sold) < 0) {
         newErrors.sold = "Số lượng bán phải là số dương";
       }
       if (formData.sold && Number(formData.sold) > Number(formData.stock)) {
@@ -137,19 +135,23 @@ const VariantForm = ({
             margin="normal"
             error={Boolean(errors.stock)}
             helperText={errors.stock}
-            disabled={!isChecked || actionType == "update"}
+            disabled={!isChecked || actionType == "create"}
           />
           <div>
-        {actionType === "update" && <label className="flex" >
-          <input
-            type="checkbox"
-            checked={isChecked}
-            onChange={(event) => {setIsChecked(event.target.checked)}}
-            
-          />
-          <p className="pl-3">Cập nhật số lượng hàng</p>
-        </label>}
-      </div>
+            {actionType === "update" && (
+              <label className="flex">
+                <input
+                  type="checkbox"
+                  checked={isChecked}
+                  onChange={(event) => {
+                    setIsChecked(event.target.checked);
+                    console.log(isChecked);
+                  }}
+                />
+                <p className="pl-3">Cập nhật số lượng hàng</p>
+              </label>
+            )}
+          </div>
           {actionType == "update" ? (
             <TextField
               label="Đã bán"
