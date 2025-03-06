@@ -27,6 +27,7 @@ const VariantForm = ({
     sold: "",
   });
   const [errors, setErrors] = useState({});
+  const [isChecked, setIsChecked] = useState();
 
   useEffect(() => {
     if (actionType === "update" && variant) {
@@ -38,7 +39,6 @@ const VariantForm = ({
     }
   }, [actionType, variant]);
 
-  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -67,7 +67,11 @@ const VariantForm = ({
     ) {
       newErrors.stock = "Số lượng hàng phải lớn là số dương";
     }
+
     if (actionType === "update") {
+      if (!formData.sold || isNaN(formData.sold) || Number(formData.sold) < 0) {
+        newErrors.sold = "Số lượng bán phải là số dương";
+      }
       if (formData.sold && Number(formData.sold) > Number(formData.stock)) {
         newErrors.sold = "Số lượng bán không thể nhiều hơn số lượng hàng";
       }
@@ -123,15 +127,31 @@ const VariantForm = ({
             helperText={errors.price}
           />
           <TextField
-            label="Số lượng"
+            label="Tổng số mẫu"
             name="stock"
-            value={formData.stock - formData.sold || formData.stock}
+            value={formData.stock}
             onChange={handleChange}
             fullWidth
             margin="normal"
             error={Boolean(errors.stock)}
             helperText={errors.stock}
+            disabled={!isChecked || actionType == "create"}
           />
+          <div>
+            {actionType === "update" && (
+              <label className="flex">
+                <input
+                  type="checkbox"
+                  checked={isChecked}
+                  onChange={(event) => {
+                    setIsChecked(event.target.checked);
+                    console.log(isChecked);
+                  }}
+                />
+                <p className="pl-3">Cập nhật số lượng hàng</p>
+              </label>
+            )}
+          </div>
           {actionType == "update" ? (
             <TextField
               label="Đã bán"
@@ -145,7 +165,7 @@ const VariantForm = ({
             />
           ) : null}
           <Button type="submit" variant="contained" color="primary" fullWidth>
-            {actionType === "create" ? "Create Variant" : "Update Variant"}
+            {actionType === "create" ? "Tạo mẫu" : "Cập nhật mẫu"}
           </Button>
         </form>
       </DialogContent>

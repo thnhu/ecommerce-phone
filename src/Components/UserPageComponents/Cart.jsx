@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Checkbox, IconButton, TextField, Snackbar, Alert } from "@mui/material";
 import { Add, Remove, Delete } from "@mui/icons-material";
-import iPhone from '../../assets/images/iphone-16-pro-titan-sa-mac.png';
-
+import iPhone from '../../assets/images/iphone-16-pro-titan-sa-mac.png'
+import api from "../../services/api";
 const Cart = () => {
   const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState([]);
+
   const [cartItems, setCartItems] = useState([
     {
       id: "20d51858-313f-43c6-a9d9-cb840dcfe88f",
@@ -21,6 +22,8 @@ const Cart = () => {
     },
   ]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  
 
   const handleSelectItem = (id) => {
     setSelectedItems((prev) =>

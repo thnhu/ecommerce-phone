@@ -1,17 +1,29 @@
-import React, { useState } from 'react';
-import { Menu, Search, ShoppingCart, Person } from '@mui/icons-material';
-import { Badge, IconButton, InputBase, MenuItem, Menu as MuiMenu } from '@mui/material';
+import React, { useEffect, useState } from "react";
+import { Menu, Search, ShoppingCart, Person } from "@mui/icons-material";
+import { Link } from "react-router-dom";
+import api from "../../services/api";
+import defaultAvatar from "../../assets/images/default-avatar.png";
+import {
+  Badge,
+  IconButton,
+  InputBase,
+  MenuItem,
+  Menu as MuiMenu,
+} from "@mui/material";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [userData, setUserData] = useState({});
+  //Tracking the change of token
+  const [tokenTracker, setTokenTracker] = useState(localStorage.getItem("authToken"))
 
   const navLinks = [
-    { title: 'Trang chủ', path: '/' },
-    { title: 'Giảm giá', path: '/sale' },
-    { title: 'Hàng mới về', path: '/newarrivals' },
-    { title: 'Thương hiệu', path: '/category' },
+    { title: "Trang chủ", path: "/" },
+    { title: "Giảm giá", path: "/promotion" },
+    { title: "Hàng mới về", path: "/newarrivals" },
+    { title: "Thương hiệu", path: "/category" },
   ];
 
   const handleProfileMenuOpen = (event) => {
@@ -21,6 +33,37 @@ const Navbar = () => {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      // Update the state whenever the token in localStorage changes
+      setTokenTracker(localStorage.getItem("authToken"));
+    };
+
+    // Add event listener for storage changes (triggered across all tabs/windows)
+    window.addEventListener("storage", handleStorageChange);
+
+    // Clean up the event listener when the component is unmounted
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get("/phone/user/myInfo");
+        setUserData((prevState) => ({ ...prevState, ...response.data }));
+      } catch (e) {
+        console.log(e);
+        setUserData({})
+      }
+    };
+
+    fetchData();
+  }, [tokenTracker]);
+
+  useEffect(() => console.log(userData), [userData]);
 
   return (
     <nav className="bg-white shadow-lg fixed top-0 left-0 w-full z-50">
@@ -35,7 +78,9 @@ const Navbar = () => {
               <Menu />
             </IconButton>
             <a href="/">
-              <span className="text-xl font-bold text-gray-800">THEGIOIDIDONG</span>
+              <span className="text-xl font-bold text-gray-800">
+                THEGIOIDIDONG
+              </span>
             </a>
           </div>
 
@@ -57,7 +102,7 @@ const Navbar = () => {
               <InputBase
                 placeholder="Bạn muốn tìm gì..."
                 className="ml-2"
-                inputProps={{ 'aria-label': 'search' }}
+                inputProps={{ "aria-label": "search" }}
               />
             </div>
 
@@ -68,17 +113,36 @@ const Navbar = () => {
               <Search />
             </IconButton>
 
-            <a href="/cart">
-              <IconButton>
-                <Badge badgeContent={1} color="error">
-                  <ShoppingCart />
-                </Badge>
-              </IconButton>
-            </a>
+            {/* Cart */}
+            {Object.keys(userData).length > 0 && (
+              <a href="/cart">
+                <IconButton>
+                  <Badge badgeContent={1} color="error">
+                    <ShoppingCart />
+                  </Badge>
+                </IconButton>
+              </a>
+            )}
 
-            <IconButton onClick={handleProfileMenuOpen}>
-              <Person />
-            </IconButton>
+            {/* Login */}
+            {Object.keys(userData).length === 0 && (
+              <IconButton onClick={handleProfileMenuOpen}>
+                <Person />
+              </IconButton>
+            )}
+            {Object.keys(userData).length > 0 && (
+              <Link to="/user">
+                {/* <h1 className="font-bold">{userData.displayName}</h1> */}
+                {/* <img src={defaultAvatar} alt="" className=""/> */}
+                <div className="w-9 h-9 overflow-hidden rounded-lg">
+                  <img
+                    src={userData.avatar || defaultAvatar}
+                    alt="Avatar"
+                    className="object-cover w-full h-full"
+                  />
+                </div>
+              </Link>
+            )}
           </div>
         </div>
 
@@ -89,7 +153,7 @@ const Navbar = () => {
               <InputBase
                 placeholder="Tìm kiếm..."
                 className="ml-2 flex-1"
-                inputProps={{ 'aria-label': 'search' }}
+                inputProps={{ "aria-label": "search" }}
               />
             </div>
           </div>
@@ -112,18 +176,25 @@ const Navbar = () => {
         )}
       </div>
 
-      <MuiMenu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleMenuClose}>
-        <a href="/login">
-          <MenuItem className="hover:text-blue-500" onClick={handleMenuClose}>
-            Đăng nhập
-          </MenuItem>
-        </a>
-        <a href="/register">
-          <MenuItem className="hover:text-blue-500" onClick={handleMenuClose}>
-            Đăng ký
-          </MenuItem>
-        </a>
-      </MuiMenu>
+      {/* Profile Dropdown Menu */}
+      {Object.keys(userData).length == 0 && (
+        <MuiMenu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <a href="/login">
+            <MenuItem className="hover:text-blue-500" onClick={handleMenuClose}>
+              Đăng nhập
+            </MenuItem>
+          </a>
+          <a href="/register">
+            <MenuItem className="hover:text-blue-500" onClick={handleMenuClose}>
+              Đăng ký
+            </MenuItem>
+          </a>
+        </MuiMenu>
+      )}
     </nav>
   );
 };

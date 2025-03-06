@@ -1,15 +1,15 @@
 import axios from "axios";
 
-const api = axios.create({
-  baseURL: "http://localhost:8080",
-});
+  const api = axios.create({
+    baseURL: "http://localhost:8080",
+  });
 
-const refreshAccessToken = async (expiredAccessToken) => {
-  try {
-    // console.log('Refreshing token with expired token:', expiredAccessToken);
-    const response = await axios.post("/phone/auth/refresh", {
-      token: expiredAccessToken,
-    });
+  const refreshAccessToken = async (expiredAccessToken) => {
+    try {
+      // console.log('Refreshing token with expired token:', expiredAccessToken);
+      const response = await axios.post("/phone/auth/refresh", {
+        token: expiredAccessToken,
+      });
 
     console.log("URL: " + response.headers);
 
