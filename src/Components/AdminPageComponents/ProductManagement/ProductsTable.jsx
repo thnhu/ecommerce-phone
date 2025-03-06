@@ -262,28 +262,28 @@ const ProductsTable = () => {
                         <ul className="list-none">
                           <li>
                           {/* JSON.stringify(attributes[0]) */}
-                            <strong>OS:</strong> {attributes[index].os || "Chưa xác định"}
+                            <strong>OS:</strong> {attributes[index]?.os || "Chưa xác định"}
                           </li>
                           <li>
-                            <strong>CPU:</strong> {attributes[index].cpu || "Chưa xác định"}
+                            <strong>CPU:</strong> {attributes[index]?.cpu || "Chưa xác định"}
                           </li>
                           <li>
-                            <strong>RAM:</strong> {attributes[index].ram || "Chưa xác định"}
+                            <strong>RAM:</strong> {attributes[index]?.ram || "Chưa xác định"}
                           </li>
                           <li>
-                            <strong>ROM:</strong> {attributes[index].rom || "Chưa xác định"}
+                            <strong>ROM:</strong> {attributes[index]?.rom || "Chưa xác định"}
                           </li>
                           <li>
-                            <strong>Camera:</strong> {attributes[index].camera || "Chưa xác định"}
+                            <strong>Camera:</strong> {attributes[index]?.camera || "Chưa xác định"}
                           </li>
                           <li>
-                            <strong>Pin:</strong> {attributes[index].pin || "Chưa xác định"}
+                            <strong>Pin:</strong> {attributes[index]?.pin || "Chưa xác định"}
                           </li>
                           <li>
-                            <strong>SIM:</strong> {attributes[index].sim || "Chưa xác định"}
+                            <strong>SIM:</strong> {attributes[index]?.sim || "Chưa xác định"}
                           </li>
                           <li>
-                            <strong>Others:</strong> {attributes[index].others || "Chưa xác định"}
+                            <strong>Others:</strong> {attributes[index]?.others || "Chưa xác định"}
                           </li>
                         </ul>
                       </div>
