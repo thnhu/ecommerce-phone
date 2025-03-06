@@ -230,7 +230,7 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
                   <p className="text-red-500 text-sm">{errors.categoryId}</p>
                 )}
               </div>
-
+              {/* Ảnh sản phẩm */}
               <div>
             <h2 className="text-m font-semibold mb-4">Chọn ảnh sản phẩm</h2>
             <div className="flex flex-wrap gap-2">
