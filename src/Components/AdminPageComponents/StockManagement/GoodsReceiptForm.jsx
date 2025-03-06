@@ -21,22 +21,31 @@ const GoodsReceiptForm = ({ open, handleClose, handleSubmit }) => {
   const [products, setProducts] = useState([]);
   const [variants, setVariants] = useState([]);
   
+  // const fetchUserName = async () => {
+  //   try {
+  //     const response = await api.get("/phone/category");
+  //     setCategories(response.data);
+  //     setLoading(false);
+  //   } catch (err) {
+  //     setError('Không thể tải danh sách nhà cung cấp');
+  //     setLoading(false);
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetch("/phone/user/myInfo")
+  //     .then((res) => res.json())
+  //     .then((data) => setUsers(data));
 
-  useEffect(() => {
-    fetch("/api/users")
-      .then((res) => res.json())
-      .then((data) => setUsers(data));
-
-    fetch("/api/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
-  }, []);
+  //   fetch("/api/products")
+  //     .then((res) => res.json())
+  //     .then((data) => setProducts(data));
+  // }, []);
 
   useEffect(() => {
     if (warehouseData.product) {
       fetch(`/api/products/${warehouseData.product}/versions`)
         .then((res) => res.json())
-        .then((data) => setVersions(data));
+        .then((data) => setVariants(data));
     }
   }, [warehouseData.product]);
 

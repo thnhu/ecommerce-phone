@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Dialog, Rating, TextField, Snackbar } from '@mui/material';
+import { Button, Dialog, Rating, TextField, Snackbar, Alert } from '@mui/material';
 import { Close, RateReview } from '@mui/icons-material';
 
 const initialPhones = [
@@ -119,7 +119,7 @@ function Review() {
   };
 
   return (
-    <div className="m-4 bg-white rounded-lg shadow">
+    <div className="m-4 bg-white rounded-lg pt-20 pb-12">
       <div className="overflow-auto max-h-[70vh]">
         <div className="grid grid-cols-12 gap-4 p-3 bg-gray-100 font-semibold border-b">
           <div className="col-span-1">#</div>
@@ -169,15 +169,12 @@ function Review() {
         open={snackbarOpen}
         autoHideDuration={3000}
         onClose={() => setSnackbarOpen(false)}
-        message="Cảm ơn đánh giá của bạn!"
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        sx={{ 
-          '& .MuiSnackbarContent-root': {
-            bgcolor: 'success.main',
-            color: 'common.white'
-          }
-        }}
-      />
+        anchorOrigin={{vertical:'top', horizontal:'center'}}  
+      >
+        <Alert severity="success" sx={{ width: '100%'}}>
+          Cảm ơn đánh giá của bạn
+      </Alert>
+      </Snackbar>
     </div>
   );
 }
