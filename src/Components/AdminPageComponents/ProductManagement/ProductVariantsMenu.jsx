@@ -8,6 +8,7 @@ const ProductVariantMenu = ({
   product,
   onAddVariant,
   onOpenAttribute, // This function should open the attribute form and pass product to it
+  setAttributes
 }) => {
   return (
     <Menu
@@ -31,7 +32,7 @@ const ProductVariantMenu = ({
           handleClose();
         }}
       >
-        Thêm thuộc tính
+        Cập nhật thuộc tính
       </MenuItem>
       
       <MenuItem

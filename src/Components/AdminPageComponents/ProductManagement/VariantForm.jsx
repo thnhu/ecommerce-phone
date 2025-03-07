@@ -27,7 +27,7 @@ const VariantForm = ({
     sold: "",
   });
   const [errors, setErrors] = useState({});
-  const [isChecked, setIsChecked] = useState();
+  const [isChecked, setIsChecked] = useState(false);
 
   useEffect(() => {
     if (actionType === "update" && variant) {
@@ -135,7 +135,7 @@ const VariantForm = ({
             margin="normal"
             error={Boolean(errors.stock)}
             helperText={errors.stock}
-            disabled={!isChecked || actionType == "create"}
+            disabled={!isChecked && actionType == "update"}
           />
           <div>
             {actionType === "update" && (

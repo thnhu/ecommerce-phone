@@ -53,6 +53,11 @@ const ProductsTable = () => {
   const [openProductAttributeForm, setOpenProductAttributeForm] = useState();
   const [attributes, setAttributes] = useState([]);
 
+  useEffect(() => {
+    console.log("Attributes updated", attributes);
+  }, [attributes]);
+  
+
   const toggleProductVariants = (productId) => {
     setExpandedProducts((prevExpanded) => ({
       ...prevExpanded,
@@ -133,6 +138,10 @@ const ProductsTable = () => {
     // setSelectedProduct(null);
   };
 
+  // const handleCloseAttributeForm = () => {
+  //   setOpenAttributeForm(false)
+  // }
+
   const handleAddVariant = () => {
     setVariantActionType("create"); // Set action to 'create'
     setSelectedVariant(null); // Reset selected variant
@@ -179,7 +188,7 @@ const ProductsTable = () => {
     }
   };
 
-  const handleCreateOfferVariant = async (variantId, product) => {};
+  // const handleCreateOfferVariant = async (variantId, product) => {};
 
   useEffect(() => {
     fetchData();
@@ -427,6 +436,7 @@ const ProductsTable = () => {
         onDeleteVariant={handleDeleteVariant}
         onOpenAttribute={handleOpenProductAttributeForm}
         onCloseAttribute={handleCloseProductAttributeForm}
+        setAttributes={setAttributes}
       />
 
       {/* Product Variant Menu Component */}
@@ -440,6 +450,9 @@ const ProductsTable = () => {
           open={openProductAttributeForm}
           handleClose={handleCloseProductAttributeForm}
           product={selectedProduct} // Pass the selected product
+          setAttributes={setAttributes}
+          attributes={attributes}
+          productData={productData}
         />
       </Dialog>
 

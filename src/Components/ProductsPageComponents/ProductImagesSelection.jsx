@@ -1,45 +1,52 @@
-import { useState } from "react";
-import Sprigatito from "../../assets/sampleImages/Sprigatito.png";
-import Fuecoco from "../../assets/sampleImages/Fuecoco.png";
-import Quaxly from "../../assets/sampleImages/Quaxly.png";
+import { useState, useEffect } from "react";
 
-import iphoneImg from "../../assets/images/iphone-16-pro-titan-sa-mac.png"
-
-const arrayOfImage = [iphoneImg, iphoneImg, iphoneImg, iphoneImg]; 
-
-const ProductImagesSelection = () => {
+const ProductImagesSelection = ({ productImg }) => {
   const [selectedImage, setSelectedImage] = useState(0);
-  const [startIndex, setStartIndex] = useState(0); 
+  const [startIndex, setStartIndex] = useState(0);
 
   const setCurrentSelectedImage = (index) => {
     setSelectedImage(index);
   };
 
+  useEffect(() => {
+    console.log(productImg); // Log the product images for debugging
+  }, [productImg]);
+
   const nextImages = () => {
-    // Loop to the start if we're at the end of the array
-    if (selectedImage < arrayOfImage.length - 1) {
+    if (selectedImage < productImg.length - 1) {
       setSelectedImage((index) => index + 1);
-      if (startIndex + 3 < arrayOfImage.length) {
-        setStartIndex(startIndex + 1)
+      if (startIndex + 3 < productImg.length) {
+        setStartIndex(startIndex + 1);
       }
     } else {
-      setSelectedImage(0)
+      setSelectedImage(0);
       setStartIndex(0);
     }
   };
 
   const prevImages = () => {
-    // Loop to the end if we're at the start
     if (selectedImage > 0) {
       setSelectedImage((index) => index - 1);
       if (startIndex > 0) {
-        setStartIndex(startIndex - 1)
+        setStartIndex(startIndex - 1);
       }
     } else {
-      setSelectedImage(arrayOfImage.length - 1)
-      setStartIndex(arrayOfImage.length - 3)
+      setSelectedImage(productImg.length - 1);
+      setStartIndex(Math.max(0, productImg.length - 3)); // Ensure we don't go negative
     }
   };
+
+  // Calculate how many images to display (max 3)
+  const imagesToDisplay = Math.min(productImg?.length || 0, 3);
+
+  // Check if productImg is undefined or an empty array
+  if (!productImg || productImg.length === 0) {
+    return (
+      <div className="flex justify-center items-center">
+        <p>Đang tải...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col-reverse md:w-1/2 mt-4 md:flex-row gap-0">
@@ -54,12 +61,12 @@ const ProductImagesSelection = () => {
 
         {/* Images carousel */}
         <div className="w-full flex gap-3 md:flex-col justify-evenly align-middle mt-2 md:mt-0">
-          {arrayOfImage
-            .slice(startIndex, startIndex + 3)
+          {productImg && productImg.length > 0 && productImg
+            .slice(startIndex, startIndex + imagesToDisplay)  // Dynamically slice the images
             .map((image, index) => (
               <button
-                key={index} // Unique key for each button
-                onClick={() => setCurrentSelectedImage(startIndex + index)} // Set the clicked image as selected
+                key={index}
+                onClick={() => setCurrentSelectedImage(startIndex + index)}
                 className={`${
                   selectedImage === startIndex + index
                     ? "border-[1px] border-black rounded-md"
@@ -67,7 +74,7 @@ const ProductImagesSelection = () => {
                 } box-border`}
               >
                 <img
-                  src={image}
+                  src={`data:image/*;base64,${image.data}`}  // Use base64 data
                   alt={`Image ${startIndex + index}`}
                   className="w-[111px] h-[106px] md:w-[152px] md:h-[167px]"
                 />
@@ -86,11 +93,13 @@ const ProductImagesSelection = () => {
 
       {/* Main Display Image */}
       <div className="flex justify-center align-middle w-full">
-        <img
-          src={arrayOfImage[selectedImage]}
-          alt="Failed to load"
-          className="w-[358px] h-[290px] overflow-clip md:w-[444px] md:h-[530px] object-contain "
-        />
+        {productImg && productImg.length > 0 && (
+          <img
+            src={`data:image/*;base64,${productImg[selectedImage].data}`}  // Main image with base64 data
+            alt="Failed to load"
+            className="w-[358px] h-[290px] overflow-clip md:w-[444px] md:h-[530px] object-contain"
+          />
+        )}
       </div>
     </div>
   );
