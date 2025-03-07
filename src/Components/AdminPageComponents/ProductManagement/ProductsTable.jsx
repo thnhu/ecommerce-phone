@@ -1,27 +1,9 @@
 import React, { useState, useEffect } from "react";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  IconButton,
-  Button,
-  Dialog,
-  Snackbar,
-  Alert,
+  Table,TableBody,TableCell,TableContainer,TableHead,TableRow,Paper,IconButton,Button,Dialog,Snackbar,Alert,
 } from "@mui/material";
 import {
-  Edit,
-  Delete,
-  ArrowBack,
-  ArrowForward,
-  MoreVert,
-  ExpandMore,
-  ExpandLess,
-  LocalOffer,
+  Edit,Delete,ArrowBack,ArrowForward,MoreVert,ExpandMore,ExpandLess,LocalOffer,
 } from "@mui/icons-material";
 import CreateProductForm from "./CreateProductForm";
 import api from "../../../services/api";
@@ -33,7 +15,7 @@ import ProductAttributeForm from "./ProductAttributeForm";
 const ProductsTable = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [productData, setProductData] = useState([]);
-  const [maxIndex, setMaxIndex] = useState(0);
+  const [totalProducts, setTotalProducts] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [openCreateForm, setOpenCreateForm] = useState(false);
@@ -52,6 +34,7 @@ const ProductsTable = () => {
   const [expandedProducts, setExpandedProducts] = useState({});
   const [openProductAttributeForm, setOpenProductAttributeForm] = useState();
   const [attributes, setAttributes] = useState([]);
+  const [showDetails, setShowDetails] = useState(false);
 
   const toggleProductVariants = (productId) => {
     setExpandedProducts((prevExpanded) => ({
@@ -67,10 +50,7 @@ const ProductsTable = () => {
         `/phone/product?page=${currentIndex}&size=${size}`
       );
       setProductData(productsRes.data.content);
-
-      if (productsRes.data.content.length < size) {
-        setMaxIndex(currentIndex);
-      }
+      setTotalProducts(productsRes.data.totalElements);
     } catch (error) {
       setError("Lỗi khi tải dữ liệu sản phẩm");
       console.error("Fetch error:", error);
@@ -78,6 +58,9 @@ const ProductsTable = () => {
       setLoading(false);
     }
   };
+
+  // Tính tổng số trang
+  const maxIndex = Math.ceil(totalProducts / size) - 1; // Vì index bắt đầu từ 0
 
   //Fetch data của phone và lưu vào mảng
   useEffect(() => {
@@ -91,7 +74,6 @@ const ProductsTable = () => {
 
         // Wait for all promises to resolve
         const resolvedAttributes = await Promise.all(attributePromises);
-        
         // Set the attributes once all promises are resolved
         setAttributes(resolvedAttributes);
         console.log(resolvedAttributes)
@@ -105,22 +87,6 @@ const ProductsTable = () => {
       fetchAttributes(); // Only fetch attributes if productData is not empty
     }
   }, [productData]);
-
-  const handleDelete = async (productId) => {
-    if (window.confirm("Bạn chắc chắn muốn xóa?")) {
-      try {
-        await api.delete(`/phone/product/${productId}`);
-        fetchData();
-        setSnackbar({
-          open: true,
-          message: "Xóa thành công!",
-          severity: "success",
-        });
-      } catch (err) {
-        setError("Xóa thất bại");
-      }
-    }
-  };
 
   const handleVariantMenuClick = (event, product) => {
     setAnchorEl(event.currentTarget);
@@ -235,12 +201,6 @@ const ProductsTable = () => {
                       <div className="flex space-x-2">
                         <IconButton color="primary">
                           <Edit />
-                        </IconButton>
-                        <IconButton
-                          color="error"
-                          onClick={() => handleDelete(product.id)}
-                        >
-                          <Delete />
                         </IconButton>
                         <IconButton
                           color="default"
@@ -382,23 +342,31 @@ const ProductsTable = () => {
       </TableContainer>
       </div>
 
-      <div className="flex items-center justify-center mt-4 gap-2">
-        <IconButton
-          onClick={() => setCurrentIndex((prev) => Math.max(0, prev - 1))}
+      {/* Pagination */}
+      <div className="flex items-center justify-center py-4 border-t border-gray-200">
+          <IconButton
           disabled={currentIndex === 0}
-        >
-          <ArrowBack />
-        </IconButton>
-
-        <span className="text-lg font-medium">{currentIndex + 1}</span>
-
-        <IconButton
-          onClick={() => setCurrentIndex((prev) => prev + 1)}
-          disabled={currentIndex >= maxIndex}
-        >
-          <ArrowForward />
-        </IconButton>
-      </div>
+          className="hover:bg-gray-100"
+            onClick={() =>
+              setCurrentIndex((currentIndex) => Math.max(0, currentIndex - 1))
+            }
+          >
+            <ArrowBack className="text-gray-600" />
+          </IconButton>
+          <p className="p-1 md:p-5 text-sm md:text-lg">{currentIndex + 1} / {maxIndex + 1}</p>
+          <IconButton
+            onClick={() =>
+              setCurrentIndex((currentIndex) => {
+                if (maxIndex > 0) return Math.min(currentIndex + 1, maxIndex);
+                else return currentIndex + 1;
+              })
+            }
+            disabled={currentIndex >= maxIndex}
+            className="hover:bg-gray-100"
+          >
+            <ArrowForward className="text-gray-600"/>
+          </IconButton>
+        </div>
 
       <Dialog
         open={openCreateForm}
