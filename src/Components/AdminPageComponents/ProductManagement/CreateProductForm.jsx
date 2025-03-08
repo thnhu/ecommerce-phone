@@ -21,13 +21,6 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
     description: "",
     categoryId: "",
     imagePaths: [],
-    variants: [
-      {
-        color: "",
-        price: "",
-        stock: "",
-      },
-    ],
   });
 
   const [errors, setErrors] = useState({});
@@ -58,13 +51,6 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
         description: "",
         categoryId: "",
         imagePaths: [],
-        variants: [
-          {
-            color: "",
-            price: "",
-            stock: "",
-          },
-        ],
       });
       setErrors({});
     }
@@ -103,6 +89,13 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
       fileInputRef.current.click();
     }
   };
+  const handleRemoveImage = (index) => {
+    setImages((prevImages) => {
+      const updatedImages = prevImages.filter((_, i) => i !== index);
+      return updatedImages;
+    });
+  };
+
   // Validate form
   const validateForm = () => {
     const newErrors = {};
@@ -146,7 +139,6 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
             name: productData.name,
             description: productData.description,
             categoryId: productData.categoryId,
-            color: productData.color,
           }),
         ],
         { type: "application/json" }
@@ -215,36 +207,6 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
                   <p className="text-red-500 text-sm">{errors.description}</p>
                 )}
               </div>
-              {/* Màu sắc mặc định*/}
-              <div>
-                <input
-                  name="color"
-                  value={productData.color}
-                  onChange={handleChange}
-                  placeholder="Màu sắc"
-                  className="outline-none w-96 p-1"
-                  style={{ borderBottom: "1px solid #E4E0E1" }}
-                />
-                {errors.color && (
-                  <p className="text-red-500 text-sm">{errors.color}</p>
-                )}
-              </div>
-
-              {/* Giá sản phẩm */}
-              <div>
-                <input
-                  type="number"
-                  name="price"
-                  value={productData.price}
-                  onChange={handleChange}
-                  placeholder="Giá sản phẩm"
-                  className="outline-none w-96 p-1"
-                  style={{ borderBottom: "1px solid #E4E0E1" }}
-                />
-                {errors.price && (
-                  <p className="text-red-500 text-sm">{errors.price}</p>
-                )}
-              </div>
 
               {/* Danh mục */}
               <div>
@@ -268,24 +230,29 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
                   <p className="text-red-500 text-sm">{errors.categoryId}</p>
                 )}
               </div>
-
               {/* Ảnh sản phẩm */}
               <div>
-                <h2 className="text-m font-semibold mb-4">Chọn ảnh sản phẩm</h2>
-                <div className="flex flex-wrap gap-2">
-                  {/* Hiển thị preview các hình đã chọn */}
-                  {images.map((img, index) => (
-                    <div
-                      key={index}
-                      className="w-20 h-20 border rounded overflow-hidden"
-                    >
-                      <img
-                        src={img.preview}
-                        alt={`image-${index}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
+            <h2 className="text-m font-semibold mb-4">Chọn ảnh sản phẩm</h2>
+            <div className="flex flex-wrap gap-2">
+              {/* Hiển thị preview các hình đã chọn */}
+              {images.map((img, index) => (
+             <div key={index} className="relative w-20 h-20 border rounded overflow-hidden">
+            <img
+                    src={img.preview}
+                    alt={`image-${index}`}
+                    className="w-full h-full object-cover"
+                  />
+            {/* Nút xóa hình */}            
+            <button
+              type="button"
+              onClick={() => handleRemoveImage(index)}
+              className="absolute top-0 right-0 bg-red-400 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+            >
+              ×
+            </button>
+          </div>
+        ))}
+
                   {/* Nút thêm hình */}
                   <button
                     type="button"

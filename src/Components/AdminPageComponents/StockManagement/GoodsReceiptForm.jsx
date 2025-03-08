@@ -17,28 +17,45 @@ const GoodsReceiptForm = ({ open, handleClose, handleSubmit }) => {
     priceAtStock: "",
   });
   const [errors, setErrors] = useState({});
-  const [users, setUsers] = useState([]);
+  const [userName, setUserName] = useState([]);
   const [products, setProducts] = useState([]);
   const [variants, setVariants] = useState([]);
-  
-
   useEffect(() => {
-    fetch("/api/users")
-      .then((res) => res.json())
-      .then((data) => setUsers(data));
-
-    fetch("/api/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
-  }, []);
-
-  useEffect(() => {
-    if (warehouseData.product) {
-      fetch(`/api/products/${warehouseData.product}/versions`)
-        .then((res) => res.json())
-        .then((data) => setVersions(data));
+    try {
+      const response = api.get ("/phone/user/myInfo");
+      setUserName(response.data.displayName);
     }
-  }, [warehouseData.product]);
+    catch (err) {
+      console.log('Không thể tải tên người dùng');
+    }
+}, []);
+  // const fetchUserName = async () => {
+  //   try {
+  //     const response = await api.get("/phone/category");
+  //     setCategories(response.data);
+  //     setLoading(false);
+  //   } catch (err) {
+  //     setError('Không thể tải danh sách nhà cung cấp');
+  //     setLoading(false);
+  //   }
+  // };
+  // useEffect(() => {
+  //   fetch("/phone/user/myInfo")
+  //     .then((res) => res.json())
+  //     .then((data) => setUsers(data));
+
+  //   fetch("/api/products")
+  //     .then((res) => res.json())
+  //     .then((data) => setProducts(data));
+  // }, []);
+
+  // useEffect(() => {
+  //   if (warehouseData.product) {
+  //     fetch(`/api/products/${warehouseData.product}/versions`)
+  //       .then((res) => res.json())
+  //       .then((data) => setVariants(data));
+  //   }
+  // }, [warehouseData.product]);
 
   const handleChange = (e) => {
     setWarehouseData({ ...warehouseData, [e.target.name]: e.target.value });
@@ -49,8 +66,20 @@ const GoodsReceiptForm = ({ open, handleClose, handleSubmit }) => {
     if (!warehouseData.user) newErrors.user = "Vui lòng chọn người nhập.";
     if (!warehouseData.product) newErrors.product = "Vui lòng chọn sản phẩm.";
     if (!warehouseData.variant) newErrors.variant = "Vui lòng chọn phiên bản.";
-    if (!warehouseData.quantity || warehouseData.quantity <= 0) newErrors.quantity = "Số lượng phải lớn hơn 0.";
-    if (!warehouseData.price || warehouseData.price <= 0) newErrors.price = "Giá kho phải lớn hơn 0.";
+    if (
+      !warehouseData.quantity ||
+      isNaN(warehouseData.quantity) ||
+      Number(warehouseData.quantity) <= 0
+    ) {
+      newErrors.price = "Số lượng phải lớn hơn 0.";
+    }
+    if (
+      !warehouseData.price ||
+      isNaN(warehouseData.price) ||
+      Number(warehouseData.price) <= 0
+    ) {
+      newErrors.price = "Giá kho phải lớn hơn 0.";
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -126,6 +155,9 @@ const GoodsReceiptForm = ({ open, handleClose, handleSubmit }) => {
               />
               {errors.price && <p className="text-red-500 text-sm">{errors.price}</p>}
             </div>
+            <h2 className="text-xl font-bold">Tên người dùng:</h2>
+          <p className="text-lg text-blue-600">{users || "Đang tải..."}</p>
+
 
             <DialogActions>
               <Button onClick={handleClose}>

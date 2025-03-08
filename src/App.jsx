@@ -8,6 +8,7 @@ import NotFoundPage from './pages/NotFoundPage';
 import LogInPage from './pages/LogInPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminPage from './pages/AdminPage';
+import StaffPage from './pages/StaffPage';
 import PersonalPage from './pages/PersonalPage';
 import ReviewPage from './pages/ReviewPage';
 import OrderPage from './pages/OrderPage';
@@ -49,6 +50,10 @@ const router = createBrowserRouter([
     element: <AdminPage />
   },
   {
+    path: '/staff',
+    element: <StaffPage />
+  },
+  {
     path: "*",
     element: <NotFoundPage />,
   },
@@ -56,7 +61,6 @@ const router = createBrowserRouter([
 ]);
 function App() {
   return <RouterProvider router={router} />;
-  // return <PersonalPage></PersonalPage>
 }
 
 export default App
