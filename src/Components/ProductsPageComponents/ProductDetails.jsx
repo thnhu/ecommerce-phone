@@ -35,7 +35,7 @@ const ProductDetail = ({ product }) => {
   const updateColor = (color) => {
     setColor(color);
     const stock = product.variants[color].stock;
-    setProductVariantId(product.variants[selectedColor].id)
+    setProductVariantId(product.variants[selectedColor].id);
     if (quantity > stock) {
       setErrorQuantity(true);
     } else {
@@ -43,11 +43,6 @@ const ProductDetail = ({ product }) => {
     }
   };
 
-  // useEffect(()=>{
-  //   if(product){
-  //     setProductVariantId(product.variants[selectedColor].id)
-  //   }
-  // }, [product, selectedColor])
   useEffect(() => {
     if (product && product.variants && product.variants.length > 0) {
       setProductVariantId(product.variants[0].id);
@@ -109,23 +104,27 @@ const ProductDetail = ({ product }) => {
   };
 
   const formatNumber = (number) => {
-    return new Intl.NumberFormat('de-DE').format(number); 
+    return new Intl.NumberFormat("de-DE").format(number);
   };
 
   const handleAddCart = async () => {
-    try {
-      const userResponse = await api.get("/phone/user/myInfo");
-      const userId = userResponse.data.id;
-      try{
-        const cartResponse = await api.post(
-          `/phone/cart?userId=${userId}&variantId=${productVariantId}&quantity=${quantity}`
-        )
-        alert("Thành công")
+    if (!errorQuantity) {
+      try {
+        const userResponse = await api.get("/phone/user/myInfo");
+        const userId = userResponse.data.id;
+        try {
+          const cartResponse = await api.post(
+            `/phone/cart?userId=${userId}&variantId=${productVariantId}&quantity=${quantity}`
+          );
+          alert("Thành công");
+        } catch (e) {
+          console.log(e);
+        }
       } catch (e) {
         console.log(e);
       }
-    } catch (e) {
-      console.log(e);
+    }else{
+      alert("Số lượng không phù hợp.")
     }
   };
 
