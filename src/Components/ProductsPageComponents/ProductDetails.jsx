@@ -2,26 +2,72 @@ import { useEffect, useState } from "react";
 import { theme } from "../../const/const";
 import stars from "../../assets/stars";
 import PropTypes from "prop-types";
-
-const colorsSample = ["#000000", "#898f6b", "#FF0000", "#FFF0012321"];
+import api from "../../services/api";
+import axios from "axios";
 
 const ProductDetail = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
-  const [selectedColor, setColor] = useState(-1);
+  const [selectedColor, setColor] = useState(0);
+  const [errorQuantity, setErrorQuantity] = useState(false);
+  const [productVariantId, setProductVariantId] = useState();
 
   const updateQuantity = (add) => {
+    const stock = product.variants[selectedColor].stock;
+
     if (add === -1 && quantity === 1) return;
-    setQuantity((prevQuantity) => prevQuantity + add);
+
+    if (add === -1 && quantity - 1 > 0) {
+      setQuantity((prevQuantity) => prevQuantity + add);
+      if (quantity - 1 <= stock) {
+        setErrorQuantity(false);
+      }
+    } else if (quantity >= stock) {
+      setErrorQuantity(true);
+      return;
+    } else {
+      setQuantity((prevQuantity) => prevQuantity + add);
+      if (quantity + 1 <= stock) {
+        setErrorQuantity(false);
+      }
+    }
   };
 
   const updateColor = (color) => {
     setColor(color);
+    const stock = product.variants[color].stock;
+    setProductVariantId(product.variants[selectedColor].id)
+    if (quantity > stock) {
+      setErrorQuantity(true);
+    } else {
+      setErrorQuantity(false);
+    }
   };
+
+  // useEffect(()=>{
+  //   if(product){
+  //     setProductVariantId(product.variants[selectedColor].id)
+  //   }
+  // }, [product, selectedColor])
+  useEffect(() => {
+    if (product && product.variants && product.variants.length > 0) {
+      setProductVariantId(product.variants[0].id);
+    }
+  }, [product]);
 
   const handleInputChange = (event) => {
     const value = event.target.value;
+
     if (/^\d*$/.test(value)) {
-      setQuantity(value);
+      const stock = product.variants[selectedColor].stock;
+
+      const numericValue = Number(value);
+
+      setQuantity(numericValue);
+      if (numericValue <= stock) {
+        setErrorQuantity(false);
+      } else {
+        setErrorQuantity(true);
+      }
     }
   };
 
@@ -30,15 +76,21 @@ const ProductDetail = ({ product }) => {
     setQuantity(newQuantity);
   };
 
-  useEffect(() => {
-    console.log(product); // Log the product for debugging
-  }, [product]);
+  //Format and map rating points
+  const formatRating = (rating) => {
+    const parsedRating = parseFloat(rating);
+    if (isNaN(parsedRating)) {
+      return "0.0";
+    }
+    const roundedRating = Math.round(parsedRating * 2) / 2;
+    return roundedRating.toFixed(1);
+  };
+  const ratingKey = formatRating(product.rating);
+  const ratingImage = stars[ratingKey];
 
   const isValidColor = (color) => {
     const hexRegex = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/;
-
     const rgbRegex = /^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/;
-
     if (hexRegex.test(color)) {
       return true;
     }
@@ -56,7 +108,27 @@ const ProductDetail = ({ product }) => {
     return false;
   };
 
-  // Check if product is null or undefined
+  const formatNumber = (number) => {
+    return new Intl.NumberFormat('de-DE').format(number); 
+  };
+
+  const handleAddCart = async () => {
+    try {
+      const userResponse = await api.get("/phone/user/myInfo");
+      const userId = userResponse.data.id;
+      try{
+        const cartResponse = await api.post(
+          `/phone/cart?userId=${userId}&variantId=${productVariantId}&quantity=${quantity}`
+        )
+        alert("Thành công")
+      } catch (e) {
+        console.log(e);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   if (!product) {
     return (
       <div className="flex justify-center items-center">
@@ -73,16 +145,23 @@ const ProductDetail = ({ product }) => {
           <p className="header-font text-[24px] md:text-3xl lg:text-[33px]">
             {product.name || "Product Name Unavailable"}
           </p>
-          <img
-            src={stars[0]}
-            className="w-[108px] h-[20px] md:w-[128px] md:h-[24px] md:my-1 lg:my-2 lg:w-[148px] lg:h-[28px]"
-            alt="rating"
-            draggable="false"
-            style={{ userSelect: "none" }}
-          />
+
+          <div>
+            <img
+              src={ratingImage}
+              className="w-[108px] h-[20px] md:w-[128px] md:h-[24px] md:my-1 lg:my-2 lg:w-[148px] lg:h-[28px]"
+              alt="rating"
+              draggable="false"
+              style={{ userSelect: "none" }}
+            />
+          </div>
+
           <h2 className="p-font text-2xl md:text-xl lg:text-2xl">
-            {product.variants && product.variants.length > 0
-              ? product.variants[0].price
+            {product.variants &&
+            product.variants.length > 0 &&
+            selectedColor >= 0 &&
+            selectedColor < product.variants.length
+              ? `${formatNumber(product.variants[selectedColor].price)} vnđ`
               : "Giá chưa được cập nhật"}
           </h2>
           <p className="p-font text-[14px] md:text-[16px] lg:text-[18px] opacity-60 mt-[5px] md:mt-[8px] leading-3 md:leading-5">
@@ -93,28 +172,34 @@ const ProductDetail = ({ product }) => {
         {/* Colors selector */}
         <div className="width-full">
           <div className="border-t-2 border-b-2 mt-[20px] mb-[20px] pt-4 pb-4">
+            {errorQuantity && (
+              <p className="text-[14px] md:text-[16px] lg:text-[18px] text-red-500">
+                Số lượng không hợp lệ. Tối đa là{" "}
+                {product.variants[selectedColor].stock}
+              </p>
+            )}
             <p className="p-font text-[14px] md:text-[16px] lg:text-[18px] opacity-60">
               Chọn màu
             </p>
             <div className="color-selector pt-2 m-0 flex flex-auto gap-4">
-              {colorsSample.map((color, index) => {
-                // Skip rendering if color is invalid
-                if (!isValidColor(color)) {
-                  return null; // If color is invalid, return null and don't render the button
-                }
-                return (
-                  <button
-                    className={`rounded-full size-7 md:size-9 ${
-                      index === selectedColor
-                        ? "border-[1px] border-black -translate-y-1"
-                        : ""
-                    }`}
-                    key={index}
-                    onClick={() => updateColor(index)}
-                    style={{ backgroundColor: color }}
-                  ></button>
-                );
-              })}
+              {product.variants &&
+                product.variants.map((color, index) => {
+                  if (!isValidColor(color.color)) {
+                    return null; // If color is invalid, return null and don't render the button
+                  }
+                  return (
+                    <button
+                      className={`rounded-full size-7 md:size-9 ${
+                        index === selectedColor
+                          ? "border-[1px] border-black -translate-y-1"
+                          : ""
+                      }`}
+                      key={index}
+                      onClick={() => updateColor(index)}
+                      style={{ backgroundColor: color.color }}
+                    ></button>
+                  );
+                })}
             </div>
           </div>
 
@@ -138,7 +223,7 @@ const ProductDetail = ({ product }) => {
                 max="5"
                 value={quantity}
                 onChange={handleInputChange}
-                onBlur={handleInputBlur} // Trigger validation when the input field loses focus
+                onBlur={handleInputBlur}
                 className="m-0 text-[14px] md:text-[18px] text-center w-[50px] appearance-none -moz-appearance-none -webkit-appearance-none bg-inherit"
               />
               <button
@@ -149,7 +234,10 @@ const ProductDetail = ({ product }) => {
               </button>
             </div>
             <div className="bg-black ml-3 rounded-[62px] w-full">
-              <button className="p-font text-[14px] px-4 md:text-[16px] text-white w-full h-[44px] md:h-[52px]">
+              <button
+                className="p-font text-[14px] px-4 md:text-[16px] text-white w-full h-[44px] md:h-[52px]"
+                onClick={handleAddCart}
+              >
                 Thêm vào giỏ
               </button>
             </div>

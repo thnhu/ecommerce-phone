@@ -2,28 +2,26 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Checkbox, IconButton, TextField, Snackbar, Alert } from "@mui/material";
 import { Add, Remove, Delete } from "@mui/icons-material";
-import iPhone from '../../assets/images/iphone-16-pro-titan-sa-mac.png'
 import api from "../../services/api";
 const Cart = () => {
   const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState([]);
 
   const [cartItems, setCartItems] = useState([
-    {
-      id: "20d51858-313f-43c6-a9d9-cb840dcfe88f",
-      name: "SP 2",
-      size: "6.7 inches",
-      color: "Titan Xanh",
-      originalPrice: 35000000,
-      price: 29900000,
-      quantity: 1,
-      stock: 5, // Thêm số lượng tồn kho
-      image: iPhone,
-    },
+    // {
+    //   id: "20d51858-313f-43c6-a9d9-cb840dcfe88f",
+    //   name: "SP 2",
+    //   size: "6.7 inches",
+    //   color: "Titan Xanh",
+    //   originalPrice: 35000000,
+    //   price: 29900000,
+    //   quantity: 1,
+    //   stock: 5, // Thêm số lượng tồn kho
+    //   image: iPhone,
+    // },
   ]);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
-  
 
   const handleSelectItem = (id) => {
     setSelectedItems((prev) =>
@@ -54,7 +52,7 @@ const Cart = () => {
           if (item.id === id) {
             const newQuantity = Math.max(1, Math.min(Number(value), item.stock));
             if (newQuantity > item.stock) {
-              setSnackbar({ open: true, message:'Số lượng trong kho không đủ!' });
+              alert('Mặt hàng không đủ!' );
             }
             return { ...item, quantity: newQuantity };
           }
@@ -91,12 +89,32 @@ const Cart = () => {
     return price.toLocaleString("vi-VN") + "đ";
   };
 
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        const userResponse = await api.get("/phone/user/myInfo");
+        const userId = userResponse.data.id;
+        try {
+          const cartResponse = await api.get(`/phone/cart/${userId}`);
+          console.log(cartResponse);
+          setCartItems(cartResponse.data.data.items);  
+        } catch (cartError) {
+          console.log("Error fetching cart:", cartError);
+        }
+      } catch (userError) {
+        console.log("Error fetching user info:", userError);
+      }
+    };
+    fetchCart();
+  }, []);
+  
+
   return (
     <div className="container mx-auto px-4 py-8 pt-20 pb-12">
       <h1 className="text-3xl font-bold mb-8">Giỏ hàng của bạn</h1>
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="flex-1 space-y-6">
-          {cartItems.map((item) => (
+          {cartItems && cartItems.map((item) => (
             <div key={item.id} className="bg-white p-4 rounded-lg shadow-md">
               <div className="flex flex-wrap items-center gap-4">
                 <Checkbox
@@ -105,23 +123,23 @@ const Cart = () => {
                   color="primary"
                 />
                 <img
-                  src={item.image}
-                  alt={item.name}
+                  src={`data:${item.images[0].imageType};base64,${item.images[0].data}`}
+                  alt="Hình ảnh sản phẩm"
                   className="w-16 h-16 sm:w-24 sm:h-24 object-contain rounded"
                 />
                 <div className="flex-1 min-w-[150px]">
                   <h3 className="text-lg font-semibold">{item.name}</h3>
                   <div className="text-sm text-gray-600 mt-2">
-                    <p>Kích thước: {item.size}</p>
-                    <p>Màu sắc: {item.color}</p>
+                    {/* <p>Kích thước: {item.size}</p> */}
+                    <p>Màu sắc: {item.productColor}</p>
                   </div>
                   <div className="flex flex-wrap items-center gap-3 mt-2">
                     <span className="text-red-600 font-bold text-lg">
                       {formatPrice(item.price)}
                     </span>
-                    <span className="text-gray-400 line-through text-sm">
+                    {/* <span className="text-gray-400 line-through text-sm">
                       {formatPrice(item.originalPrice)}
-                    </span>
+                    </span> */}
                   </div>
                 </div>
                 <div className="flex flex-col items-center gap-2 mt-2">

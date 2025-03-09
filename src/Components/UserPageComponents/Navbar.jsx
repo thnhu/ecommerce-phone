@@ -18,6 +18,7 @@ const Navbar = () => {
   const [userData, setUserData] = useState({});
   //Tracking the change of token
   const [tokenTracker, setTokenTracker] = useState(localStorage.getItem("authToken"))
+  
 
   const navLinks = [
     { title: "Trang chủ", path: "/" },
@@ -79,7 +80,7 @@ const Navbar = () => {
             </IconButton>
             <a href="/">
               <span className="text-xl font-bold text-gray-800">
-                THEGIOIDIDONG
+                DIDONGVERSE
               </span>
             </a>
           </div>

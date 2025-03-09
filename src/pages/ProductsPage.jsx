@@ -10,7 +10,7 @@ import api from "../services/api.js";
 
 const ProductsPage = () => {
   //A sample Product
-  const productId = "20d51858-313f-43c6-a9d9-cb840dcfe88f"
+  const productId = "5d800a29-eae5-42dc-92cc-4b7cfe7d5276"
 
   const [product, setProduct] = useState({})
   useEffect(() => {
@@ -20,8 +20,6 @@ const ProductsPage = () => {
     }
     fetchData()
   }, [])
-
-  // useEffect(() => {console.log(product)}, [product])
 
   return (
     <>

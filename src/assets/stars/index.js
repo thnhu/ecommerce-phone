@@ -11,12 +11,12 @@ import a35s from './a3-5s.png'
 import a45s from './a4-5s.png'
 
 const stars = {
-  "0": a0s,
-  "1": a1s,
-  "2": a2s,
-  "3": a3s,
-  "4": a4s,
-  "5": a5s,
+  "0.0": a0s,
+  "1.0": a1s,
+  "2.0": a2s,
+  "3.0": a3s,
+  "4.0": a4s,
+  "5.0": a5s,
   "0.5": a05s,
   "1.5": a15s,
   "2.5": a25s,
