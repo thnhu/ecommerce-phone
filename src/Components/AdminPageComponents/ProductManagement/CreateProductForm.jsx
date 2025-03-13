@@ -27,8 +27,6 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
   const [categories, setCategories] = useState([]);
   const fileInputRef = useRef(null);
   const [images, setImages] = useState([]);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-
 
   // Lấy nhà cung cấp từ API
   useEffect(() => {

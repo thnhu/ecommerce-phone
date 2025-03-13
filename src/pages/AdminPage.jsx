@@ -3,6 +3,7 @@ import UsersTable from '../Components/AdminPageComponents/UsersTable'
 import CategorisTable from '../Components/AdminPageComponents/CategoriesTable'
 import ProductsTable from '../Components/AdminPageComponents/ProductManagement/ProductsTable'
 import StockTable from '../Components/AdminPageComponents/StockManagement/StockTable'
+import CreateStaff from '../Components/AdminPageComponents/CreateStaff'
 import { Link } from "react-router-dom";
 const AdminPage = () => {
   const [selectedTab, setSelectedTab] = useState("");
@@ -85,6 +86,18 @@ const AdminPage = () => {
               Quản lý kho
             </button>
           </li>
+          <li
+            key="nhanvien"
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${selectedTab === 'nhanvien' ? 'bg-gray-800 rounded-md' : ''}`}
+          >
+            <button
+              id="nhanvien"
+              className="md:w-full text-left"
+              onClick={handleClick}
+            >
+              Quản lý nhân viên
+            </button>
+          </li>
         </ul>
       </aside>
     );
@@ -103,6 +116,7 @@ const AdminPage = () => {
           {selectedTab === "nhacungcap" && <CategorisTable />}
           {selectedTab === "thietbi" && <ProductsTable />}
           {selectedTab === "kho" && <StockTable />}
+          {selectedTab === "nhanvien" && <CreateStaff />}
         </div>
       </div>
     </>
