@@ -137,7 +137,7 @@ const Navbar = () => {
                 {/* <img src={defaultAvatar} alt="" className=""/> */}
                 <div className="w-9 h-9 overflow-hidden rounded-lg">
                   <img
-                    src={userData.avatar || defaultAvatar}
+                    src={`data:image/*;base64,${userData.avatar.data}` || defaultAvatar}
                     alt="Avatar"
                     className="object-cover w-full h-full"
                   />
