@@ -16,9 +16,11 @@ const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [userData, setUserData] = useState({});
+  const [cartQuantity, setCartQuantity] = useState();
   //Tracking the change of token
-  const [tokenTracker, setTokenTracker] = useState(localStorage.getItem("authToken"))
-  
+  const [tokenTracker, setTokenTracker] = useState(
+    localStorage.getItem("authToken")
+  );
 
   const navLinks = [
     { title: "Trang chủ", path: "/" },
@@ -37,14 +39,10 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleStorageChange = () => {
-      // Update the state whenever the token in localStorage changes
       setTokenTracker(localStorage.getItem("authToken"));
     };
-
-    // Add event listener for storage changes (triggered across all tabs/windows)
     window.addEventListener("storage", handleStorageChange);
 
-    // Clean up the event listener when the component is unmounted
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
@@ -57,7 +55,7 @@ const Navbar = () => {
         setUserData((prevState) => ({ ...prevState, ...response.data }));
       } catch (e) {
         console.log(e);
-        setUserData({})
+        setUserData({});
       }
     };
 
@@ -65,6 +63,23 @@ const Navbar = () => {
   }, [tokenTracker]);
 
   useEffect(() => console.log(userData), [userData]);
+
+  // Tracking of quantity. Need to modify for adding cart and change quantity
+  useEffect(() => {
+    const fetchCart = async () => {
+      if (userData) {
+        try {
+          const cartResponse = await api.get(`/phone/cart/${userData.id}`);
+          setCartQuantity(cartResponse.data.data.items.length);
+        } catch (e) {
+          console.log("Lỗi giỏ hàng" + e);
+        }
+      }
+    };
+    fetchCart();
+  });
+
+  
 
   return (
     <nav className="bg-white shadow-lg fixed top-0 left-0 w-full z-50">
@@ -118,7 +133,10 @@ const Navbar = () => {
             {Object.keys(userData).length > 0 && (
               <a href="/cart">
                 <IconButton>
-                  <Badge badgeContent={1} color="error">
+                  <Badge
+                    badgeContent={cartQuantity}
+                    color={`${cartQuantity > 0 ? "error" : null}`}
+                  >
                     <ShoppingCart />
                   </Badge>
                 </IconButton>
