@@ -85,7 +85,8 @@ const Cart = () => {
     .filter((item) => selectedItems.includes(item.id))
     .reduce((acc, item) => acc + item.quantity, 0);
 
-  const handleCheckout = () => {
+  const handleCheckout = async() => {
+    await handleUpdateItems()
     navigate("/order", {
       state: {
         selectedItems: cartItems.filter((item) =>
@@ -225,7 +226,7 @@ const Cart = () => {
                       </p>
                       <p>Màu sắc: {item.productColor}</p>
                       {/* test this line */}
-                      {<p>{item.stock}</p>}
+                      {/* {<p>{item.stock}</p>} */}
                     </div>
                     <div className="flex flex-wrap items-center gap-3 mt-2">
                       <span className="text-red-600 font-bold text-lg">
@@ -303,7 +304,7 @@ const Cart = () => {
                 `}
               disabled={!cartWasChanged}
             >
-              LƯU GIỎ HÀNG
+              LƯU SỐ LƯỢNG SẢN PHẨM
             </button>
           </div>
         </div>
