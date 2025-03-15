@@ -29,7 +29,7 @@ const LogoutButton = ({style}) => {
     }
   };
 
-  return  <button className={`${style}`} onClick={handleLogOut}>Log out</button>;
+  return  <button className={`${style}`} onClick={handleLogOut}>Đăng xuất</button>;
 };
 
 export default LogoutButton;

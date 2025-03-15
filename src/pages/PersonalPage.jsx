@@ -10,26 +10,26 @@ import BillTab from "../Components/PersonalPage/BillTab";
 
 const SideBar = ({ userData, setSelectedTab }) => {
   return (
-    <div className="w-full sm:w-3/12 p-4 bg-blue-200 p-font">
+    <div className="w-full sm:w-3/12 py-4 px-10 p-font">
       <p className="lg:text-2xl p-5">
         Khách hàng <span className="font-bold">{userData.displayName}</span>
       </p>
       <div>
         <div
-          className="flex items-center rounded hover:cursor-pointer px-3 hover:bg-slate-400 select-none"
+          className="flex items-center rounded hover:cursor-pointer px-3 hover:bg-slate-200 select-none"
           onClick={() => setSelectedTab("thongtincanhan")}
         >
           <ContactMail />
           <p className="text-xl p-2 pl-5">Thông tin cá nhân</p>
         </div>
         <div
-          className="flex items-center rounded hover:cursor-pointer px-3 hover:bg-slate-400 select-none mt-3"
+          className="flex items-center rounded hover:cursor-pointer px-3 hover:bg-slate-200 select-none mt-3"
           onClick={() => setSelectedTab("donhangdamua")}
         >
           <CreditCard />
           <p className="text-xl p-2 pl-5">Đơn hàng đã mua</p>
         </div>
-        <LogoutButton style="bg-white w-full p-3 text-xl mt-3 border border-slate-800"></LogoutButton>
+        <LogoutButton style="bg-white hover:bg-slate-400 w-full p-3 text-xl mt-3 border border-slate-800"></LogoutButton>
       </div>
     </div>
   );
@@ -59,8 +59,8 @@ const PersonalPage = () => {
 
   return (
     <>
-      {/* <Navbar /> */}
-      <div className="flex flex-wrap p-5">
+      <Navbar />
+      <div className="flex flex-wrap p-5 mt-20">
         <SideBar userData={userData} setSelectedTab={setSelectedTab}></SideBar>
         {selectedTab == "thongtincanhan" ? (
           <InfoTab userData={userData}></InfoTab>

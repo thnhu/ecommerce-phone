@@ -5,27 +5,6 @@ import AddIcon from "@mui/icons-material/Add";
 import AddressForm from "./AddressForm.jsx"; // Import the AddressForm component
 import InfoForm from "./InfoForm.jsx"; // Import the InfoForm component for editing user info
 
-// testData -> userData.addresses
-const testData = [
-  {
-    userId: "504c91f6-48a4-4829-8d4c-0d15659a92d9",
-    province: "TP. Cần Thơ",
-    district: "Ninh Kiều",
-    ward: "An Hòa",
-    detail: "Mậu Thân",
-    receiverName: "Gia Bảo",
-    receiverPhone: "0789668345",
-  },
-  {
-    userId: "504c91f6-48a4-4829-8d4c-0d15659a92d9",
-    province: "TP. Cần Thơ",
-    district: "Ninh Kiều",
-    ward: "An Hòa",
-    detail: "Mậu Thân",
-    receiverName: "Gia Bảo",
-    receiverPhone: "0789668345",
-  },
-];
 
 const InfoTab = ({ userData }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -75,8 +54,8 @@ const InfoTab = ({ userData }) => {
   if (isLoading) return null;
 
   return (
-    <div className="w-full sm:w-9/12 p-4 bg-red-300">
-      <h1 className="p-5 lg:text-2xl">THÔNG TIN CÁ NHÂN</h1>
+    <div className="w-full sm:w-9/12 p-4 bg-gray-100 border border-black border-opacity-25 rounded-lg">
+      <h1 className="p-5 lg:text-2xl font-semibold">THÔNG TIN CÁ NHÂN</h1>
       <div className="border py-5 mb-5 flex items-center justify-between">
         <div className="">
           <p className="lg:text-xl pl-5">
@@ -110,10 +89,10 @@ const InfoTab = ({ userData }) => {
         </div>
       )}
 
-      <h1 className="p-5 lg:text-2xl">ĐỊA CHỈ NHẬN HÀNG</h1>
+      <h1 className="p-5 lg:text-2xl font-semibold">ĐỊA CHỈ NHẬN HÀNG</h1>
 
       <div className="border py-1 mb-5">
-        {testData.map((address, index) => {
+        {userData.addresses.map((address, index) => {
           const addressParts = [
             address.detail,
             address.ward,
@@ -127,7 +106,7 @@ const InfoTab = ({ userData }) => {
             <div
               key={index}
               className={`mx-5 flex items-center justify-between border-black border-b text-[18px] ${
-                index === testData.length - 1 ? "border-b-0" : ""
+                index === userData.addresses.length - 1 ? "border-b-0" : ""
               }`}
             >
               <div className="py-3">
