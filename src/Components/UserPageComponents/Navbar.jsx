@@ -153,17 +153,12 @@ const Navbar = () => {
                 {/* <img src={defaultAvatar} alt="" className=""/> */}
                 <div className="w-9 h-9 overflow-hidden rounded-lg">
                   <img
-<<<<<<< Updated upstream
-                    src={userData.avatar || defaultAvatar}
-                    alt="Avatar"
-=======
                     src={
                       userData?.avatar?.data
                         ? `data:image/*;base64,${userData.avatar.data}`
                         : defaultAvatar
                     }
                     alt="User Avatar"
->>>>>>> Stashed changes
                     className="object-cover w-full h-full"
                   />
                 </div>
