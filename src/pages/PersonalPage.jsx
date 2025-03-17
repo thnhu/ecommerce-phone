@@ -44,7 +44,6 @@ const PersonalPage = () => {
     const fetchPersonalInfo = async () => {
       try {
         const response = await api.get("/phone/user/myInfo");
-        console.log(response.data);
         setUserData(() => ({ ...response.data }));
       } catch (error) {
         if (error.response && error.response.status === 404) {

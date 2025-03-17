@@ -3,7 +3,6 @@ import { theme } from "../../const/const";
 import stars from "../../assets/stars";
 import PropTypes from "prop-types";
 import api from "../../services/api";
-import axios from "axios";
 
 const ProductDetail = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
@@ -42,6 +41,16 @@ const ProductDetail = ({ product }) => {
       setErrorQuantity(false);
     }
   };
+
+  //Preload stock to see if it out of stock
+  useEffect(() => {
+    if (product && product.variants && product.variants.length > 0) {
+      const firstVariant = product.variants[0];
+      if (firstVariant.stock === 0) {
+        setErrorQuantity(true);
+      }
+    }
+  }, [product]); 
 
   useEffect(() => {
     if (product && product.variants && product.variants.length > 0) {
@@ -123,8 +132,8 @@ const ProductDetail = ({ product }) => {
       } catch (e) {
         console.log(e);
       }
-    }else{
-      alert("Số lượng không phù hợp.")
+    } else {
+      alert("Số lượng không phù hợp.");
     }
   };
 
@@ -142,7 +151,7 @@ const ProductDetail = ({ product }) => {
         {/* Basic info name, price, rate, description */}
         <div className="basic-info">
           <p className="header-font text-[24px] md:text-3xl lg:text-[33px]">
-            {product.name || "Product Name Unavailable"}
+            {product.name || "Tên sản phẩm chưa cập nhật"}
           </p>
 
           <div>

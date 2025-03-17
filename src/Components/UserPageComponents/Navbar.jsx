@@ -62,7 +62,7 @@ const Navbar = () => {
     fetchData();
   }, [tokenTracker]);
 
-  useEffect(() => console.log(userData), [userData]);
+  // useEffect(() => console.log(userData), [userData]);
 
   // Tracking of quantity. Need to modify for adding cart and change quantity
   useEffect(() => {
@@ -72,7 +72,7 @@ const Navbar = () => {
           const cartResponse = await api.get(`/phone/cart/${userData.id}`);
           setCartQuantity(cartResponse.data.data.items.length);
         } catch (e) {
-          console.log("Lỗi giỏ hàng" + e);
+          // console.log("Lỗi giỏ hàng" + e);
         }
       }
     };
