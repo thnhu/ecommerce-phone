@@ -157,11 +157,15 @@ const BillTab = ({ userData }) => {
     }
   }, [userData]);
 
+  // useEffect(() => {
+  //   fetchOrderData();
+  // }, [])
+
   useEffect(() => {
     fetchOrderData();
-  }, [currentIndex, selectedTab]); // Depend on currentIndex and selectedTab to refetch data
+  }, [userData, currentIndex, selectedTab]); 
 
-  const fetchOrderData = async (status = "") => {
+  const fetchOrderData = async () => {
     try {
       let response;
       if (selectedTab === "Tất cả") {
@@ -173,11 +177,11 @@ const BillTab = ({ userData }) => {
           `/phone/order?status=${formatStatusToEng(selectedTab)}&pageNumber=${currentIndex}&pageSize=${size}&userId=${userData.id}`
         );
       }
+      console.log(response)
 
       const totalOrders = response.data.content.length;
       setOrderData(response.data.content);
 
-      // Update maxIndex only when the number of orders returned is less than the page size
       if (totalOrders < size) {
         setMaxIndex(currentIndex);
       } else {

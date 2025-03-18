@@ -50,7 +50,7 @@ const ProductDetail = ({ product }) => {
         setErrorQuantity(true);
       }
     }
-  }, [product]); 
+  }, [product]);
 
   useEffect(() => {
     if (product && product.variants && product.variants.length > 0) {
@@ -180,10 +180,16 @@ const ProductDetail = ({ product }) => {
         {/* Colors selector */}
         <div className="width-full">
           <div className="border-t-2 border-b-2 mt-[20px] mb-[20px] pt-4 pb-4">
-            {errorQuantity && (
+            {product.variants[selectedColor].stock > 0 ? (
+              errorQuantity ? (
+                <p className="text-[14px] md:text-[16px] lg:text-[18px] text-red-500">
+                  Số lượng không hợp lệ. Tối đa là{" "}
+                  {product.variants[selectedColor].stock}
+                </p>
+              ) : null
+            ) : (
               <p className="text-[14px] md:text-[16px] lg:text-[18px] text-red-500">
-                Số lượng không hợp lệ. Tối đa là{" "}
-                {product.variants[selectedColor].stock}
+                Sản phẩm đã hết hàng
               </p>
             )}
             <p className="p-font text-[14px] md:text-[16px] lg:text-[18px] opacity-60">
