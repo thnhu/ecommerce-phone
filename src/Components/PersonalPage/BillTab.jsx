@@ -157,13 +157,9 @@ const BillTab = ({ userData }) => {
     }
   }, [userData]);
 
-  // useEffect(() => {
-  //   fetchOrderData();
-  // }, [])
-
   useEffect(() => {
     fetchOrderData();
-  }, [userData, currentIndex, selectedTab]); 
+  }, [userData, currentIndex, selectedTab]);
 
   const fetchOrderData = async () => {
     try {
@@ -174,10 +170,12 @@ const BillTab = ({ userData }) => {
         );
       } else {
         response = await api.get(
-          `/phone/order?status=${formatStatusToEng(selectedTab)}&pageNumber=${currentIndex}&pageSize=${size}&userId=${userData.id}`
+          `/phone/order?status=${formatStatusToEng(
+            selectedTab
+          )}&pageNumber=${currentIndex}&pageSize=${size}&userId=${userData.id}`
         );
       }
-      console.log(response)
+      console.log(response);
 
       const totalOrders = response.data.content.length;
       setOrderData(response.data.content);
@@ -187,6 +185,7 @@ const BillTab = ({ userData }) => {
       } else {
         setMaxIndex(currentIndex + 1); // Allow pagination to the next index if there's more data
       }
+      setIsLoading(false);
     } catch (e) {
       console.log("Lỗi fetch hóa đơn" + e);
     }
@@ -195,8 +194,9 @@ const BillTab = ({ userData }) => {
   if (isLoading) return null;
 
   const handleTabClick = (tab) => {
+    setIsLoading(true);
+    setCurrentIndex(0);
     setSelectedTab(tab);
-    console.log(formatStatusToEng(tab))
   };
 
   return (
@@ -216,29 +216,33 @@ const BillTab = ({ userData }) => {
             </li>
           ))}
         </ul>
-        <Order orderData={orderData} />
+        <Order orderData={orderData} fetchOrderData={fetchOrderData} />
       </div>
 
-      <div className="flex items-center w-full justify-center px-1 md:px-3">
-        <IconButton
-          onClick={() =>
-            setCurrentIndex((currentIndex) => Math.max(0, currentIndex - 1))
-          }
-        >
-          <ArrowBackIcon />
-        </IconButton>
-        <p className="p-1 md:p-5 text-sm md:text-lg">{currentIndex + 1}</p>
-        <IconButton
-          onClick={() =>
-            setCurrentIndex((currentIndex) => {
-              if (maxIndex > 0) return Math.min(currentIndex + 1, maxIndex);
-              else return currentIndex + 1;
-            })
-          }
-        >
-          <ArrowForwardIcon />
-        </IconButton>
-      </div>
+      {!isLoading && orderData.length > 0 ? (
+        <div className="flex items-center w-full justify-center px-1 md:px-3">
+          <IconButton
+            onClick={() =>
+              setCurrentIndex((currentIndex) => Math.max(0, currentIndex - 1))
+            }
+          >
+            <ArrowBackIcon />
+          </IconButton>
+          <p className="p-1 md:p-5 text-sm md:text-lg">{currentIndex + 1}</p>
+          <IconButton
+            onClick={() =>
+              setCurrentIndex((currentIndex) => {
+                if (maxIndex > 0) return Math.min(currentIndex + 1, maxIndex);
+                else return currentIndex + 1;
+              })
+            }
+          >
+            <ArrowForwardIcon />
+          </IconButton>
+        </div>
+      ) : (
+        <p className="mt-2 text-lg">Không có đơn</p>
+      )}
     </div>
   );
 };

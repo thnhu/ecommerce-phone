@@ -84,7 +84,7 @@ const UsersTable = () => {
                     {user.phoneNumber}
                   </p>
                   <p className="border border-gray-300 py-2 px-5 hidden md:block text-center">
-                    {user.dob == null ? "None" : user.dob}
+                    {user.dob == null ? "Chưa cài đặt" : user.dob}
                   </p>
                 </div>
               );

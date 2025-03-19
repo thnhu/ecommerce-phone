@@ -47,7 +47,7 @@ const Footer = () => {
 
       {/* Footer Bottom */}
       <div className="text-center text-gray-500 mt-10">
-        <p>Thegioididong © 2024, All Rights Reserved</p>
+        <p>Didongverse © 2024, All Rights Reserved</p>
       </div>
     </footer>
   );

@@ -90,7 +90,7 @@ const AdminPage = () => {
             </button>
           </li>
           <li
-            key="kho"
+            key="donhang"
             className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
               selectedTab === "donhang" ? "bg-gray-800 rounded-md" : ""
             }`}

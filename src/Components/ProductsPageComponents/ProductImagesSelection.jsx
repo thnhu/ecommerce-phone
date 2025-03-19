@@ -8,10 +8,6 @@ const ProductImagesSelection = ({ productImg }) => {
     setSelectedImage(index);
   };
 
-  useEffect(() => {
-    console.log(productImg); // Log the product images for debugging
-  }, [productImg]);
-
   const nextImages = () => {
     if (selectedImage < productImg.length - 1) {
       setSelectedImage((index) => index + 1);
