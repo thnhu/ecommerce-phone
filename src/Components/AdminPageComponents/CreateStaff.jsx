@@ -43,8 +43,8 @@ export default function CreateStaff() {
     }
     if (!staffData.password) {
       errors.password = "Mật khẩu không được để trống";
-    } else if (staffData.password.length < 6) {
-      errors.password = "Mật khẩu phải có ít nhất 6 ký tự";
+    } else if (staffData.password.length < 8) {
+      errors.password = "Mật khẩu phải có ít nhất 8 ký tự";
     }
     if (!staffData.dob) {
       errors.dob = "Ngày sinh không được để trống";

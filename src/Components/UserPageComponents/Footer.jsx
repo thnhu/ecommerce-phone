@@ -1,13 +1,12 @@
 import React from 'react';
-// import './Footer.css';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-100 px-5 py-10 text-sm text-gray-800 h-full p-0 m-0 fixed w-full b-0">
+    <footer className="bg-gray-100 px-5 py-10 text-sm text-gray-800 h-full p-0 m-0 w-full b-0">
       <div className="max-w-6xl mx-auto flex flex-wrap justify-between">
         {/* Logo and Description */}
         <div className="w-full sm:w-1/2 lg:w-1/4 mb-5">
-          <h3 className="text-lg font-semibold mb-3">THEGIOIDIDONG</h3>
+          <h3 className="text-lg font-semibold mb-3">DIDONGVERSE</h3>
           <p className="text-gray-600 leading-relaxed">
             Giới thiệu công ty
           </p>
@@ -47,7 +46,7 @@ const Footer = () => {
 
       {/* Footer Bottom */}
       <div className="text-center text-gray-500 mt-10">
-        <p>Thegioididong © 2024, All Rights Reserved</p>
+        <p>DIDONGVERSE © 2025, All Rights Reserved</p>
       </div>
     </footer>
   );
