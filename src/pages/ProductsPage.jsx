@@ -11,10 +11,6 @@ import { useParams } from 'react-router-dom';
 
 const ProductsPage = () => {
   const { productId } = useParams(); // Lấy productId từ URL
-
-  // //A sample Product
-  // const productId = "5d800a29-eae5-42dc-92cc-4b7cfe7d5276"
-
   const [product, setProduct] = useState({})
   useEffect(() => {
     const fetchData = async() => {
