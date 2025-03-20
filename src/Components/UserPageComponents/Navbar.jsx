@@ -229,9 +229,7 @@ const Navbar = () => {
                         ? `data:image/*;base64,${userData.avatar.data}`
                         : defaultAvatar
                     }
-                    alt="User Avatar"
-                    className="object-cover w-full h-full"
-                  />
+                    alt="User Avatar"/>
                 </div>
               </Link>
             )}
