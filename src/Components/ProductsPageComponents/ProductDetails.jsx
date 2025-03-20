@@ -3,7 +3,6 @@ import { theme } from "../../const/const";
 import stars from "../../assets/stars";
 import PropTypes from "prop-types";
 import api from "../../services/api";
-import axios from "axios";
 
 const ProductDetail = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
@@ -42,6 +41,17 @@ const ProductDetail = ({ product }) => {
       setErrorQuantity(false);
     }
   };
+
+  //Preload stock to see if it out of stock
+  useEffect(() => {
+    if (product && product.variants && product.variants.length > 0) {
+      const firstVariant = product.variants[0];
+      if (firstVariant.stock === 0) {
+        setErrorQuantity(true);
+      }
+    }
+    console.log(product)
+  }, [product]);
 
   useEffect(() => {
     if (product && product.variants && product.variants.length > 0) {
@@ -124,8 +134,8 @@ const ProductDetail = ({ product }) => {
       } catch (e) {
         console.log(e);
       }
-    }else{
-      alert("Số lượng không phù hợp.")
+    } else {
+      alert("Số lượng không phù hợp.");
     }
   };
 
@@ -143,7 +153,7 @@ const ProductDetail = ({ product }) => {
         {/* Basic info name, price, rate, description */}
         <div className="basic-info">
           <p className="header-font text-[24px] md:text-3xl lg:text-[33px]">
-            {product.name || "Product Name Unavailable"}
+            {product.name || "Tên sản phẩm chưa cập nhật"}
           </p>
 
           <div>
@@ -172,10 +182,16 @@ const ProductDetail = ({ product }) => {
         {/* Colors selector */}
         <div className="width-full">
           <div className="border-t-2 border-b-2 mt-[20px] mb-[20px] pt-4 pb-4">
-            {errorQuantity && (
+            {product && product.variants[selectedColor].stock > 0 ? (
+              errorQuantity ? (
+                <p className="text-[14px] md:text-[16px] lg:text-[18px] text-red-500">
+                  Số lượng không hợp lệ. Tối đa là{" "}
+                  {product.variants[selectedColor].stock}
+                </p>
+              ) : null
+            ) : (
               <p className="text-[14px] md:text-[16px] lg:text-[18px] text-red-500">
-                Số lượng không hợp lệ. Tối đa là{" "}
-                {product.variants[selectedColor].stock}
+                Sản phẩm đã hết hàng
               </p>
             )}
             <p className="p-font text-[14px] md:text-[16px] lg:text-[18px] opacity-60">

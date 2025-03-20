@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
-import UsersTable from '../Components/AdminPageComponents/UsersTable'
-import CategorisTable from '../Components/AdminPageComponents/CategoriesTable'
-import ProductsTable from '../Components/AdminPageComponents/ProductManagement/ProductsTable'
-import StockTable from '../Components/AdminPageComponents/StockManagement/StockTable'
-import CreateStaff from '../Components/AdminPageComponents/CreateStaff'
+import React, { useState } from "react";
+import UsersTable from "../Components/AdminPageComponents/UsersTable";
+import CategorisTable from "../Components/AdminPageComponents/CategoriesTable";
+import ProductsTable from "../Components/AdminPageComponents/ProductManagement/ProductsTable";
+import StockTable from "../Components/AdminPageComponents/StockManagement/StockTable";
+import CreateStaff from "../Components/AdminPageComponents/CreateStaff";
+import LogoutButton from "../Components/UserPageComponents/LogoutButton";
 import { Link } from "react-router-dom";
+import BillManagement from "../Components/AdminPageComponents/OrderManagement/BillManagement";
 const AdminPage = () => {
   const [selectedTab, setSelectedTab] = useState("");
   const handleClick = (e) => {
@@ -18,7 +20,7 @@ const AdminPage = () => {
         <ul>
           <li
             key="trangchu"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
               selectedTab === "trangchu" ? "bg-gray-800 rounded-md" : ""
             }`}
           >
@@ -34,7 +36,7 @@ const AdminPage = () => {
           </li>
           <li
             key="thietbi"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
               selectedTab === "thietbi" ? "bg-gray-800 rounded-md" : ""
             }`}
           >
@@ -48,7 +50,7 @@ const AdminPage = () => {
           </li>
           <li
             key="nhacungcap"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
               selectedTab === "nhacungcap" ? "bg-gray-800 rounded-md" : ""
             }`}
           >
@@ -62,7 +64,7 @@ const AdminPage = () => {
           </li>
           <li
             key="nguoidung"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
               selectedTab === "nguoidung" ? "bg-gray-800 rounded-md" : ""
             }`}
           >
@@ -76,7 +78,9 @@ const AdminPage = () => {
           </li>
           <li
             key="kho"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${selectedTab === 'kho' ? 'bg-gray-800 rounded-md' : ''}`}
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
+              selectedTab === "kho" ? "bg-gray-800 rounded-md" : ""
+            }`}
           >
             <button
               id="kho"
@@ -88,7 +92,9 @@ const AdminPage = () => {
           </li>
           <li
             key="nhanvien"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${selectedTab === 'nhanvien' ? 'bg-gray-800 rounded-md' : ''}`}
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${
+              selectedTab === "nhanvien" ? "bg-gray-800 rounded-md" : ""
+            }`}
           >
             <button
               id="nhanvien"
@@ -97,6 +103,27 @@ const AdminPage = () => {
             >
               Quản lý nhân viên
             </button>
+          </li>
+          <li
+            key="donhang"
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
+              selectedTab === "donhang" ? "bg-gray-800 rounded-md" : ""
+            }`}
+          >
+            <button
+              id="donhang"
+              className="md:w-full text-left"
+              onClick={handleClick}
+            >
+              Quản lý đơn hàng
+            </button>
+          </li>
+          <li>
+            <LogoutButton
+              style={
+                "md:w-full md:px-5 px-1 py-3 md:w-full text-left text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md"
+              }
+            ></LogoutButton>
           </li>
         </ul>
       </aside>
@@ -117,6 +144,7 @@ const AdminPage = () => {
           {selectedTab === "thietbi" && <ProductsTable />}
           {selectedTab === "kho" && <StockTable />}
           {selectedTab === "nhanvien" && <CreateStaff />}
+          {selectedTab === "donhang" && <BillManagement />}
         </div>
       </div>
     </>

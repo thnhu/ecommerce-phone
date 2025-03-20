@@ -21,6 +21,9 @@ const Navbar = () => {
   const [tokenTracker, setTokenTracker] = useState(
     localStorage.getItem("authToken")
   );
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debounceTimeout, setDebounceTimeout] = useState(null);
+  const [products, setProducts] = useState([]);
 
   const navLinks = [
     { title: "Trang chủ", path: "/" },
@@ -29,12 +32,45 @@ const Navbar = () => {
     { title: "Thương hiệu", path: "/category" },
   ];
 
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  useEffect(() => {
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout); // Clear the previous timeout if any
+    }
+
+    // Set a new debounce timeout for the search query
+    const timeoutId = setTimeout(() => {
+      fetchProducts(searchQuery);
+    }, 500); // 500ms debounce delay
+
+    setDebounceTimeout(timeoutId); // Store the timeout ID for future cleanup
+
+    // Cleanup the timeout when the component is unmounted or search query changes
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+
+  const fetchProducts = async (query) => {
+    if (!query) {
+      setProducts([]);
+      return;
+    }
+    try {
+      const response = await api.get(`/phone/product/search?name=${query}`);
+      setProducts(response.data.slice(0, 3)); // Set the search results
+    } catch (error) {
+      console.error("Lỗi sản phẩm", error);
+    }
   };
 
   useEffect(() => {
@@ -58,11 +94,10 @@ const Navbar = () => {
         setUserData({});
       }
     };
-
     fetchData();
   }, [tokenTracker]);
 
-  useEffect(() => console.log(userData), [userData]);
+  // useEffect(() => console.log(userData), [userData]);
 
   // Tracking of quantity. Need to modify for adding cart and change quantity
   useEffect(() => {
@@ -72,14 +107,12 @@ const Navbar = () => {
           const cartResponse = await api.get(`/phone/cart/${userData.id}`);
           setCartQuantity(cartResponse.data.data.items.length);
         } catch (e) {
-          console.log("Lỗi giỏ hàng" + e);
+          // console.log("Lỗi giỏ hàng" + e);
         }
       }
     };
     fetchCart();
-  });
-
-  
+  }, []);
 
   return (
     <nav className="bg-white shadow-lg fixed top-0 left-0 w-full z-50">
@@ -113,35 +146,65 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="hidden md:flex items-center bg-gray-100 rounded-full px-3 py-1">
+            <div className="relative hidden md:flex items-center bg-gray-100 rounded-full px-3 py-1">
               <Search className="text-gray-500" />
               <InputBase
                 placeholder="Bạn muốn tìm gì..."
                 className="ml-2"
                 inputProps={{ "aria-label": "search" }}
+                value={searchQuery}
+                onChange={handleSearchChange}
               />
             </div>
 
-            <IconButton
-              className="sm:block md:hidden"
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
+            {/* Render product images absolutely positioned */}
+            {products && isSearchOpen && (
+              <div className="absolute top-full right-0 w-1/3 bg-white shadow-lg z-10 rounded-b-xl">
+                {products.map((product) => (
+                  <div
+                    key={product.id}
+                    className="flex items-center p-4 hover:bg-gray-100 rounded-xl"
+                  >
+                    <img
+                      src={`data:image/*;base64,${product.images[0].data}`}
+                      alt={product.name}
+                      className="w-10 h-10 object-cover rounded-lg"
+                    />
+                    <h3 className="md:ml-5 md:text-lg text-sm font-semibold text-center">
+                      {product.name}
+                    </h3>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div
+              className={`${
+                isSearchOpen ? `bg-gray-100 rounded-full` : `bg-white`
+              }`}
             >
-              <Search />
-            </IconButton>
+              <IconButton
+                className="sm:block md:hidden"
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                sx={() => {return isSearchOpen}, { color: "black" }}
+              >
+                <Search />
+              </IconButton>
+            </div>
 
             {/* Cart */}
-            {Object.keys(userData).length > 0 && (
-              <a href="/cart">
-                <IconButton>
-                  <Badge
-                    badgeContent={cartQuantity}
-                    color={`${cartQuantity > 0 ? "error" : null}`}
-                  >
-                    <ShoppingCart />
-                  </Badge>
-                </IconButton>
-              </a>
-            )}
+            {Object.keys(userData).length > 0 &&
+              userData.role.name === "USER" && (
+                <a href="/cart">
+                  <IconButton>
+                    <Badge
+                      badgeContent={cartQuantity}
+                      color={`${cartQuantity > 0 ? "error" : null}`}
+                    >
+                      <ShoppingCart />
+                    </Badge>
+                  </IconButton>
+                </a>
+              )}
 
             {/* Login */}
             {Object.keys(userData).length === 0 && (
@@ -150,13 +213,23 @@ const Navbar = () => {
               </IconButton>
             )}
             {Object.keys(userData).length > 0 && (
-              <Link to="/user">
-                {/* <h1 className="font-bold">{userData.displayName}</h1> */}
-                {/* <img src={defaultAvatar} alt="" className=""/> */}
+              <Link
+                to={
+                  userData.role.name === "ADMIN"
+                    ? "/admin"
+                    : userData.role.name === "STAFF"
+                    ? "/staff"
+                    : "/user"
+                }
+              >
                 <div className="w-9 h-9 overflow-hidden rounded-lg">
                   <img
-                    src={`data:image/*;base64,${userData.avatar.data}` || defaultAvatar}
-                    alt="Avatar"
+                    src={
+                      userData?.avatar?.data
+                        ? `data:image/*;base64,${userData.avatar.data}`
+                        : defaultAvatar
+                    }
+                    alt="User Avatar"
                     className="object-cover w-full h-full"
                   />
                 </div>
@@ -173,6 +246,7 @@ const Navbar = () => {
                 placeholder="Tìm kiếm..."
                 className="ml-2 flex-1"
                 inputProps={{ "aria-label": "search" }}
+                onChange={handleSearchChange}
               />
             </div>
           </div>

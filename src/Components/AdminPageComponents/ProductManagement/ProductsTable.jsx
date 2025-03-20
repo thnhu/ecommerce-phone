@@ -6,6 +6,7 @@ import {
   Edit,Delete,ArrowBack,ArrowForward,MoreVert,ExpandMore,ExpandLess,LocalOffer,
 } from "@mui/icons-material";
 import CreateProductForm from "./CreateProductForm";
+import UpdateProductForm from "./UpdateProductForm";
 import api from "../../../services/api";
 import ProductVariantMenu from "./ProductVariantsMenu"; // Import the new component
 import VariantForm from "./VariantForm"; // Import the VariantForm component
@@ -34,11 +35,11 @@ const ProductsTable = () => {
   const [expandedProducts, setExpandedProducts] = useState({});
   const [openProductAttributeForm, setOpenProductAttributeForm] = useState();
   const [attributes, setAttributes] = useState([]);
-  const [showDetails, setShowDetails] = useState(false);
+  // const [showDetails, setShowDetails] = useState(false);
+  const [displayUpdateProductForm, setDisplayUpdateProductForm] = useState(false)
+  const [updatingProduct, setUpdatingProduct] = useState()
 
-  useEffect(() => {
-    console.log("Attributes updated", attributes);
-  }, [attributes]);
+  useEffect(() => console.log(productData), [])
   
 
   const toggleProductVariants = (productId) => {
@@ -81,7 +82,7 @@ const ProductsTable = () => {
         const resolvedAttributes = await Promise.all(attributePromises);
         // Set the attributes once all promises are resolved
         setAttributes(resolvedAttributes);
-        console.log(resolvedAttributes)
+        // console.log(resolvedAttributes)
         setLoading(false)
       } catch (e) {
         console.log(e);
@@ -131,9 +132,9 @@ const ProductsTable = () => {
     setOpenProductAttributeForm(false); // Close the dialog
   };
 
-  useEffect(() => {
-    console.log(selectedVariant);
-  }, [selectedVariant]);
+  // useEffect(() => {
+  //   console.log(selectedVariant);
+  // }, [selectedVariant]);
 
   const handleDeleteVariant = async (variantId, product) => {
     if (window.confirm("Bạn chắc chắn muốn xóa mẫu này?")) {
@@ -154,6 +155,16 @@ const ProductsTable = () => {
     }
   };
 
+  const handleUpdateForm = (product) => {
+    console.log("clicked")
+    setDisplayUpdateProductForm(true)
+    setUpdatingProduct(product)
+  }
+
+  useEffect(() => {
+    console.log("Updated Product:", updatingProduct);
+}, [updatingProduct]);
+
   // const handleCreateOfferVariant = async (variantId, product) => {};
 
   useEffect(() => {
@@ -162,6 +173,7 @@ const ProductsTable = () => {
 
   if (loading) return <div className="p-4 text-center">Đang tải...</div>;
   if (error) return <div className="p-4 text-red-500 text-center">{error}</div>;
+
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -175,6 +187,7 @@ const ProductsTable = () => {
           Thêm sản phẩm
         </Button>
       </div>
+
       <div className="overflow-x-auto">
       <TableContainer component={Paper} className="shadow-lg">
           <Table className="min-w-max w-full" aria-label="product table">
@@ -208,7 +221,8 @@ const ProductsTable = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
-                        <IconButton color="primary">
+                        {/* Edit button */}
+                        <IconButton color="primary" onClick={() => handleUpdateForm(product)}>
                           <Edit />
                         </IconButton>
                         <IconButton
@@ -343,6 +357,7 @@ const ProductsTable = () => {
                       </TableCell>
                     </TableRow>
                   )}
+                  
                 </React.Fragment>
               ))}
             </TableBody>
@@ -390,6 +405,23 @@ const ProductsTable = () => {
             fetchData();
             setOpenCreateForm(false);
           }}
+        />
+      </Dialog>
+
+      <Dialog
+        open={displayUpdateProductForm}
+        onClose={() => setDisplayUpdateProductForm(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <UpdateProductForm
+          open={displayUpdateProductForm}
+          handleClose={() => setDisplayUpdateProductForm(false)}
+          onSuccess={() => {
+            fetchData();
+            setDisplayUpdateProductForm(false);
+          }}
+          updatingProduct={updatingProduct}
         />
       </Dialog>
 

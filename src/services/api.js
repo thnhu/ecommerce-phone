@@ -7,7 +7,7 @@ import axios from "axios";
   const refreshAccessToken = async (expiredAccessToken) => {
     try {
       // console.log('Refreshing token with expired token:', expiredAccessToken);
-      const response = await axios.post("/phone/auth/refresh", {
+      const response = await api.post("/phone/auth/refresh", {
         token: expiredAccessToken,
       });
 

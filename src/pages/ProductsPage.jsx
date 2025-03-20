@@ -10,34 +10,36 @@ import api from "../services/api.js";
 
 const ProductsPage = () => {
   //A sample Product
-  const productId = "5d800a29-eae5-42dc-92cc-4b7cfe7d5276"
+  const productId = "5d800a29-eae5-42dc-92cc-4b7cfe7d5276";
 
-  const [product, setProduct] = useState({})
+  const [product, setProduct] = useState({});
+  const [isLoading, setIsLoading] = useState(true)
   useEffect(() => {
-    const fetchData = async() => {
-      const response = await api.get(`/phone/product/${productId}`)
-      setProduct(() => response.data)
-    }
-    fetchData()
-  }, [])
+    const fetchData = async () => {
+      const response = await api.get(`/phone/product/${productId}`);
+      setProduct(() => response.data);
+      setIsLoading(false)
+    };
+    fetchData();
+  }, []);
 
   return (
     <>
-    {/* md:bg-slate-400 lg:bg-red-400 */}
-    <Navbar></Navbar>
-      <div className="md:flex md:flex-col px-[16px] md:px-[100px] mt-20 mb-10">
-        <div className="md:flex">
-          <ProductImagesSelection productImg={product.images}/>
-          <ProductDetail product={product}/>
-        </div>
-        <ProductTabs/>
-        
+      {/* md:bg-slate-400 lg:bg-red-400 */}
+      <Navbar></Navbar>
+      <div className="md:flex md:flex-col px-[16px] md:px-[150px] mt-20 mb-10">
+
+        {!isLoading && <div className="md:flex">
+          <ProductImagesSelection productImg={product.images} />
+          <ProductDetail product={product} />
+        </div>}
+        {!isLoading && <ProductTabs product={product}/>}
+
         {/* <OtherProducts/> */}
       </div>
-    <Footer></Footer>
+      <Footer></Footer>
     </>
   );
 };
-
 
 export default ProductsPage;

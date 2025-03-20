@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import CategorisTable from '../Components/AdminPageComponents/CategoriesTable'
 import ProductsTable from '../Components/AdminPageComponents/ProductManagement/ProductsTable'
 import StockTable from '../Components/AdminPageComponents/StockManagement/StockTable'
+import LogoutButton from "../Components/UserPageComponents/LogoutButton";
 import { Link } from "react-router-dom";
 const StaffPage = () => {
   const [selectedTab, setSelectedTab] = useState("");
@@ -16,7 +17,7 @@ const StaffPage = () => {
         <ul>
           <li
             key="trangchu"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
               selectedTab === "trangchu" ? "bg-gray-800 rounded-md" : ""
             }`}
           >
@@ -32,7 +33,7 @@ const StaffPage = () => {
           </li>
           <li
             key="thietbi"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
               selectedTab === "thietbi" ? "bg-gray-800 rounded-md" : ""
             }`}
           >
@@ -46,7 +47,7 @@ const StaffPage = () => {
           </li>
           <li
             key="nhacungcap"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
               selectedTab === "nhacungcap" ? "bg-gray-800 rounded-md" : ""
             }`}
           >
@@ -60,7 +61,7 @@ const StaffPage = () => {
           </li>
           <li
             key="kho"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${selectedTab === 'kho' ? 'bg-gray-800 rounded-md' : ''}`}
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${selectedTab === 'kho' ? 'bg-gray-800 rounded-md' : ''}`}
           >
             <button
               id="kho"
@@ -69,6 +70,9 @@ const StaffPage = () => {
             >
               Quản lý kho
             </button>
+          </li>
+          <li>
+            <LogoutButton style={'md:w-full md:px-5 px-1 py-3 md:w-full text-left text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md'}></LogoutButton>
           </li>
         </ul>
       </aside>

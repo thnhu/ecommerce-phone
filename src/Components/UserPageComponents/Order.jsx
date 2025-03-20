@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import api from "../../services/api";
 
-const shippingMethod = ["COD", "Banking"]
 //Handle address selection box
 const AddressDropdown = ({
   userAddresses,
@@ -62,16 +61,19 @@ const AddressDropdown = ({
 };
 
 function Order() {
+  const shippingMethod = ["Banking", "COD"];
+
   const [userData, setUserData] = useState();
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const [selectedMethod, setSelectedMethod] = useState(["COD"]);
+  const [selectedMethod, setSelectedMethod] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   const { state } = location;
 
-  const orderItems = state?.selectedItems || [];
-  const totalAmount = state?.total || 0;
-  console.log(orderItems);
+  // const orderItems = state?.selectedItems || [];
+  // const totalAmount = state?.total || 0;
+  const [orderItems, setOrderItems] = useState(state?.selectedItems || []);
+  const [totalAmount, setTotalAmount] = useState(state?.total || 0);
 
   const [notes, setNotes] = React.useState("");
   const [showSuccess, setShowSuccess] = React.useState(false);
@@ -89,22 +91,66 @@ function Order() {
     fetchUser();
   }, []);
 
-  const handlePlaceOrder = () => {
-    setShowSuccess(true);
-    setTimeout(() => {
-      navigate("/");
-    }, 2000);
+  const handlePlaceOrder = async () => {
+    const mapItemIds = orderItems.map((item) => item.itemId + 1);
+    if (selectedAddress && selectedMethod) {
+      let reqBody = {
+        addressId: selectedAddress.id,
+        note: notes,
+        method: selectedMethod,
+        itemId: mapItemIds,
+      };
+      console.log(reqBody);
+      try {
+        console.log(mapItemIds);
+        const response = api.post(`/phone/order/${userData.id}`, reqBody);
+        await response;
+        reqBody = {};
+        setShowSuccess(true);
+        navigate("/user");
+
+        // setOrderItems([]);
+        // setTotalAmount(0);
+      } catch (e) {
+        console.log("Lỗi đặt hàng. Vui lòng thử lại sau." + e);
+      }
+    } else {
+      alert("Vui lòng điền đầy đủ thông tin");
+    }
   };
 
-  const handleMethodChange = (event) => {
-    const selectedMethodId = event.target.value;
-    const method = method.find((method) => method.id === setSelectedMethod);
-    setSelectedMethod(method);
+  const handleMethodChange = (e) => {
+    setSelectedMethod(e.target.value);
   };
 
   const formatPrice = (price) => {
     return price.toLocaleString("vi-VN") + "đ";
   };
+
+  if (!orderItems || !totalAmount) {
+    return (
+      <div className="flex items-center h-full mt-10">
+        <div className="container mx-auto my-10 px-4 py-8 max-w-3xl bg-gray-100 pt-20 mb-4">
+          <div className="flex justify-center items-center h-full">
+            <div className="text-center bg-white p-8 rounded-lg shadow-lg">
+              <p className="text-2xl font-semibold text-gray-700">
+                Không có đơn hàng
+              </p>
+              <p className="mt-4 text-gray-500">
+                Chưa có đơn hàng nào trong giỏ hàng của bạn.
+              </p>
+              <button
+                onClick={() => navigate("/")}
+                className="mt-6 px-6 py-2 bg-blue-500 text-white font-semibold rounded-full hover:bg-blue-600 transition duration-300"
+              >
+                Quay lại mua sắm
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl bg-gray-100 min-h-screen pt-20 mb-4">
@@ -196,13 +242,20 @@ function Order() {
               <option value="" disabled selected className="text-gray-400">
                 Chọn hình thức thanh toán
               </option>
-              {
-                shippingMethod.map((method, index) => {
-                  if(method === "COD")
-                  return <option key={index}>{method}</option>
-                  else return <option key={index} disabled>{method}</option>
-                })
-              }
+              {shippingMethod.map((method, index) => {
+                if (method === "COD") {
+                  return (
+                    <option key={index} value={method}>
+                      {method}
+                    </option>
+                  );
+                } else
+                  return (
+                    <option key={index} disabled value={method}>
+                      {method}
+                    </option>
+                  );
+              })}
             </select>
           </div>
         </div>
