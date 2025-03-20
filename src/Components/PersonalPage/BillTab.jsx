@@ -194,9 +194,11 @@ const BillTab = ({ userData }) => {
   if (isLoading) return null;
 
   const handleTabClick = (tab) => {
-    setIsLoading(true);
-    setCurrentIndex(0);
-    setSelectedTab(tab);
+    if (tab !== selectedTab) {
+      setIsLoading(true);
+      setCurrentIndex(0);
+      setSelectedTab(tab);
+    }
   };
 
   return (

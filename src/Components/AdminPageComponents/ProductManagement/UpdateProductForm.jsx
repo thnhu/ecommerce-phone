@@ -15,7 +15,12 @@ import {
 } from "@mui/material";
 import api from "../../../services/api";
 
-const UpdateProductForm = ({ product, open, handleClose, onSuccess }) => {
+const UpdateProductForm = ({
+  updatingProduct,
+  open,
+  handleClose,
+  onSuccess,
+}) => {
   const [productData, setProductData] = useState({
     name: "",
     description: "",
@@ -55,18 +60,18 @@ const UpdateProductForm = ({ product, open, handleClose, onSuccess }) => {
 
   // Reset data when the form is closed or when the product changes
   useEffect(() => {
-    if (product && open) {
+    if (updatingProduct && open) {
       setProductData({
-        name: product.name,
-        description: product.description,
-        categoryId: product.category.id,
-        status: product.status || "",
-        price: product.price || "0",
-        color: product.color || "",
-        imagePaths: product.images || [], // Initialize with current images
+        name: updatingProduct.name,
+        description: updatingProduct.description,
+        categoryId: updatingProduct.category.id,
+        status: updatingProduct.status || "",
+        price: updatingProduct.price || "0",
+        color: updatingProduct.color || "",
+        imagePaths: updatingProduct.images || [], // Initialize with current images
         removeImageIds: [], // Reset remove image IDs
-        related_id: product.related_id || [], // Set related product IDs
-        variants: product.variants || [
+        related_id: updatingProduct.related_id || [], // Set related product IDs
+        variants: updatingProduct.variants || [
           {
             color: "",
             price: "",
@@ -74,9 +79,9 @@ const UpdateProductForm = ({ product, open, handleClose, onSuccess }) => {
           },
         ],
       });
-      setImages(product.images || []); // Set old images, only keep one
+      setImages(updatingProduct.images || []); // Set old images, only keep one
     }
-  }, [product, open]);
+  }, [updatingProduct, open]);
 
   // Handle input changes
   const handleChange = (e) => {
@@ -233,7 +238,11 @@ const UpdateProductForm = ({ product, open, handleClose, onSuccess }) => {
           />
 
           {/* Danh mục */}
-          <FormControl fullWidth margin="normal" error={Boolean(errors.categoryId)}>
+          <FormControl
+            fullWidth
+            margin="normal"
+            error={Boolean(errors.categoryId)}
+          >
             <InputLabel>Chọn danh mục</InputLabel>
             <Select
               name="categoryId"
@@ -256,11 +265,7 @@ const UpdateProductForm = ({ product, open, handleClose, onSuccess }) => {
           </FormControl>
 
           {/* Trạng thái */}
-          <FormControl
-            fullWidth
-            margin="normal"
-            error={Boolean(errors.status)}
-          >
+          <FormControl fullWidth margin="normal" error={Boolean(errors.status)}>
             <InputLabel>Chọn trạng thái</InputLabel>
             <Select
               name="status"
@@ -287,9 +292,13 @@ const UpdateProductForm = ({ product, open, handleClose, onSuccess }) => {
               {/* Display existing images */}
               {images.length > 0 &&
                 images.map((image, index) => (
-                  <div key={index} className="w-20 h-20 border rounded overflow-hidden relative">
+                  <div
+                    key={index}
+                    className="w-20 h-20 border rounded overflow-hidden relative"
+                  >
                     <img
-                      src={image.preview}
+                      // src={image.preview}
+                      src={`data:image/*;base64,${images[0].data}`}
                       alt="Old image"
                       className="w-full h-full object-cover"
                     />

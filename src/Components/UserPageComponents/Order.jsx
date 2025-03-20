@@ -92,11 +92,6 @@ function Order() {
   }, []);
 
   const handlePlaceOrder = async () => {
-    
-    // setTimeout(() => {
-    //   navigate("/");
-    // }, 2000);
-
     const mapItemIds = orderItems.map((item) => item.itemId + 1);
     if (selectedAddress && selectedMethod) {
       let reqBody = {
@@ -112,7 +107,7 @@ function Order() {
         await response;
         reqBody = {};
         setShowSuccess(true);
-        navigate("/");
+        navigate("/user");
 
         // setOrderItems([]);
         // setTotalAmount(0);

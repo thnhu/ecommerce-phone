@@ -50,6 +50,7 @@ const ProductDetail = ({ product }) => {
         setErrorQuantity(true);
       }
     }
+    console.log(product)
   }, [product]);
 
   useEffect(() => {

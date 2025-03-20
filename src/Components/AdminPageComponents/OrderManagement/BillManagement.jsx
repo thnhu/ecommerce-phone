@@ -81,15 +81,16 @@ const BillManagement = () => {
     fetchOrderData();
   }, [selectedTab, currentIndex]);
 
-  
   const handleTabClick = (tab) => {
-    setIsLoading(true);
-    setCurrentIndex(0)
-    setSelectedTab(tab);
+    if (tab !== selectedTab) {
+      setIsLoading(true);
+      setCurrentIndex(0);
+      setSelectedTab(tab);
+    }
   };
 
   if (isLoading) return null;
-  
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-4">
@@ -113,7 +114,10 @@ const BillManagement = () => {
         </ul>
       </div>
       {orderData && orderData.length >= 1 && (
-        <OrderUI orderData={orderData} fetchOrderData={fetchOrderData}></OrderUI>
+        <OrderUI
+          orderData={orderData}
+          fetchOrderData={fetchOrderData}
+        ></OrderUI>
       )}
 
       {!isLoading && orderData.length > 0 ? (

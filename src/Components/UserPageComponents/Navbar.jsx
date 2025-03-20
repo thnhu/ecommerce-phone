@@ -14,7 +14,6 @@ import {
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isSearching, setIsSearching] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [userData, setUserData] = useState({});
   const [cartQuantity, setCartQuantity] = useState();
@@ -44,8 +43,6 @@ const Navbar = () => {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
-
-  // useEffect(() => console.log(isSearching), [isSearching]);
 
   useEffect(() => {
     if (debounceTimeout) {
