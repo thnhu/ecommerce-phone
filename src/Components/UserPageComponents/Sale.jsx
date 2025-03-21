@@ -11,7 +11,7 @@ function Sale() {
     const fetchProducts = async (page) => {
         try {
             setLoading(true);
-            const response = await api.get(`/phone/product/status?page=${page}&size=4&status=ACTIVE`);
+            const response = await api.get(`/phone/product/status?page=${page}&size=5&status=ACTIVE`);
             const newProducts = response.data.content || [];
 
             // Kiểm tra và loại bỏ sản phẩm trùng lặp

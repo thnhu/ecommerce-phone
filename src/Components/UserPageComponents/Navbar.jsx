@@ -13,7 +13,7 @@ import {
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const [userData, setUserData] = useState({});
   const [cartQuantity, setCartQuantity] = useState();
