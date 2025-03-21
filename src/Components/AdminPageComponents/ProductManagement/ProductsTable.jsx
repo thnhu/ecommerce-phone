@@ -65,6 +65,8 @@ const ProductsTable = () => {
     }
   };
 
+  
+
   // Tính tổng số trang
   const maxIndex = Math.ceil(totalProducts / size) - 1; // Vì index bắt đầu từ 0
 
@@ -73,7 +75,6 @@ const ProductsTable = () => {
     const fetchAttributes = async () => {
       try {
         const attributePromises = productData.map(async (phone) => {
-          setLoading(true)
           const attRes = await api.get(`/phone/product/${phone.id}/attribute`);
           return attRes.data; // Return the attribute data for each product
         });
@@ -83,7 +84,6 @@ const ProductsTable = () => {
         // Set the attributes once all promises are resolved
         setAttributes(resolvedAttributes);
         // console.log(resolvedAttributes)
-        setLoading(false)
       } catch (e) {
         console.log(e);
       }
@@ -266,7 +266,7 @@ const ProductsTable = () => {
                             <strong>SIM:</strong> {attributes[index]?.sim || "Chưa xác định"}
                           </li>
                           <li>
-                            <strong>Others:</strong> {attributes[index]?.others || "Chưa xác định"}
+                            <strong>Mô tả khác:</strong> {attributes[index]?.others || "Chưa xác định"}
                           </li>
                         </ul>
                       </div>

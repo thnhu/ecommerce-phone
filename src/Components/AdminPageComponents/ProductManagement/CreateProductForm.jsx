@@ -1,14 +1,14 @@
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
-import api from '../../../services/api';
+import api from "../../../services/api";
 import {
   Button,
   Dialog,
   DialogTitle,
   DialogContent,
   Snackbar,
-  Alert
-} from '@mui/material';
+  Alert,
+} from "@mui/material";
 import Slide from "@mui/material/Slide";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -74,12 +74,10 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
     });
     setErrors({ ...errors, imagePaths: "" });
     if (files) {
-      // Chuyển đổi FileList thành mảng và tạo URL preview cho từng file
       const imagesArray = Array.from(files).map((file) => ({
         file,
         preview: URL.createObjectURL(file),
       }));
-      // Cập nhật state, ghép thêm các file mới đã chọn (nếu cần xóa thì tùy chỉnh lại)
       setImages((prevImages) => [...prevImages, ...imagesArray]);
     }
   };
@@ -89,12 +87,39 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
       fileInputRef.current.click();
     }
   };
+  // const handleRemoveImage = (imgId) => {
+  //   setImages((prevImages) => {
+  //     return prevImages.filter((img) => img.id !== imgId);
+  //   });
+  // };
   const handleRemoveImage = (index) => {
     setImages((prevImages) => {
       const updatedImages = prevImages.filter((_, i) => i !== index);
+
+      // Create a new FileList from the updated images
+      const updatedFiles = new DataTransfer();
+      updatedImages.forEach((img) => updatedFiles.items.add(img.file));
+
+      // Update productData.imagePaths
+      setProductData((prevData) => ({
+        ...prevData,
+        imagePaths: updatedFiles.files,
+      }));
+
+      // Update the file input field with the new FileList
+      if (fileInputRef.current) {
+        fileInputRef.current.files = updatedFiles.files;
+      }
       return updatedImages;
     });
   };
+
+  //Take only one images
+  useEffect(() => {
+    if (productData.imagePaths.length === 1) {
+      setErrors((prevErrors) => ({ ...prevErrors, imagePaths: "" }));
+    }
+  }, [productData.imagePaths]);
 
   // Validate form
   const validateForm = () => {
@@ -114,8 +139,11 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
     if (!productData.categoryId) {
       newErrors.categoryId = "Vui lòng chọn nhà cung cấp.";
     }
-    if (productData.imagePaths.length === 0) {
-      newErrors.imagePaths = "Vui lòng chọn ít nhất một hình ảnh.";
+    if (
+      productData.imagePaths.length === 0 ||
+      productData.imagePaths.length > 1
+    ) {
+      newErrors.imagePaths = "Vui lòng chọn một hình ảnh.";
     }
 
     return newErrors;
@@ -145,9 +173,11 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
       )
     );
 
-    Array.from(productData.imagePaths).forEach((file) => {
-      formData.append("files", file);
-    });
+    if (productData.imagePaths) {
+      Array.from(productData.imagePaths).forEach((file) => {
+        formData.append("files", file);
+      });
+    }
 
     try {
       const response = await api.post("/phone/product", formData, {
@@ -173,7 +203,7 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
         onClose={handleClose}
         TransitionComponent={Transition}
       >
-        <DialogTitle sx={{ color: "darkgreen" }}>Thêm sản phẩm mới</DialogTitle>
+        <DialogTitle>Thêm sản phẩm mới</DialogTitle>
         <DialogContent>
           <div className="p-3">
             <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -232,37 +262,40 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
               </div>
               {/* Ảnh sản phẩm */}
               <div>
-            <h2 className="text-m font-semibold mb-4">Chọn ảnh sản phẩm</h2>
-            <div className="flex flex-wrap gap-2">
-              {/* Hiển thị preview các hình đã chọn */}
-              {images.map((img, index) => (
-             <div key={index} className="relative w-20 h-20 border rounded overflow-hidden">
-            <img
-                    src={img.preview}
-                    alt={`image-${index}`}
-                    className="w-full h-full object-cover"
-                  />
-            {/* Nút xóa hình */}            
-            <button
-              type="button"
-              onClick={() => handleRemoveImage(index)}
-              className="absolute top-0 right-0 bg-red-400 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
-            >
-              ×
-            </button>
-          </div>
-        ))}
+                <h2 className="text-m font-semibold mb-4">Chọn ảnh sản phẩm</h2>
+                <div className="flex flex-wrap gap-2">
+                  {/* Hiển thị preview các hình đã chọn */}
+                  {images.map((img, index) => (
+                    <div
+                      key={index}
+                      className="relative w-20 h-20 border rounded overflow-hidden"
+                    >
+                      <img
+                        src={img.preview}
+                        alt={`image-${index}`}
+                        className="w-full h-full object-cover"
+                      />
+                      {/* Nút xóa hình */}
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(index)}
+                        className="absolute top-0 right-0 bg-red-400 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
 
                   {/* Nút thêm hình */}
-                  <button
+                  {/* <button
                     type="button"
                     onClick={handleSelectImages}
                     className="w-20 h-20 border rounded flex items-center justify-center text-gray-500 hover:bg-gray-100"
                   >
                     +
-                  </button>
+                  </button> */}
                   {/* Input file ẩn, cho phép chọn nhiều hình */}
-                  <input
+                  {/* <input
                     type="file"
                     name="imagePaths"
                     accept="image/*"
@@ -270,7 +303,23 @@ const CreateProductForm = ({ page, size, open, handleClose, onSuccess }) => {
                     ref={fileInputRef}
                     onChange={handleFileChange}
                     className="hidden"
-                  />
+                  /> */}
+                  <div className="">
+                    {errors.imagePaths && (
+                      <p className="text-red-500 text-sm">
+                        {errors.imagePaths}
+                      </p>
+                    )}
+                    <input
+                      type="file"
+                      name="imagePaths"
+                      accept="image/*"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      className=""
+                      multiple
+                    />
+                  </div>
                 </div>
               </div>
               <Button

@@ -24,26 +24,17 @@ const UpdateProductForm = ({
   const [productData, setProductData] = useState({
     name: "",
     description: "",
-    categoryId: "",
     status: "",
-    price: "",
-    color: "",
     imagePaths: [], // For new images
+    newImages: [],
     removeImageIds: [], // For tracking images to be removed
     related_id: [], // Related product IDs
-    variants: [
-      {
-        color: "",
-        price: "",
-        stock: "",
-      },
-    ],
   });
   const [errors, setErrors] = useState({});
   const [categories, setCategories] = useState([]);
   const fileInputRef = useRef(null);
   const [images, setImages] = useState([]); // To store preview of the selected image
-  const states = ["DRAFT", "ACTIVE"];
+  const states = ["DRAFT", "ACTIVE", "BLOCKED"];
 
   // Fetch categories on mount
   useEffect(() => {
@@ -64,22 +55,13 @@ const UpdateProductForm = ({
       setProductData({
         name: updatingProduct.name,
         description: updatingProduct.description,
-        categoryId: updatingProduct.category.id,
         status: updatingProduct.status || "",
-        price: updatingProduct.price || "0",
-        color: updatingProduct.color || "",
-        imagePaths: updatingProduct.images || [], // Initialize with current images
-        removeImageIds: [], // Reset remove image IDs
-        related_id: updatingProduct.related_id || [], // Set related product IDs
-        variants: updatingProduct.variants || [
-          {
-            color: "",
-            price: "",
-            stock: "",
-          },
-        ],
+        imagePaths: updatingProduct.images, 
+        newImages: [],
+        removeImageIds: [], 
+        related_id: updatingProduct.related_id || [], 
       });
-      setImages(updatingProduct.images || []); // Set old images, only keep one
+      setImages(updatingProduct.images || []); 
     }
   }, [updatingProduct, open]);
 
@@ -98,26 +80,9 @@ const UpdateProductForm = ({
     const files = e.target.files;
     setProductData({
       ...productData,
-      imagePaths: files,
+      newImages: files,
     });
     setErrors({ ...errors, imagePaths: "" });
-    if (files && files.length > 0) {
-      const imageFile = files[0]; // We only allow one image
-      const imageArray = [
-        {
-          file: imageFile,
-          preview: URL.createObjectURL(imageFile),
-        },
-      ];
-      setImages(imageArray); // Set the new selected image
-    }
-  };
-
-  // Trigger file input click
-  const handleSelectImages = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
   };
 
   // Handle image removal
@@ -126,6 +91,7 @@ const UpdateProductForm = ({
       ...prevData,
       removeImageIds: [...prevData.removeImageIds, imageId], // Add image ID to the removal list
     }));
+    setImages(images.filter((image) => image.id !== imageId));
   };
 
   // Validate form
@@ -143,16 +109,21 @@ const UpdateProductForm = ({
       newErrors.description = "Mô tả phải có ít nhất 10 ký tự.";
     }
 
-    if (!productData.categoryId) {
-      newErrors.categoryId = "Vui lòng chọn danh mục.";
-    }
-
-    if (productData.imagePaths.length === 0 && images.length === 0) {
+    if (
+      productData.newImages &&
+      productData.newImages.length === 0 &&
+      images.length === 0
+    ) {
       newErrors.imagePaths = "Vui lòng chọn ít nhất một hình ảnh.";
     }
 
     return newErrors;
   };
+
+  // useEffect(() => {
+  //   console.log(productData.newImages);
+  //   console.log(images);
+  // }, [productData.newImages, images]);
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -171,9 +142,6 @@ const UpdateProductForm = ({
           JSON.stringify({
             name: productData.name,
             description: productData.description,
-            price: productData.price,
-            categoryId: productData.categoryId,
-            color: productData.color,
             status: productData.status,
             related_id: productData.related_id,
             removeImageIds: productData.removeImageIds, // Include remove image IDs
@@ -183,18 +151,34 @@ const UpdateProductForm = ({
       )
     );
 
-    if (productData.imagePaths.length > 0) {
-      Array.from(productData.imagePaths).forEach((file) => {
+    if (productData.newImages && productData.newImages.length > 0) {
+      Array.from(productData.newImages).forEach((file) => {
         formData.append("files", file);
       });
+    } else {
+      formData.append("files", new Blob([]));
     }
-    console.log(formData);
+
+    //Try to read blob content
+    // formData.forEach(async (value, key) => {
+    //   if (value instanceof Blob) {
+    //     const text = await value.text(); // Read Blob content as text
+    //     console.log(key, JSON.parse(text)); // Convert and log JSON
+    //   } else {
+    //     console.log(key, value);
+    //   }
+    // });
+
     try {
-      const response = await api.put(`/phone/product/${product.id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await api.put(
+        `/phone/product/${updatingProduct.id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       handleClose();
       alert("Cập nhật sản phẩm thành công");
       if (typeof onSuccess === "function") {
@@ -205,6 +189,10 @@ const UpdateProductForm = ({
       alert("Cập nhật sản phẩm thất bại");
     }
   };
+
+  // useEffect(() => {
+  //   console.log(productData);
+  // }, [productData]);
 
   return (
     <Dialog open={open} onClose={handleClose}>
@@ -236,33 +224,6 @@ const UpdateProductForm = ({
             error={Boolean(errors.description)}
             helperText={errors.description}
           />
-
-          {/* Danh mục */}
-          <FormControl
-            fullWidth
-            margin="normal"
-            error={Boolean(errors.categoryId)}
-          >
-            <InputLabel>Chọn danh mục</InputLabel>
-            <Select
-              name="categoryId"
-              value={productData.categoryId}
-              onChange={handleChange}
-              label="Chọn danh mục"
-            >
-              <MenuItem value="" disabled>
-                Chọn danh mục
-              </MenuItem>
-              {categories.map((category) => (
-                <MenuItem key={category.id} value={category.id}>
-                  {category.name}
-                </MenuItem>
-              ))}
-            </Select>
-            {errors.categoryId && (
-              <FormHelperText>{errors.categoryId}</FormHelperText>
-            )}
-          </FormControl>
 
           {/* Trạng thái */}
           <FormControl fullWidth margin="normal" error={Boolean(errors.status)}>
@@ -298,35 +259,31 @@ const UpdateProductForm = ({
                   >
                     <img
                       // src={image.preview}
-                      src={`data:image/*;base64,${images[0].data}`}
+                      src={`data:image/*;base64,${images[index].data}`}
                       alt="Old image"
                       className="w-full h-full object-cover"
                     />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveImage(image.file.name)} // Pass the image ID to remove
-                      className="absolute top-0 right-0 text-red-500"
-                    >
-                      ×
-                    </button>
+
+                    {images && images.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveImage(image.id)}
+                        className="absolute top-0 right-0 bg-red-400 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+                      >
+                        ×
+                      </button>
+                    )}
                   </div>
                 ))}
 
-              {/* Button to select new image */}
-              <button
-                type="button"
-                onClick={handleSelectImages}
-                className="w-20 h-20 border rounded flex items-center justify-center text-gray-500 hover:bg-gray-100"
-              >
-                +
-              </button>
               <input
                 type="file"
-                name="imagePaths"
+                name="newImages"
                 accept="image/*"
                 ref={fileInputRef}
                 onChange={handleFileChange}
-                className="hidden"
+                className=""
+                multiple
               />
             </div>
             {errors.imagePaths && (

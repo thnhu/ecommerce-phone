@@ -1,21 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextField, Button, Box, Typography, Grid } from "@mui/material";
 import api from "../../../services/api";
 
-const ProductAttributeForm = ({ product, handleClose, setAttributes, attributes, productData }) => {
+const ProductAttributeForm = ({
+  product,
+  handleClose,
+  setAttributes,
+  attributes,
+  productData,
+}) => {
   const [formData, setFormData] = useState({
-    os: "IOS 18",
-    cpu: "A16 Bionic",
-    ram: "4GB",
-    rom: "64GB",
-    camera: "50MP",
-    pin: "10000MAH",
-    sim: "2",
-    others: "Dynamic Island, công nghệ 5G",
+    os: "",
+    cpu: "",
+    ram: "",
+    rom: "",
+    camera: "",
+    pin: "",
+    sim: "",
+    others: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false); // Track submitting state
-  const [index, setIndex] = useState(0); // Assuming you select an index based on your logic.
 
   // const fetchAttributes = async (index) => {
   //   try {
@@ -35,25 +40,38 @@ const ProductAttributeForm = ({ product, handleClose, setAttributes, attributes,
   //     console.error("Error fetching attributes:", e);
   //   }
   // };
-
-    const fetchAttributes = async () => {
+  useEffect(() => {
+    const fetchSingle = async () => {
       try {
-        const attributePromises = productData.map(async (phone) => {
-          const attRes = await api.get(`/phone/product/${phone.id}/attribute`);
-          return attRes.data; // Return the attribute data for each product
-        });
-
-        // Wait for all promises to resolve
-        const resolvedAttributes = await Promise.all(attributePromises);
-        
-        // Set the attributes once all promises are resolved
-        setAttributes(resolvedAttributes);
-        console.log(resolvedAttributes)
+        const response = await api.get(
+          `/phone/product/${product.id}/attribute`
+        );
+        if(response.data){
+          setFormData(response.data)
+        }
       } catch (e) {
-        console.log(e);
+        console.log("Lỗi dữ liệu");
       }
     };
+    fetchSingle();
+  }, []);
 
+  const fetchAttributes = async () => {
+    try {
+      const attributePromises = productData.map(async (phone) => {
+        const attRes = await api.get(`/phone/product/${phone.id}/attribute`);
+        return attRes.data; // Return the attribute data for each product
+      });
+
+      // Wait for all promises to resolve
+      const resolvedAttributes = await Promise.all(attributePromises);
+
+      // Set the attributes once all promises are resolved
+      setAttributes(resolvedAttributes);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -68,12 +86,15 @@ const ProductAttributeForm = ({ product, handleClose, setAttributes, attributes,
     setIsSubmitting(true); // Set submitting state to true while submitting
 
     try {
-      const response = await api.put(`/phone/product/${product.id}/attribute`, formData);
+      const response = await api.put(
+        `/phone/product/${product.id}/attribute`,
+        formData
+      );
       console.log(response.data);
-      
+
       // Call fetchAttributes with the index to update the specific attribute
       fetchAttributes();
-      
+
       handleClose(); // Close the form if submission is successful
     } catch (error) {
       console.error(error);
