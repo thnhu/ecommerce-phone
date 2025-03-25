@@ -125,6 +125,7 @@ const ProductDetail = ({ product }) => {
         try {
           const cartResponse = await api.post(
             `/phone/cart?userId=${userId}&variantId=${productVariantId}&quantity=${quantity}`
+            // "/phone/cart?userId=dbbb416e-6a22-4b71-bbac-34c3841367c2&variantId=1&quantity=1"
           );
           alert("Thành công");
         } catch (e) {

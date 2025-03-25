@@ -3,6 +3,7 @@ import UsersTable from "../Components/AdminPageComponents/UsersTable";
 import CategorisTable from "../Components/AdminPageComponents/CategoriesTable";
 import ProductsTable from "../Components/AdminPageComponents/ProductManagement/ProductsTable";
 import StockTable from "../Components/AdminPageComponents/StockManagement/StockTable";
+import CreateStaff from "../Components/AdminPageComponents/CreateStaff";
 import LogoutButton from "../Components/UserPageComponents/LogoutButton";
 import { Link } from "react-router-dom";
 import BillManagement from "../Components/AdminPageComponents/OrderManagement/BillManagement";
@@ -90,6 +91,20 @@ const AdminPage = () => {
             </button>
           </li>
           <li
+            key="nhanvien"
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${
+              selectedTab === "nhanvien" ? "bg-gray-800 rounded-md" : ""
+            }`}
+          >
+            <button
+              id="nhanvien"
+              className="md:w-full text-left"
+              onClick={handleClick}
+            >
+              Quản lý nhân viên
+            </button>
+          </li>
+          <li
             key="donhang"
             className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
               selectedTab === "donhang" ? "bg-gray-800 rounded-md" : ""
@@ -104,7 +119,11 @@ const AdminPage = () => {
             </button>
           </li>
           <li>
-            <LogoutButton style={'md:w-full md:px-5 px-1 py-3 md:w-full text-left text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md'}></LogoutButton>
+            <LogoutButton
+              style={
+                "md:w-full md:px-5 px-1 py-3 md:w-full text-left text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md"
+              }
+            ></LogoutButton>
           </li>
         </ul>
       </aside>
@@ -124,6 +143,7 @@ const AdminPage = () => {
           {selectedTab === "nhacungcap" && <CategorisTable />}
           {selectedTab === "thietbi" && <ProductsTable />}
           {selectedTab === "kho" && <StockTable />}
+          {selectedTab === "nhanvien" && <CreateStaff />}
           {selectedTab === "donhang" && <BillManagement />}
         </div>
       </div>

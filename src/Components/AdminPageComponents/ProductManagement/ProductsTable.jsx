@@ -35,12 +35,11 @@ const ProductsTable = () => {
   const [expandedProducts, setExpandedProducts] = useState({});
   const [openProductAttributeForm, setOpenProductAttributeForm] = useState();
   const [attributes, setAttributes] = useState([]);
-  // const [showDetails, setShowDetails] = useState(false);
   const [displayUpdateProductForm, setDisplayUpdateProductForm] = useState(false)
   const [updatingProduct, setUpdatingProduct] = useState()
+  const [showAllAttributes, setShowAllAttributes] = useState(false);
 
-  useEffect(() => console.log(productData), [])
-  
+  useEffect(() => console.log(productData), []);
 
   const toggleProductVariants = (productId) => {
     setExpandedProducts((prevExpanded) => ({
@@ -241,7 +240,7 @@ const ProductsTable = () => {
                   {attributes.length > 0 && (<TableRow>
                     <TableCell colSpan={6}>
                       <div className="bg-gray-100 p-2">
-                        <h3 className="font-semibold">Thuộc tính sản phẩm:</h3>
+                        <h3 className="font-semibold">Thông số kĩ thuật:</h3>
                         <ul className="list-none">
                           <li>
                           {/* JSON.stringify(attributes[0]) */}
@@ -250,7 +249,9 @@ const ProductsTable = () => {
                           <li>
                             <strong>CPU:</strong> {attributes[index]?.cpu || "Chưa xác định"}
                           </li>
-                          <li>
+                          {showAllAttributes && (
+                            <>
+                            <li>
                             <strong>RAM:</strong> {attributes[index]?.ram || "Chưa xác định"}
                           </li>
                           <li>
@@ -268,7 +269,16 @@ const ProductsTable = () => {
                           <li>
                             <strong>Mô tả khác:</strong> {attributes[index]?.others || "Chưa xác định"}
                           </li>
+                            </>
+                          )}
+                          
                         </ul>
+                        <button
+                          onClick={() => setShowAllAttributes(!showAllAttributes)}
+                          className="text-blue-600 hover:underline mt-2 text-sm"
+                        >
+                          {showAllAttributes ? "Thu gọn" : "Xem thêm"}
+                        </button>
                       </div>
                     </TableCell>
                   </TableRow>)}

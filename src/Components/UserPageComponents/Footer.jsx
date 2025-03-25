@@ -1,5 +1,4 @@
 import React from 'react';
-// import './Footer.css';
 
 const Footer = () => {
   return (
@@ -7,7 +6,7 @@ const Footer = () => {
       <div className="max-w-6xl mx-auto flex flex-wrap justify-between">
         {/* Logo and Description */}
         <div className="w-full sm:w-1/2 lg:w-1/4 mb-5">
-          <h3 className="text-lg font-semibold mb-3">THEGIOIDIDONG</h3>
+          <h3 className="text-lg font-semibold mb-3">DIDONGVERSE</h3>
           <p className="text-gray-600 leading-relaxed">
             Giới thiệu công ty
           </p>

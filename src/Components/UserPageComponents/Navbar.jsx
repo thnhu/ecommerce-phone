@@ -13,7 +13,7 @@ import {
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const [userData, setUserData] = useState({});
   const [cartQuantity, setCartQuantity] = useState();
@@ -229,9 +229,7 @@ const Navbar = () => {
                         ? `data:image/*;base64,${userData.avatar.data}`
                         : defaultAvatar
                     }
-                    alt="User Avatar"
-                    className="object-cover w-full h-full"
-                  />
+                    alt="User Avatar"/>
                 </div>
               </Link>
             )}

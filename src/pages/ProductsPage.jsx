@@ -7,13 +7,12 @@ import OtherProducts from "../Components/ProductsPageComponents/OtherProducts";
 import Navbar from "../Components/UserPageComponents/Navbar.jsx";
 import Footer from "../Components/UserPageComponents/Footer.jsx";
 import api from "../services/api.js";
+import { useParams } from 'react-router-dom';
 
 const ProductsPage = () => {
-  //A sample Product
-  const productId = "5d800a29-eae5-42dc-92cc-4b7cfe7d5276";
-
+  const { productId } = useParams(); // Lấy productId từ URL
   const [product, setProduct] = useState({});
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     const fetchData = async () => {
       const response = await api.get(`/phone/product/${productId}`);

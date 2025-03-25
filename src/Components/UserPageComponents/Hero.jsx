@@ -2,7 +2,6 @@ import React from 'react';
 import samsungLogo from "../../assets/images/logo-samsung.png";
 import iPhoneLogo from "../../assets/images/logo-iPhone.png";
 import xiaomiLogo from "../../assets/images/logo-xiaomi.png";
-import huaweiLogo from "../../assets/images/logo-huawei.jpg";
 import oppoLogo from "../../assets/images/logo-oppo.png";
 
 const Hero = () => {
@@ -40,7 +39,6 @@ const Hero = () => {
         <img className="h-10 object-contain" src={iPhoneLogo} alt="iPhone" />
         <img className="h-10 object-contain" src={xiaomiLogo} alt="Xiaomi" />
         <img className="h-10 object-contain" src={oppoLogo} alt="Oppo" />
-        <img className="h-10 object-contain" src={huaweiLogo} alt="Huawei" />       
       </div>
     </section>
   );

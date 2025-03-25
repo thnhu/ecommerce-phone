@@ -22,10 +22,24 @@ const ProductAttributeForm = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false); // Track submitting state
 
-  // const fetchAttributes = async (index) => {
-  //   try {
-  //     // Make a single request for the product's attributes
-  //     const attRes = await api.get(`/phone/product/${product.id}/attribute`);
+  // Effect để cập nhật formData khi attributes thay đổi
+  useEffect(() => {
+    if (productData && attributes && product) {
+      const productIndex = productData.findIndex(p => p.id === product.id);
+      const productAttributes = attributes[productIndex] || {};
+      
+      setFormData({
+        os: productAttributes.os || "",
+        cpu: productAttributes.cpu || "",
+        ram: productAttributes.ram || "",
+        rom: productAttributes.rom || "",
+        camera: productAttributes.camera || "",
+        pin: productAttributes.pin || "",
+        sim: productAttributes.sim || "",
+        others: productAttributes.others || ""
+      });
+    }
+  }, [productData, attributes, product]);
 
   //     // Log the attribute data if needed
   //     console.log("Updating attributes...");
@@ -75,15 +89,15 @@ const ProductAttributeForm = ({
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true); // Set submitting state to true while submitting
+    setIsSubmitting(true);
 
     try {
       const response = await api.put(
@@ -97,115 +111,39 @@ const ProductAttributeForm = ({
 
       handleClose(); // Close the form if submission is successful
     } catch (error) {
-      console.error(error);
-      console.log("Error Request:", error.request);
+      console.error("Lỗi khi cập nhật:", error);
     } finally {
-      setIsSubmitting(false); // Reset submitting state
+      setIsSubmitting(false);
     }
   };
 
   return (
     <Box sx={{ width: "100%", maxWidth: 600, margin: "0 auto", padding: 3 }}>
       <Typography variant="h6" gutterBottom>
-        Đặc tả thiết bị
+        Thông số kĩ thuật
       </Typography>
       <form onSubmit={handleSubmit}>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TextField
-              label="OS"
-              variant="outlined"
-              fullWidth
-              name="os"
-              value={formData.os}
-              onChange={handleChange}
-              placeholder="IOS 18"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="CPU"
-              variant="outlined"
-              fullWidth
-              name="cpu"
-              value={formData.cpu}
-              onChange={handleChange}
-              placeholder="A16 Bionic"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="RAM"
-              variant="outlined"
-              fullWidth
-              name="ram"
-              value={formData.ram}
-              onChange={handleChange}
-              placeholder="4GB"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="ROM"
-              variant="outlined"
-              fullWidth
-              name="rom"
-              value={formData.rom}
-              onChange={handleChange}
-              placeholder="64GB"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="Camera"
-              variant="outlined"
-              fullWidth
-              name="camera"
-              value={formData.camera}
-              onChange={handleChange}
-              placeholder="50MP"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="Pin"
-              variant="outlined"
-              fullWidth
-              name="pin"
-              value={formData.pin}
-              onChange={handleChange}
-              placeholder="10000MAH"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="SIM"
-              variant="outlined"
-              fullWidth
-              name="sim"
-              value={formData.sim}
-              onChange={handleChange}
-              placeholder="2"
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              label="Mô tả khác"
-              variant="outlined"
-              fullWidth
-              name="others"
-              value={formData.others}
-              onChange={handleChange}
-              placeholder=""
-            />
-          </Grid>
+          {Object.keys(formData).map((field) => (
+            <Grid item xs={12} key={field}>
+              <TextField
+                label={getFieldLabel(field)}
+                variant="outlined"
+                fullWidth
+                name={field}
+                value={formData[field]}
+                onChange={handleChange}
+                placeholder={getPlaceholder(field)}
+              />
+            </Grid>
+          ))}
           <Grid item xs={12} sx={{ marginTop: 2 }}>
             <Button
               type="submit"
               variant="contained"
               color="primary"
               fullWidth
-              disabled={isSubmitting} // Disable the button while submitting
+              disabled={isSubmitting}
             >
               {isSubmitting ? "Đang Cập Nhật..." : "Cập nhật"}
             </Button>
@@ -214,6 +152,36 @@ const ProductAttributeForm = ({
       </form>
     </Box>
   );
+};
+
+// Hàm helper để chuyển đổi tên field thành label
+const getFieldLabel = (field) => {
+  const labels = {
+    os: "Hệ điều hành",
+    cpu: "CPU",
+    ram: "RAM",
+    rom: "ROM",
+    camera: "Camera",
+    pin: "Dung lượng pin",
+    sim: "Số khe SIM",
+    others: "Thông số khác"
+  };
+  return labels[field] || field.toUpperCase();
+};
+
+// Hàm helper cho placeholder
+const getPlaceholder = (field) => {
+  const examples = {
+    os: "VD: Android 13",
+    cpu: "VD: Snapdragon 8 Gen 2",
+    ram: "VD: 8GB",
+    rom: "VD: 256GB",
+    camera: "VD: 108MP + 12MP + 5MP",
+    pin: "VD: 5000mAh",
+    sim: "VD: 2",
+    others: "VD: Màn hình AMOLED, hỗ trợ 5G"
+  };
+  return examples[field] || "";
 };
 
 export default ProductAttributeForm;
