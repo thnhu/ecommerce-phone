@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close"; // Import the CloseIcon
 
-const AddressForm = ({ onSubmit, onCancel, address }) => {
+const AddressForm = ({ onSubmit, onCancel, address, onUpdateAddress }) => {
   // Default empty address state for add mode
   const defaultAddress = {
     detail: "",
@@ -57,7 +57,8 @@ const AddressForm = ({ onSubmit, onCancel, address }) => {
         {address ? "Sửa Địa Chỉ" : "Thêm Địa Chỉ"}
       </h2>
 
-      <form onSubmit={handleSubmit}>
+      {/* <form onSubmit={handleSubmit}> */}
+      <form onSubmit={address == null ? handleSubmit : onUpdateAddress}>
         {/* Detail input */}
         <div>
           <label className="block">Địa chỉ chi tiết:</label>

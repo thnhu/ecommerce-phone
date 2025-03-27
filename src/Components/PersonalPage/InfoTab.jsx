@@ -2,11 +2,12 @@ import React, { useState, useEffect } from "react";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import AddressForm from "./AddressForm.jsx"; // Import the AddressForm component
 import InfoForm from "./InfoForm.jsx"; // Import the InfoForm component for editing user info
+import api from "../../services/api.js";
 
-
-const InfoTab = ({ userData }) => {
+const InfoTab = ({ userData, fetchPersonalInfo }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isUserInfoFormVisible, setIsUserInfoFormVisible] = useState(false); // To control user info form visibility
@@ -34,9 +35,36 @@ const InfoTab = ({ userData }) => {
     setIsUserInfoFormVisible(true); // Show the user info form
   };
 
-  const handleAddressSubmit = (newAddress) => {
-    console.log("Submitted Address:", newAddress);
-    // Logic to update the address list goes here
+  const handleUpdateAddress = (e) => {
+    e.preventDefault();
+    console.log(editAddress.id);
+  };
+
+  const handleDeleteAddress = async (address) => {
+    setEditAddress(address);
+    try {
+      const response = await api.delete(
+        `/phone/address?addressId=${address.id}`
+      );
+      console.log(response);
+      await fetchPersonalInfo();
+    } catch (error) {
+      console.log("Không thể xóa" + error);
+    }
+  };
+
+  const handleAddressSubmit = async (newAddress) => {
+    const updatedAddress = { ...newAddress, userId: userData.id };
+    console.log("Submitted Address:", updatedAddress);
+
+    try {
+      await api.post("/phone/address", updatedAddress); // Wait for the API call to finish
+      console.log("Address added successfully");
+      await fetchPersonalInfo(); // Wait for the new data to be fetched
+    } catch (e) {
+      console.log("Thêm địa chỉ thất bại", e);
+    }
+
     setIsFormVisible(false); // Hide the form after submission
   };
 
@@ -115,12 +143,22 @@ const InfoTab = ({ userData }) => {
                 </p>
                 <p>{addressParts}</p>
               </div>
-              <IconButton
-                color="black"
-                onClick={() => handleEditClick(address)}
-              >
-                <EditIcon />
-              </IconButton>
+              <div className="hidden">
+                <IconButton
+                  color="black"
+                  onClick={() => handleEditClick(address)}
+                >
+                  <EditIcon />
+                </IconButton>
+              </div>
+              <div className="">
+                <IconButton
+                  color="black"
+                  onClick={() => handleDeleteAddress(address)}
+                >
+                  <DeleteIcon style={{ color: "red", cursor: "pointer" }} />
+                </IconButton>
+              </div>
             </div>
           );
         })}
@@ -140,7 +178,8 @@ const InfoTab = ({ userData }) => {
           <AddressForm
             onSubmit={handleAddressSubmit}
             onCancel={handleCancelForm}
-            address={editAddress} // Pass the address to be edited, or null for adding
+            onUpdateAddress={handleUpdateAddress}
+            // address={editAddress} // Pass the address to be edited, or null for adding
           />
         </div>
       )}

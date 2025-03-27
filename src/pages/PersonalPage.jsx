@@ -40,19 +40,20 @@ const PersonalPage = () => {
   // const [selectedTab, setSelectedTab] = useState("thongtincanhan");
   const [selectedTab, setSelectedTab] = useState("donhangdamua");
 
-  useEffect(() => {
-    const fetchPersonalInfo = async () => {
-      try {
-        const response = await api.get("/phone/user/myInfo");
-        setUserData(() => ({ ...response.data }));
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          console.log("User not found. Please log in.");
-        } else {
-          console.log("An unexpected error occurred.");
-        }
+  const fetchPersonalInfo = async () => {
+    try {
+      const response = await api.get("/phone/user/myInfo");
+      setUserData(() => ({ ...response.data }));
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.log("Không tìm thấy người dùng.");
+      } else {
+        console.log("Lỗi không xác định.");
       }
-    };
+    }
+  };
+
+  useEffect(() => {
     fetchPersonalInfo();
   }, []);
 
@@ -62,7 +63,10 @@ const PersonalPage = () => {
       <div className="flex flex-wrap p-5 mt-20">
         <SideBar userData={userData} setSelectedTab={setSelectedTab}></SideBar>
         {selectedTab == "thongtincanhan" ? (
-          <InfoTab userData={userData}></InfoTab>
+          <InfoTab
+            userData={userData}
+            fetchPersonalInfo={fetchPersonalInfo}
+          ></InfoTab>
         ) : selectedTab == "donhangdamua" ? (
           <BillTab userData={userData}></BillTab>
         ) : null}

@@ -1,9 +1,27 @@
 import React, { useState, useEffect } from "react";
 import {
-  Table,TableBody,TableCell,TableContainer,TableHead,TableRow,Paper,IconButton,Button,Dialog,Snackbar,Alert,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  Button,
+  Dialog,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import {
-  Edit,Delete,ArrowBack,ArrowForward,MoreVert,ExpandMore,ExpandLess,LocalOffer,
+  Edit,
+  Delete,
+  ArrowBack,
+  ArrowForward,
+  MoreVert,
+  ExpandMore,
+  ExpandLess,
+  LocalOffer,
 } from "@mui/icons-material";
 import CreateProductForm from "./CreateProductForm";
 import UpdateProductForm from "./UpdateProductForm";
@@ -35,9 +53,11 @@ const ProductsTable = () => {
   const [expandedProducts, setExpandedProducts] = useState({});
   const [openProductAttributeForm, setOpenProductAttributeForm] = useState();
   const [attributes, setAttributes] = useState([]);
-  const [displayUpdateProductForm, setDisplayUpdateProductForm] = useState(false)
-  const [updatingProduct, setUpdatingProduct] = useState()
+  const [displayUpdateProductForm, setDisplayUpdateProductForm] =
+    useState(false);
+  const [updatingProduct, setUpdatingProduct] = useState();
   const [showAllAttributes, setShowAllAttributes] = useState(false);
+  const [showDiscountHistory, setShowDiscountHistory] = useState(false);
 
   useEffect(() => console.log(productData), []);
 
@@ -47,6 +67,11 @@ const ProductsTable = () => {
       [productId]: !prevExpanded[productId],
     }));
   };
+
+  const handleDiscountHistory = (variant, product) => {
+    setShowDiscountHistory(!showDiscountHistory)
+    setSelectedVariant(variant)
+  }
 
   const fetchData = async () => {
     try {
@@ -63,8 +88,6 @@ const ProductsTable = () => {
       setLoading(false);
     }
   };
-
-  
 
   // Tính tổng số trang
   const maxIndex = Math.ceil(totalProducts / size) - 1; // Vì index bắt đầu từ 0
@@ -155,14 +178,14 @@ const ProductsTable = () => {
   };
 
   const handleUpdateForm = (product) => {
-    console.log("clicked")
-    setDisplayUpdateProductForm(true)
-    setUpdatingProduct(product)
-  }
+    console.log("clicked");
+    setDisplayUpdateProductForm(true);
+    setUpdatingProduct(product);
+  };
 
   useEffect(() => {
     console.log("Updated Product:", updatingProduct);
-}, [updatingProduct]);
+  }, [updatingProduct]);
 
   // const handleCreateOfferVariant = async (variantId, product) => {};
 
@@ -172,7 +195,6 @@ const ProductsTable = () => {
 
   if (loading) return <div className="p-4 text-center">Đang tải...</div>;
   if (error) return <div className="p-4 text-red-500 text-center">{error}</div>;
-
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -188,14 +210,17 @@ const ProductsTable = () => {
       </div>
 
       <div className="overflow-x-auto">
-      <TableContainer component={Paper} className="shadow-lg">
+        <TableContainer component={Paper} className="shadow-lg">
           <Table className="min-w-max w-full" aria-label="product table">
             <TableHead className="bg-gray-50">
               <TableRow>
                 <TableCell>#</TableCell>
                 <TableCell>Tên sản phẩm</TableCell>
                 <TableCell className="hidden sm:table-cell">Mô tả</TableCell>
-                <TableCell className="hidden sm:table-cell">Nhà cung cấp</TableCell>
+                <TableCell className="hidden sm:table-cell">
+                  Nhà cung cấp
+                </TableCell>
+                <TableCell>Trạng thái</TableCell>
                 <TableCell>Hình ảnh</TableCell>
                 <TableCell>Cập nhật</TableCell>
               </TableRow>
@@ -210,6 +235,7 @@ const ProductsTable = () => {
                       {product.description}
                     </TableCell>
                     <TableCell>{product.category.name || "-"}</TableCell>
+                    <TableCell>{product.status || "-"}</TableCell>
                     <TableCell>
                       <div className="flex space-x-1">
                         <img
@@ -221,7 +247,10 @@ const ProductsTable = () => {
                     <TableCell>
                       <div className="flex space-x-2">
                         {/* Edit button */}
-                        <IconButton color="primary" onClick={() => handleUpdateForm(product)}>
+                        <IconButton
+                          color="primary"
+                          onClick={() => handleUpdateForm(product)}
+                        >
                           <Edit />
                         </IconButton>
                         <IconButton
@@ -237,51 +266,62 @@ const ProductsTable = () => {
                   </TableRow>
 
                   {/* Display Product Attributes */}
-                  {attributes.length > 0 && (<TableRow>
-                    <TableCell colSpan={6}>
-                      <div className="bg-gray-100 p-2">
-                        <h3 className="font-semibold">Thông số kĩ thuật:</h3>
-                        <ul className="list-none">
-                          <li>
-                          {/* JSON.stringify(attributes[0]) */}
-                            <strong>OS:</strong> {attributes[index]?.os || "Chưa xác định"}
-                          </li>
-                          <li>
-                            <strong>CPU:</strong> {attributes[index]?.cpu || "Chưa xác định"}
-                          </li>
-                          {showAllAttributes && (
-                            <>
+                  {attributes.length > 0 && (
+                    <TableRow>
+                      <TableCell colSpan={7}>
+                        <div className="bg-gray-100 p-2">
+                          <h3 className="font-semibold">Thông số kĩ thuật:</h3>
+                          <ul className="list-none">
                             <li>
-                            <strong>RAM:</strong> {attributes[index]?.ram || "Chưa xác định"}
-                          </li>
-                          <li>
-                            <strong>ROM:</strong> {attributes[index]?.rom || "Chưa xác định"}
-                          </li>
-                          <li>
-                            <strong>Camera:</strong> {attributes[index]?.camera || "Chưa xác định"}
-                          </li>
-                          <li>
-                            <strong>Pin:</strong> {attributes[index]?.pin || "Chưa xác định"}
-                          </li>
-                          <li>
-                            <strong>SIM:</strong> {attributes[index]?.sim || "Chưa xác định"}
-                          </li>
-                          <li>
-                            <strong>Mô tả khác:</strong> {attributes[index]?.others || "Chưa xác định"}
-                          </li>
-                            </>
-                          )}
-                          
-                        </ul>
-                        <button
-                          onClick={() => setShowAllAttributes(!showAllAttributes)}
-                          className="text-blue-600 hover:underline mt-2 text-sm"
-                        >
-                          {showAllAttributes ? "Thu gọn" : "Xem thêm"}
-                        </button>
-                      </div>
-                    </TableCell>
-                  </TableRow>)}
+                              {/* JSON.stringify(attributes[0]) */}
+                              <strong>OS:</strong>{" "}
+                              {attributes[index]?.os || "Chưa xác định"}
+                            </li>
+                            <li>
+                              <strong>CPU:</strong>{" "}
+                              {attributes[index]?.cpu || "Chưa xác định"}
+                            </li>
+                            {showAllAttributes && (
+                              <>
+                                <li>
+                                  <strong>RAM:</strong>{" "}
+                                  {attributes[index]?.ram || "Chưa xác định"}
+                                </li>
+                                <li>
+                                  <strong>ROM:</strong>{" "}
+                                  {attributes[index]?.rom || "Chưa xác định"}
+                                </li>
+                                <li>
+                                  <strong>Camera:</strong>{" "}
+                                  {attributes[index]?.camera || "Chưa xác định"}
+                                </li>
+                                <li>
+                                  <strong>Pin:</strong>{" "}
+                                  {attributes[index]?.pin || "Chưa xác định"}
+                                </li>
+                                <li>
+                                  <strong>SIM:</strong>{" "}
+                                  {attributes[index]?.sim || "Chưa xác định"}
+                                </li>
+                                <li>
+                                  <strong>Mô tả khác:</strong>{" "}
+                                  {attributes[index]?.others || "Chưa xác định"}
+                                </li>
+                              </>
+                            )}
+                          </ul>
+                          <button
+                            onClick={() =>
+                              setShowAllAttributes(!showAllAttributes)
+                            }
+                            className="text-blue-600 hover:underline mt-2 text-sm"
+                          >
+                            {showAllAttributes ? "Thu gọn" : "Xem thêm"}
+                          </button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
 
                   {/* Display Variants of this product */}
                   {product.variants && product.variants.length > 0 && (
@@ -318,6 +358,7 @@ const ProductsTable = () => {
                                   <TableCell>Màu</TableCell>
                                   <TableCell>Giá</TableCell>
                                   <TableCell>Số lượng</TableCell>
+                                  <TableCell>Giảm giá</TableCell>
                                   <TableCell>Cập nhật</TableCell>
                                 </TableRow>
                               </TableHead>
@@ -328,6 +369,9 @@ const ProductsTable = () => {
                                     <TableCell>{variant.color}</TableCell>
                                     <TableCell>{variant.price}</TableCell>
                                     <TableCell>{variant.stock}</TableCell>
+                                    <TableCell>
+                                      {variant.discount || 0} %
+                                    </TableCell>
                                     <TableCell>
                                       <div className="flex space-x-2">
                                         <IconButton
@@ -358,6 +402,11 @@ const ProductsTable = () => {
                                         ></UpdateDiscountVariant>
                                       </div>
                                     </TableCell>
+                                    <TableCell>
+                                      <div className="text-blue-500">
+                                        <button onClick={handleDiscountHistory}>Xem lịch sử giảm giá</button>
+                                      </div>
+                                    </TableCell>
                                   </TableRow>
                                 ))}
                               </TableBody>
@@ -367,40 +416,40 @@ const ProductsTable = () => {
                       </TableCell>
                     </TableRow>
                   )}
-                  
                 </React.Fragment>
               ))}
             </TableBody>
           </Table>
-        
-      </TableContainer>
+        </TableContainer>
       </div>
 
       {/* Pagination */}
       <div className="flex items-center justify-center py-4 border-t border-gray-200">
-          <IconButton
+        <IconButton
           disabled={currentIndex === 0}
           className="hover:bg-gray-100"
-            onClick={() =>
-              setCurrentIndex((currentIndex) => Math.max(0, currentIndex - 1))
-            }
-          >
-            <ArrowBack className="text-gray-600" />
-          </IconButton>
-          <p className="p-1 md:p-5 text-sm md:text-lg">{currentIndex + 1} / {maxIndex + 1}</p>
-          <IconButton
-            onClick={() =>
-              setCurrentIndex((currentIndex) => {
-                if (maxIndex > 0) return Math.min(currentIndex + 1, maxIndex);
-                else return currentIndex + 1;
-              })
-            }
-            disabled={currentIndex >= maxIndex}
-            className="hover:bg-gray-100"
-          >
-            <ArrowForward className="text-gray-600"/>
-          </IconButton>
-        </div>
+          onClick={() =>
+            setCurrentIndex((currentIndex) => Math.max(0, currentIndex - 1))
+          }
+        >
+          <ArrowBack className="text-gray-600" />
+        </IconButton>
+        <p className="p-1 md:p-5 text-sm md:text-lg">
+          {currentIndex + 1} / {maxIndex + 1}
+        </p>
+        <IconButton
+          onClick={() =>
+            setCurrentIndex((currentIndex) => {
+              if (maxIndex > 0) return Math.min(currentIndex + 1, maxIndex);
+              else return currentIndex + 1;
+            })
+          }
+          disabled={currentIndex >= maxIndex}
+          className="hover:bg-gray-100"
+        >
+          <ArrowForward className="text-gray-600" />
+        </IconButton>
+      </div>
 
       <Dialog
         open={openCreateForm}

@@ -134,10 +134,10 @@ function Order() {
           <div className="flex justify-center items-center h-full">
             <div className="text-center bg-white p-8 rounded-lg shadow-lg">
               <p className="text-2xl font-semibold text-gray-700">
-                Không có đơn hàng
+                Không có món hàng
               </p>
               <p className="mt-4 text-gray-500">
-                Chưa có đơn hàng nào trong giỏ hàng của bạn.
+                Chưa có món hàng nào trong giỏ hàng của bạn.
               </p>
               <button
                 onClick={() => navigate("/")}

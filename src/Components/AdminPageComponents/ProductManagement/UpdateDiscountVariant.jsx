@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   IconButton,
   Modal,
@@ -90,11 +90,14 @@ const DiscountButton = ({ variantId, product }) => {
     setDiscountData(newDiscountData); // Set discountData to the state
     console.log("Discount Data:", newDiscountData); // Log the discount data
 
-    try{
-      const response = await api.post('/phone/product/discount', newDiscountData)
-      console.log(response.data)
-    } catch(e){
-      console.log(e)
+    try {
+      const response = await api.post(
+        "/phone/product/discount",
+        newDiscountData
+      );
+      console.log(response.data);
+    } catch (e) {
+      console.log(e);
     }
 
     handleClose(); // Close the modal after submission
