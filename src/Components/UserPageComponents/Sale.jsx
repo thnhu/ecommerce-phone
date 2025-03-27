@@ -46,21 +46,21 @@ function Sale() {
 
     // Hàm tính giá gốc chính xác (nếu discount là phần trăm)
     const calculateOriginalPrice = (price, discount) => {
-        return price / (1 - discount / 100);
+        return price * (1 - discount / 100);
     };
+
 
     return (
         <section className="text-center p-5 bg-gray-100">
             <h2 className="text-2xl font-bold mb-5">KHUYẾN MÃI HOT</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-2">
                 {products.map((product) => {
-                    const variant = product.variants?.[0] || {};
-                    const imageUrl = product.images?.[0] || '';
-                    const hasDiscount = variant.discount > 0;
+                    const variant = product.variants[0] || {};
+                    const imageUrl = product.images[0] || '';
+                    const hasDiscount = product.discountDisplayed > 0;
                     const originalPrice = hasDiscount
-                        ? calculateOriginalPrice(variant.price, variant.discount)
-                        : variant.price;
-
+                        ? calculateOriginalPrice(product.variants[0].price, product.variants[0].discount)
+                        : product.variants[0].price;
                     return (
                         <Link
                             key={product.id}
@@ -70,7 +70,7 @@ function Sale() {
                             <div className="relative bg-white rounded-lg shadow-md p-3 text-center h-full flex flex-col justify-between transition-transform transform hover:scale-105 text-sm">
                                 {hasDiscount && (
                                     <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-                                        Giảm {variant.discount}%
+                                        Giảm {product.discountDisplayed}%
                                     </span>
                                 )}
                                 <img
@@ -84,13 +84,14 @@ function Sale() {
                                 <p className="text-yellow-500 text-xs mb-1">
                                     ⭐ {product.rating || 'Chưa có đánh giá'}
                                 </p>
-                                <p className="text-gray-800 text-base font-bold">
+                                <p className="text-red-600 text-base font-bold">
                                     {formatPrice(variant.price)}
                                     {hasDiscount && (
                                         <span className="line-through text-gray-500 text-xs ml-1">
                                             {formatPrice(originalPrice)}
                                         </span>
                                     )}
+                                    
                                 </p>
                             </div>
                         </Link>

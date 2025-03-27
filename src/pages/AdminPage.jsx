@@ -3,7 +3,7 @@ import UsersTable from "../Components/AdminPageComponents/UsersTable";
 import CategorisTable from "../Components/AdminPageComponents/CategoriesTable";
 import ProductsTable from "../Components/AdminPageComponents/ProductManagement/ProductsTable";
 import StockTable from "../Components/AdminPageComponents/StockManagement/StockTable";
-import CreateStaff from "../Components/AdminPageComponents/CreateStaff";
+import StaffTable from "../Components/AdminPageComponents/StaffManagement/StaffsTable";
 import LogoutButton from "../Components/UserPageComponents/LogoutButton";
 import { Link } from "react-router-dom";
 import BillManagement from "../Components/AdminPageComponents/OrderManagement/BillManagement";
@@ -143,7 +143,7 @@ const AdminPage = () => {
           {selectedTab === "nhacungcap" && <CategorisTable />}
           {selectedTab === "thietbi" && <ProductsTable />}
           {selectedTab === "kho" && <StockTable />}
-          {selectedTab === "nhanvien" && <CreateStaff />}
+          {selectedTab === "nhanvien" && <StaffTable />}
           {selectedTab === "donhang" && <BillManagement />}
         </div>
       </div>

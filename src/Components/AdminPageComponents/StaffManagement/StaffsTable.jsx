@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
-import { IconButton } from "@mui/material";
+import { IconButton, Button, Dialog } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import api from "../../services/api";
+import CreateStaffForm from './CreateStaffForm'
+import api from "../../../services/api";
 
-const StaffsTable = () => {
+const UsersTable = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userData, setUserData] = useState([]);
   const [maxIndex, setMaxIndex] = useState(0);
+  const [openCreateForm, setOpenCreateForm] = useState(false);
   const size = 6;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await api.get(
-          `/phone/user?page=${currentIndex}&size=${size}`
+          `/phone/user?page=${currentIndex}&size=${size}&roleName=EMPLOYEE`
         );
         setUserData(response.data.content);
         //disable over indexing
@@ -30,14 +32,12 @@ const StaffsTable = () => {
 
   return (
     <div className="pt-3 md:pt-5 w-full">
-      <h1 className="text-xl md:text-xl lg:text-3xl text-gray-600 font-medium md:px-5 px-2 flex items-center justify-center">
-        Quản lý nhân viên
-      </h1>
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Danh sách nhân viên</h1>
+      <div className="flex justify-between items-center mb-2 p-4">
+        <h1 className="text-2xl font-bold">Quản lý nhân viên</h1>
         <Button
           variant="contained"
-          onClick={handleOpenDialog}
+          color="primary"
+          onClick={() => setOpenCreateForm(true)}
         >
           Thêm nhân viên
         </Button>
@@ -110,9 +110,25 @@ const StaffsTable = () => {
             <ArrowForwardIcon />
           </IconButton>
         </div>
+              {/* Dialog thêm nhân viên */}
+      <Dialog
+      open={openCreateForm}
+      onClose={() => setOpenCreateForm(false)}
+      maxWidth="md"
+      fullWidth
+    >
+      <CreateStaffForm
+        onSuccess={() => {
+          setOpenCreateForm(false);
+          setCurrentPage(0); // Load lại dữ liệu từ đầu
+        }}
+        onClose={() => setOpenCreateForm(false)}
+      />
+    </Dialog>
       </div>
     </div>
+
   );
 };
 
-export default StaffsTable;
+export default UsersTable;
