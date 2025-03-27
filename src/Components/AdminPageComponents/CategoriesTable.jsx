@@ -18,7 +18,7 @@ import {
   Snackbar,
   Alert
 } from '@mui/material';
-import { Delete} from '@mui/icons-material';
+import { Edit} from '@mui/icons-material';
 
 const CategoriesTable = () => {
   const [categories, setCategories] = useState([]);
@@ -28,7 +28,8 @@ const CategoriesTable = () => {
   const [newCategory, setNewCategory] = useState("");
   const [addError, setAddError] = useState('');
   const [snackbar, setSnackbar] = useState({ open: false, message: ''});
-
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [editingCategory, setEditingCategory] = useState({ id: null, name: '' });
   useEffect(() => {
     fetchCategories();
   }, []);
@@ -78,15 +79,35 @@ const CategoriesTable = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Bạn chắc chắn muốn xóa?')) {
-      try {
-        await api.delete(`/phone/category/${id}`);
-        setCategories(categories.filter(category => category.id !== id));
-        setSnackbar({ open: true, message: 'Xóa thành công!' });
-      } catch (err) {
-        setError('Xóa thất bại');
-      }
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+  
+    if (!editingCategory.name.trim()) {
+      setError('Tên không được để trống');
+      setOpenEditDialog(false);
+      return;
+    }
+  
+    // Kiểm tra trùng tên (loại trừ category đang edit)
+    const isExist = categories.some(
+      category => 
+        category.id !== editingCategory.id && 
+        category.name.trim().toLowerCase() === editingCategory.name.trim().toLowerCase()
+    );
+  
+    if (isExist) {
+      setError('Tên nhà cung cấp đã tồn tại');
+      setOpenEditDialog(false);
+      return;
+    }
+  
+    try {
+      await api.put(`/phone/category/${editingCategory.id}?name=${encodeURIComponent(editingCategory.name)}`);
+      fetchCategories(); // Load lại danh sách
+      setOpenEditDialog(false);
+      setSnackbar({ open: true, message: 'Cập nhật thành công!' });
+    } catch (err) {
+      setError('Cập nhật thất bại');
     }
   };
 
@@ -121,7 +142,7 @@ const CategoriesTable = () => {
             <TableRow>
               <TableCell className="font-bold">#</TableCell>
               <TableCell className="font-bold">Tên nhà cung cấp</TableCell>
-              <TableCell className="font-bold">Xóa nhà cung cấp</TableCell>
+              <TableCell className="font-bold">Cập nhật nhà cung cấp</TableCell>
             </TableRow>
           </TableHead>
           
@@ -134,12 +155,15 @@ const CategoriesTable = () => {
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>{value.name}</TableCell>
                 <TableCell>
-                  <IconButton
-                    onClick={() => handleDelete(value.id)}
-                    color="error"
-                  >
-                    <Delete />
-                  </IconButton>
+                <IconButton
+                  onClick={() => {
+                    setEditingCategory({ id: value.id, name: value.name });
+                    setOpenEditDialog(true);
+                  }}
+                  color="primary"
+                >
+                  <Edit />
+                </IconButton>                
                 </TableCell>
               </TableRow>
             ))}
@@ -183,6 +207,34 @@ const CategoriesTable = () => {
             disabled={!newCategory.trim()}
           >
             Thêm
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Dialog cập nhật */}
+      <Dialog open={openEditDialog} onClose={() => setOpenEditDialog(false)}>
+        <DialogTitle>Cập nhật nhà cung cấp</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Tên nhà cung cấp"
+            type="text"
+            fullWidth
+            variant="outlined"
+            value={editingCategory.name}
+            onChange={(e) => setEditingCategory({ ...editingCategory, name: e.target.value })}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenEditDialog(false)}>Hủy</Button>
+          <Button 
+            onClick={handleUpdate}
+            variant="contained" 
+            color="primary"
+            disabled={!editingCategory.name.trim()}
+          >
+            Cập nhật
           </Button>
         </DialogActions>
       </Dialog>

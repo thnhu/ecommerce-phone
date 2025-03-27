@@ -10,6 +10,8 @@ const ProductDetail = ({ product }) => {
   const [errorQuantity, setErrorQuantity] = useState(false);
   const [productVariantId, setProductVariantId] = useState();
 
+  useEffect(() => {console.log(product)}, [])
+
   const updateQuantity = (add) => {
     const stock = product.variants[selectedColor].stock;
 
@@ -172,7 +174,7 @@ const ProductDetail = ({ product }) => {
             selectedColor >= 0 &&
             selectedColor < product.variants.length
               ? `${formatNumber(product.variants[selectedColor].price)} vnđ`
-              : "Giá chưa được cập nhật"}
+              : "Giá chưa được cập nhật"} - {product.variants[selectedColor].discount}%
           </h2>
           <p className="p-font text-[14px] md:text-[16px] lg:text-[18px] opacity-60 mt-[5px] md:mt-[8px] leading-3 md:leading-5">
             {product.description || "Chưa có mô tả"}

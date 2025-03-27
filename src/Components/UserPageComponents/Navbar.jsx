@@ -161,6 +161,10 @@ const Navbar = () => {
             {products && isSearchOpen && (
               <div className="absolute top-full right-0 w-1/3 bg-white shadow-lg z-10 rounded-b-xl">
                 {products.map((product) => (
+                  <Link
+                  key={product.id}
+                  to={`/product/${product.id}`}
+                  className="block">
                   <div
                     key={product.id}
                     className="flex items-center p-4 hover:bg-gray-100 rounded-xl"
@@ -174,6 +178,7 @@ const Navbar = () => {
                       {product.name}
                     </h3>
                   </div>
+                  </Link>
                 ))}
               </div>
             )}

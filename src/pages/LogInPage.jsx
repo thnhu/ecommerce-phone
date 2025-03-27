@@ -84,7 +84,7 @@ const LogInPage = () => {
       <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
         <div className="bg-white p-6 md:p-8 rounded-2xl shadow-lg w-full max-w-md">
           <div className="text-center mb-6">
-            <div className="text-xl font-bold">Didongverse</div>
+            <div className="text-xl font-bold">DIDONGVERSE</div>
             <h2 className="text-2xl font-semibold mt-2">Chào mừng trở lại</h2>
             <p className="text-gray-500 text-sm mt-1">
             Vui lòng nhập thông tin để đăng nhập
@@ -132,7 +132,7 @@ const LogInPage = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`w-full text-white p-2 rounded-lg transition ${
+              className={`w-full text-white p-2 rounded-full transition ${
                 isSubmitting ? "bg-gray-400" : "bg-black hover:bg-gray-800"
               }`}
             >
