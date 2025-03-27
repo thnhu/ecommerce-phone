@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Checkbox,
   IconButton,
@@ -219,11 +219,13 @@ const Cart = () => {
                     className="w-16 h-16 sm:w-24 sm:h-24 object-contain rounded"
                   />
                   <div className="flex-1 min-w-[150px]">
-                    <h3 className="text-lg font-semibold">{item.name}</h3>
                     <div className="text-sm text-gray-600 mt-2">
-                      <p className="text-xl font-bold">
-                        Sản phẩm: {item.productName}
-                      </p>
+                        <Link
+                          to={`/product/${item.productId}`}
+                          className="text-lg text-black font-semibold inline-block"
+                        >
+                          {item.productName}
+                        </Link>
                       <p>Màu sắc: {item.productColor}</p>
                       {/* test this line */}
                       {/* {<p>{item.stock}</p>} */}

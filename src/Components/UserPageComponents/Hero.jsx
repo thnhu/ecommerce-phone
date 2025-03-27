@@ -34,11 +34,14 @@ const Hero = () => {
         </div>
       </div>
 
-      <div className="flex justify-center gap-8 flex-wrap mt-10">
-        <img className="h-10 object-contain" src={samsungLogo} alt="Samsung" />
-        <img className="h-10 object-contain" src={iPhoneLogo} alt="iPhone" />
+      <div className="flex justify-center gap-8 items-center flex-wrap mt-10 ">
+        <img className="w-32 object-contain" src={samsungLogo} alt="Samsung" />
+        <img className="h-28 object-contain" src={iPhoneLogo} alt="iPhone" />
         <img className="h-10 object-contain" src={xiaomiLogo} alt="Xiaomi" />
-        <img className="h-10 object-contain" src={oppoLogo} alt="Oppo" />
+        <img className="h-14 object-contain" src={oppoLogo} alt="Oppo" />
+      </div>
+      <div className='w-full flex justify-center'>
+        <div className='w-1/3 border-b border-gray-400'></div>
       </div>
     </section>
   );

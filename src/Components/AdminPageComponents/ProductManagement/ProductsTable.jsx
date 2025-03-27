@@ -347,7 +347,7 @@ const ProductsTable = () => {
                           >
                             {expandedProducts[product.id]
                               ? "Thu gọn"
-                              : "Hiển thị mẫu"}
+                              : "Hiển thị các màu sắc"}
                           </Button>
 
                           {/* Conditionally render the variants section and its header */}

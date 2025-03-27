@@ -54,28 +54,44 @@ const Order = ({ orderData }) => {
           {/* Order Overview */}
           <div className="flex justify-between items-center">
             <div>
-              <p className="font-semibold text-xl">
-                ID đơn hàng: {order.orderId}
+              <p className="font-semibold text-xl uppercase">
+                ID đơn hàng: {order.orderId}{" "}
+                <span className="px-3 py-1 rounded-full text-sm text-white bg-blue-500">
+                  {formatStatusToVN(order.status)}
+                </span>
               </p>
               <p className="text-gray-600">Người nhận: {order.receiverName}</p>
               <p className="text-gray-600">Điện thoại: {order.receiverPhone}</p>
               <p className="text-gray-600">Địa chỉ: {order.address}</p>
-            </div>
-            <div>
-              <span className="px-3 py-1 rounded-full text-sm text-white bg-blue-500">
-                {formatStatusToVN(order.status)}
-              </span>
             </div>
           </div>
 
           {/* Order Summary */}
           <div className="mt-4">
             {/* <p className="text-gray-600">Tổng số lượng: {order.totalQuantity}</p> */}
-            <p className="text-xl font-semibold">
+            <p className="text-xl font-semibold text-sky-700">
               Tổng giá tiền: {order.totalPrice.toLocaleString()} VND
             </p>
           </div>
-
+          {order.status === "DELIVERING" ? (
+            <div className="w-full flex">
+              <button className="ml-auto bg-sky-400 text-white px-2 rounded-md font-semibold mt-2 py-1">
+                Đã nhận hàng
+              </button>
+            </div>
+          ) : (
+            ""
+          )}
+          {order.status === "DELIVERED" ? (
+            <div className="w-full">
+              <div className="ml-auto bg-yellow-100 px-2 rounded-md  mt-2 py-1">
+                Qúy khách muốn trả hàng hoàn tiền vui lòng liên hệ:{" "}
+                <span className="text-orange-500">cskh@didongverse.com</span>
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
           {/* Collapse Button */}
           <button
             onClick={() => toggleCollapse(order.orderId)}
@@ -113,6 +129,15 @@ const Order = ({ orderData }) => {
                   ))}
                 </tbody>
               </table>
+              {order.status === "PENDING" || order.status === "CONFIRM" ? (
+                <div className="w-full flex">
+                  <button className="ml-auto bg-red-500 text-white px-2 rounded-md font-semibold mt-2 py-1">
+                    Hủy đơn hàng
+                  </button>
+                </div>
+              ) : (
+                ""
+              )}
             </div>
           )}
         </div>
