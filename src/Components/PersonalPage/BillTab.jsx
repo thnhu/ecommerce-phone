@@ -16,7 +16,7 @@ const shippingStatus = [
 ];
 
 //UI for each order
-const Order = ({ orderData }) => {
+const Order = ({ orderData, fetchOrderData }) => {
   // State to keep track of which order is expanded
   const [expandedOrderId, setExpandedOrderId] = useState(null);
 
@@ -41,6 +41,32 @@ const Order = ({ orderData }) => {
         return "ĐÃ HOÀN TIỀN";
       default:
         return "KHÔNG RÕ TRẠNG THÁI";
+    }
+  };
+
+  const handleCancelOrderUpdate = async (order) => {
+    try {
+      const response = await api.post(
+        `/phone/order/updateStatus/${order.orderId}?status=REFUNDED`
+      );
+      alert("Cập nhật thành công");
+      console.log(response);
+      fetchOrderData();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleReceivedOrderUpdate = async (order) => {
+    try {
+      const response = await api.post(
+        `/phone/order/updateStatus/${order.orderId}?status=DELIVERED`
+      );
+      alert("Cập nhật thành công");
+      console.log(response);
+      fetchOrderData();
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -75,7 +101,10 @@ const Order = ({ orderData }) => {
           </div>
           {order.status === "DELIVERING" ? (
             <div className="w-full flex">
-              <button className="ml-auto bg-sky-400 text-white px-2 rounded-md font-semibold mt-2 py-1">
+              <button
+                className="ml-auto bg-sky-400 text-white px-2 rounded-md font-semibold mt-2 py-1"
+                onClick={() => handleReceivedOrderUpdate(order)}
+              >
                 Đã nhận hàng
               </button>
             </div>
@@ -85,7 +114,7 @@ const Order = ({ orderData }) => {
           {order.status === "DELIVERED" ? (
             <div className="w-full">
               <div className="ml-auto bg-yellow-100 px-2 rounded-md  mt-2 py-1">
-                Qúy khách muốn trả hàng hoàn tiền vui lòng liên hệ:{" "}
+                Quý khách muốn trả hàng hoàn tiền vui lòng liên hệ:{" "}
                 <span className="text-orange-500">cskh@didongverse.com</span>
               </div>
             </div>
@@ -131,7 +160,10 @@ const Order = ({ orderData }) => {
               </table>
               {order.status === "PENDING" || order.status === "CONFIRM" ? (
                 <div className="w-full flex">
-                  <button className="ml-auto bg-red-500 text-white px-2 rounded-md font-semibold mt-2 py-1">
+                  <button
+                    className="ml-auto bg-red-500 text-white px-2 rounded-md font-semibold mt-2 py-1"
+                    onClick={() => handleCancelOrderUpdate(order)}
+                  >
                     Hủy đơn hàng
                   </button>
                 </div>
