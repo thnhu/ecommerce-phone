@@ -21,7 +21,7 @@ function Sale() {
                 return [...prev, ...filteredNewProducts]; // Nối danh sách
             });
 
-            setHasMore(newProducts.length === 4); // Kiểm tra còn dữ liệu không
+            setHasMore(newProducts.length === 5); // Kiểm tra còn dữ liệu không
         } catch (error) {
             console.error('Error fetching products:', error);
         } finally {
@@ -51,54 +51,65 @@ function Sale() {
 
 
     return (
-        <section className="text-center p-5 bg-gray-100">
-            <h2 className="text-2xl font-bold mb-5">KHUYẾN MÃI HOT</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-2">
+        <section className="text-center p-2 bg-gray-100">
+            <h2 className="text-2xl font-bold mb-2">KHUYẾN MÃI HOT</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 px-2">
                 {products.map((product) => {
                     const variant = product.variants[0] || {};
                     const imageUrl = product.images[0] || '';
                     const hasDiscount = product.discountDisplayed > 0;
                     const originalPrice = hasDiscount
-                        ? calculateOriginalPrice(product.variants[0].price, product.variants[0].discount)
+                        ? calculateOriginalPrice(product.variants[0].price, product.discountDisplayed)
                         : product.variants[0].price;
-                    return (
-                        <Link
-                            key={product.id}
-                            to={`/product/${product.id}`}
-                            className="block"
-                        >
-                            <div className="relative bg-white rounded-lg shadow-md p-3 text-center h-full flex flex-col justify-between transition-transform transform hover:scale-105 text-sm">
-                                {hasDiscount && (
-                                    <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-                                        Giảm {product.discountDisplayed}%
-                                    </span>
-                                )}
-                                <img
-                                    src={`data:image/*;base64,${imageUrl.data}`}
-                                    alt={product.name}
-                                    className="w-3/4 mx-auto rounded mb-2"
-                                />
-                                <h3 className="text-sm font-medium mb-1 min-h-[36px] flex items-center justify-center">
-                                    {product.name}
-                                </h3>
-                                <p className="text-yellow-500 text-xs mb-1">
-                                    ⭐ {product.rating || 'Chưa có đánh giá'}
-                                </p>
-                                <p className="text-red-600 text-base font-bold">
-                                    {formatPrice(variant.price)}
+                        return (
+                            <Link
+                                key={product.id}
+                                to={`/product/${product.id}`}
+                                className="block h-full"
+                            >
+                                <div className="relative bg-white rounded-lg shadow-md p-3 h-full flex flex-col justify-between hover:scale-105 transition-transform text-sm">
                                     {hasDiscount && (
-                                        <span className="line-through text-gray-500 text-xs ml-1">
-                                            {formatPrice(originalPrice)}
+                                        <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded z-10">
+                                            Giảm {product.discountDisplayed}%
                                         </span>
                                     )}
                                     
-                                </p>
-                            </div>
-                        </Link>
-                    );
-                })}
-            </div>
-
+                                    {/* Container hình vuông */}
+                                    <div className="relative pt-[100%] mb-2"> {/* Tạo tỷ lệ 1:1 */}
+                                        <div className="absolute top-0 left-0 w-full h-full p-2 flex items-center justify-center">
+                                            <img
+                                                src={`data:image/*;base64,${imageUrl.data}`}
+                                                alt={product.name}
+                                                className="w-full h-full object-contain max-w-[80%] max-h-[80%]"
+                                            />
+                                        </div>
+                                    </div>
+    
+                                    <h3 className="font-medium mb-1 line-clamp-2 min-h-[3em] text-lg">
+                                        {product.name}
+                                    </h3>
+                                    
+                                    <div className="mt-auto">
+                                        <p className="text-yellow-500 text-s mb-1">
+                                            ⭐ {product.rating || 'Chưa có đánh giá'}
+                                        </p>
+                                        <div className="flex flex-col">
+                                            <span className="text-rose-600 text-base font-bold text-lg">
+                                                {formatPrice(variant.price)}
+                                            </span>
+                                            {hasDiscount && (
+                                                <span className="line-through text-gray-600 font-bold">
+                                                    {formatPrice(originalPrice)}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            </Link>
+                        );
+                    })}
+                </div>
+                
             {hasMore && (
                 <button
                     onClick={loadMoreProducts}

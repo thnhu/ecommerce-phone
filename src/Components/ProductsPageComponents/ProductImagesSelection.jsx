@@ -58,7 +58,7 @@ const ProductImagesSelection = ({ productImg }) => {
         {/* Images carousel */}
         <div className="w-full flex gap-3 md:flex-col justify-evenly align-middle mt-2 md:mt-0">
           {productImg && productImg.length > 0 && productImg
-            .slice(startIndex, startIndex + imagesToDisplay)  // Dynamically slice the images
+            .slice(startIndex, startIndex + imagesToDisplay)
             .map((image, index) => (
               <button
                 key={index}
@@ -67,17 +67,16 @@ const ProductImagesSelection = ({ productImg }) => {
                   selectedImage === startIndex + index
                     ? "border-[1px] border-black rounded-md"
                     : ""
-                } box-border`}
+                } box-content p-1`}
               >
                 <img
-                  src={`data:image/*;base64,${image.data}`}  // Use base64 data
+                  src={`data:image/*;base64,${image.data}`}
                   alt={`Image ${startIndex + index}`}
-                  className="w-[111px] h-[106px] md:w-[152px] md:h-[167px] object-co"
+                  className="w-[106px] h-[106px] md:w-[167px] md:h-[167px] object-cover rounded-md"
                 />
               </button>
             ))}
         </div>
-
         {/* Next Button */}
         <button
           onClick={nextImages}

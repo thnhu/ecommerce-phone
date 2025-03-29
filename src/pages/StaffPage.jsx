@@ -32,20 +32,6 @@ const StaffPage = () => {
             </Link>
           </li>
           <li
-            key="thietbi"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
-              selectedTab === "thietbi" ? "bg-gray-800 rounded-md" : ""
-            }`}
-          >
-            <button
-              id="thietbi"
-              className="md:w-full text-left"
-              onClick={handleClick}
-            >
-              Thiết bị
-            </button>
-          </li>
-          <li
             key="nhacungcap"
             className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
               selectedTab === "nhacungcap" ? "bg-gray-800 rounded-md" : ""
@@ -59,6 +45,7 @@ const StaffPage = () => {
               Nhà cung cấp
             </button>
           </li>
+
           <li
             key="kho"
             className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${selectedTab === 'kho' ? 'bg-gray-800 rounded-md' : ''}`}
@@ -69,6 +56,21 @@ const StaffPage = () => {
               onClick={handleClick}
             >
               Quản lý kho
+            </button>
+          </li>
+
+          <li
+            key="thietbi"
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
+              selectedTab === "thietbi" ? "bg-gray-800 rounded-md" : ""
+            }`}
+          >
+            <button
+              id="thietbi"
+              className="md:w-full text-left"
+              onClick={handleClick}
+            >
+              Thiết bị
             </button>
           </li>
           <li>
