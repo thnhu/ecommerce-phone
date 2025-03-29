@@ -3,17 +3,32 @@ import { theme } from "../../const/const";
 import stars from "../../assets/stars";
 import PropTypes from "prop-types";
 import api from "../../services/api";
-
+import CustomSnackbar from '../../Components/CustomSnackbar';
 const ProductDetail = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setColor] = useState(0);
   const [errorQuantity, setErrorQuantity] = useState(false);
   const [productVariantId, setProductVariantId] = useState();
+  const [discount, setDiscount] = useState();
+  const [snackbarState, setSnackbarState] = useState({
+    open: false,
+    message: '',
+    severity: 'info', // default value
+  });
 
-  useEffect(() => {console.log(product)}, [])
-
+  const showSnackbar = (message, severity = 'info') => {
+    setSnackbarState({
+      open: true,
+      message,
+      severity
+    });
+  };
+  
   const updateQuantity = (add) => {
     const stock = product.variants[selectedColor].stock;
+    if (stock === 0) {
+      showSnackbar('Sản phẩm đã hết hàng', 'error');
+    }
 
     if (add === -1 && quantity === 1) return;
 
@@ -48,18 +63,32 @@ const ProductDetail = ({ product }) => {
   useEffect(() => {
     if (product && product.variants && product.variants.length > 0) {
       const firstVariant = product.variants[0];
+      setProductVariantId(product.variants[0].id);
       if (firstVariant.stock === 0) {
         setErrorQuantity(true);
       }
     }
-    console.log(product)
+    console.log(product);
+    console.log(product.variants[0].id);
+    setProductVariantId(product.variants[0].id);
   }, [product]);
 
-  useEffect(() => {
-    if (product && product.variants && product.variants.length > 0) {
-      setProductVariantId(product.variants[0].id);
-    }
-  }, [product]);
+    useEffect(() => {
+      fetchDiscount();
+    }, []);
+  
+    const fetchDiscount = async () => {
+      try {
+        const response = await api.get(`/phone/product/discount/getActive/${productVariantId}`);
+        console.log(response.data.discountValue);
+        setDiscount(response.data.discountValue);
+        setLoading(false);
+      } catch (err) {
+        setError('Không thể tải danh sách nhà cung cấp');
+        setLoading(false);
+      }
+    };
+  
 
   const handleInputChange = (event) => {
     const value = event.target.value;
@@ -121,25 +150,30 @@ const ProductDetail = ({ product }) => {
 
   const handleAddCart = async () => {
     if (!errorQuantity) {
+      // Kiểm tra trạng thái đăng nhập qua localStorage
+      const isLoggedIn = localStorage.getItem('authToken');
+      
+      if (!isLoggedIn) {
+        showSnackbar('Vui lòng đăng nhập để sử dụng chức năng này', 'error');
+        return;
+      }
+  
       try {
         const userResponse = await api.get("/phone/user/myInfo");
         const userId = userResponse.data.id;
         try {
           const cartResponse = await api.post(
             `/phone/cart?userId=${userId}&variantId=${productVariantId}&quantity=${quantity}`
-            // "/phone/cart?userId=dbbb416e-6a22-4b71-bbac-34c3841367c2&variantId=1&quantity=1"
           );
-          alert("Thành công");
+          showSnackbar('Thêm vào giỏ hàng thành công!', 'success');
         } catch (e) {
           console.log(e);
         }
       } catch (e) {
         console.log(e);
       }
-    } else {
-      alert("Số lượng không phù hợp.");
     }
-  };
+    };
 
   if (!product) {
     return (
@@ -148,13 +182,26 @@ const ProductDetail = ({ product }) => {
       </div>
     );
   }
+  const hasDiscount = product.variants[selectedColor].discount > 0;
+      // Hàm định dạng tiền tệ
+      const formatPrice = (price) => {
+        return new Intl.NumberFormat('vi-VN').format(price) + '₫';
+    };
+
+    // Hàm tính giá gốc chính xác (nếu discount là phần trăm)
+    const calculateOriginalPrice = (price, discount) => {
+        return price * (1 - discount / 100);
+    };
+    const originalPrice = hasDiscount
+    ? calculateOriginalPrice(product.variants[selectedColor].price, product.variants[selectedColor].discount)
+    : product.variants[selectedColor].price;
 
   return (
     <>
       <div className="md:ml-[40px] md:w-1/2 mt-4 block">
         {/* Basic info name, price, rate, description */}
         <div className="basic-info">
-          <p className="header-font text-[24px] md:text-3xl lg:text-[33px]">
+          <p className="header-font text-[24px] md:text-3xl lg:text-[33px] font-bold">
             {product.name || "Tên sản phẩm chưa cập nhật"}
           </p>
 
@@ -168,27 +215,44 @@ const ProductDetail = ({ product }) => {
             />
           </div>
 
-          <h2 className="p-font text-2xl md:text-xl lg:text-2xl">
-            {product.variants &&
-            product.variants.length > 0 &&
-            selectedColor >= 0 &&
-            selectedColor < product.variants.length
-              ? `${formatNumber(product.variants[selectedColor].price)} vnđ`
-              : "Giá chưa được cập nhật"} - {product.variants[selectedColor].discount}%
-          </h2>
-          <p className="p-font text-[14px] md:text-[16px] lg:text-[18px] opacity-60 mt-[5px] md:mt-[8px] leading-3 md:leading-5">
+          <div className="flex flex-col">
+        {hasDiscount ? (
+            <div className="flex items-baseline gap-2">
+                {/* Giá khuyến mãi */}
+                <span className="text-rose-600 text-2xl font-bold">
+                    {formatPrice(product.variants[selectedColor].price)}
+                </span>
+                
+                {/* Giá gốc và % giảm */}
+                <div className="flex items-baseline gap-1">
+                    <span className="line-through text-gray-500 text-xl">
+                        {formatPrice(originalPrice)}
+                    </span>
+                    <span className="text-red-500 font-medium text-xl">
+                        (-{product.variants[selectedColor].discount}%)
+                    </span>
+                </div>
+            </div>
+        ) : (
+            // Hiển thị giá thường khi không có discount
+            <span className="text-rose-600 text-2xl font-bold">
+                {formatPrice(product.variants[selectedColor].price)}
+            </span>
+        )}
+        </div>
+              <p className="font-normal p-font text-[14px] md:text-[16px] lg:text-[18px] opacity-60 mt-[5px] md:mt-[8px] leading-3 md:leading-5">
             {product.description || "Chưa có mô tả"}
           </p>
         </div>
 
         {/* Colors selector */}
         <div className="width-full">
-          <div className="border-t-2 border-b-2 mt-[20px] mb-[20px] pt-4 pb-4">
+          <div className="border-t-2 mt-[20px] mb-[20px] pt-4 pb-4">
             {product && product.variants[selectedColor].stock > 0 ? (
               errorQuantity ? (
                 <p className="text-[14px] md:text-[16px] lg:text-[18px] text-red-500">
-                  Số lượng không hợp lệ. Tối đa là{" "}
-                  {product.variants[selectedColor].stock}
+                  Rất tiếc, số lượng sản phẩm chúng tôi hiện có là {" "}
+                  {product.variants[selectedColor].stock}. Vui lòng điều chỉnh lại số lượng.
                 </p>
               ) : null
             ) : (
@@ -200,29 +264,48 @@ const ProductDetail = ({ product }) => {
               Chọn màu
             </p>
             <div className="color-selector pt-2 m-0 flex flex-auto gap-4">
-              {product.variants &&
-                product.variants.map((color, index) => {
-                  if (!isValidColor(color.color)) {
-                    return null; // If color is invalid, return null and don't render the button
-                  }
-                  return (
-                    <button
-                      className={`rounded-full size-7 md:size-9 ${
-                        index === selectedColor
-                          ? "border-[1px] border-black -translate-y-1"
-                          : ""
-                      }`}
-                      key={index}
-                      onClick={() => updateColor(index)}
-                      style={{ backgroundColor: color.color }}
-                    ></button>
-                  );
-                })}
-            </div>
-          </div>
+             {product.variants &&
+             product.variants.map((variant, index) => {
+              // Tách chuỗi màu thành mã HEX và tên
+              const [hexCode, colorName] = variant.color.split(" - ");
+              
+              if (!isValidColor(hexCode)) {
+                  return null;
+              }
 
+              return (
+                <div 
+                  className="flex flex-col items-center gap-2 group" 
+                  key={index}
+                >
+                  <div className="relative">
+                    {/* Nút chọn màu */}
+                    <button
+                      className={`w-8 h-8 rounded-full transition-all duration-200 
+                        shadow-md hover:shadow-lg ${
+                          index === selectedColor
+                            ? "ring-2 ring-offset-2 ring-black scale-110"
+                            : "hover:scale-105"
+                        }`}
+                      onClick={() => updateColor(index)}
+                      style={{ backgroundColor: hexCode }}
+                    >
+                      {/* Hiệu ứng hover */}
+                      <div className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-20 transition-opacity bg-white" />
+                    </button>
+                  </div>
+        
+                  {/* Tên màu */}
+                  <span className="text-sm font-medium text-gray-700 text-center capitalize">
+                    {colorName || "Unknown Color"}
+                  </span>
+                </div>
+              );
+            })}
+        </div>
+        
           {/* Add to cart */}
-          <div className="md:border-b-2 mb-[20px] pb-4 flex size-full">
+          <div className="md:border-b-2 mb-[20px] pb-4 flex size-full mt-2">
             <div
               className="relative quantity-selector flex justify-center items-center gap-4 w-[170px] h-[52px] rounded-[62px]"
               style={{ backgroundColor: theme.colors.unselectedButton }}
@@ -253,7 +336,7 @@ const ProductDetail = ({ product }) => {
             </div>
             <div className="bg-black ml-3 rounded-[62px] w-full">
               <button
-                className="p-font text-[14px] px-4 md:text-[16px] text-white w-full h-[44px] md:h-[52px]"
+                className="p-font text-xl px-4 md:text-[16px] text-white w-full h-[44px] md:h-[52px]"
                 onClick={handleAddCart}
               >
                 Thêm vào giỏ
@@ -261,6 +344,13 @@ const ProductDetail = ({ product }) => {
             </div>
           </div>
         </div>
+        <CustomSnackbar
+        open={snackbarState.open}
+        onClose={() => setSnackbarState(prev => ({ ...prev, open: false }))}
+        message={snackbarState.message}
+        severity={snackbarState.severity}
+      />      
+      </div>
       </div>
     </>
   );
