@@ -7,6 +7,7 @@ import StaffTable from "../Components/AdminPageComponents/StaffManagement/Staffs
 import LogoutButton from "../Components/UserPageComponents/LogoutButton";
 import { Link } from "react-router-dom";
 import BillManagement from "../Components/AdminPageComponents/OrderManagement/BillManagement";
+import Revenue from "../Components/AdminPageComponents/StaffManagement/Revenue";
 const AdminPage = () => {
   const [selectedTab, setSelectedTab] = useState("");
   const handleClick = (e) => {
@@ -33,6 +34,20 @@ const AdminPage = () => {
                 Trang chủ
               </button>
             </Link>
+          </li>
+          <li
+            key="thongke"
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
+              selectedTab === "thongke" ? "bg-gray-800 rounded-md" : ""
+            }`}
+          >
+            <button
+              id="thongke"
+              className="md:w-full text-left"
+              onClick={handleClick}
+            >
+              Thống kê
+            </button>
           </li>
           <li
             key="nhacungcap"
@@ -147,6 +162,7 @@ const AdminPage = () => {
           {selectedTab === "kho" && <StockTable />}
           {selectedTab === "nhanvien" && <StaffTable />}
           {selectedTab === "donhang" && <BillManagement />}
+          {selectedTab === "thongke" && <Revenue/>}
         </div>
       </div>
     </>
