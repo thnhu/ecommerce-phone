@@ -1,66 +1,70 @@
 // eslint-disable-next-line no-unused-vars
-import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import ProductsPage from "./pages/ProductsPage"
-import HomePage from './pages/HomePage';
-import CartPage from './pages/CartPage';
-import NotFoundPage from './pages/NotFoundPage';
-import LogInPage from './pages/LogInPage';
-import RegisterPage from './pages/RegisterPage';
-import AdminPage from './pages/AdminPage';
-import StaffPage from './pages/StaffPage';
-import PersonalPage from './pages/PersonalPage';
-import ReviewPage from './pages/ReviewPage';
-import OrderPage from './pages/OrderPage';
+import React from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import ProductsPage from "./pages/ProductsPage";
+import HomePage from "./pages/HomePage";
+import CartPage from "./pages/CartPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import LogInPage from "./pages/LogInPage";
+import RegisterPage from "./pages/RegisterPage";
+import AdminPage from "./pages/AdminPage";
+import StaffPage from "./pages/StaffPage";
+import PersonalPage from "./pages/PersonalPage";
+import ReviewPage from "./pages/ReviewPage";
+import OrderPage from "./pages/OrderPage";
+import CategoryPage from "./pages/CategoryPage";
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <HomePage />,
   },
   {
-    path: '/product/:productId',
+    path: "/product/:productId",
     element: <ProductsPage />,
   },
   {
-    path: '/order',
+    path: "/product",
+    element: <CategoryPage />,
+  },
+  {
+    path: "/order",
     element: <OrderPage />,
   },
   {
-    path: '/review',
+    path: "/review",
     element: <ReviewPage />,
   },
   {
-    path: '/cart',
+    path: "/cart",
     element: <CartPage />,
   },
   {
-    path: '/login',
+    path: "/login",
     element: <LogInPage />,
   },
   {
-    path: '/register',
+    path: "/register",
     element: <RegisterPage />,
   },
   {
-    path: '/user',
-    element: <PersonalPage />
+    path: "/user",
+    element: <PersonalPage />,
   },
   {
-    path: '/admin',
-    element: <AdminPage />
+    path: "/admin",
+    element: <AdminPage />,
   },
   {
-    path: '/staff',
-    element: <StaffPage />
+    path: "/staff",
+    element: <StaffPage />,
   },
   {
     path: "*",
     element: <NotFoundPage />,
   },
-
 ]);
 function App() {
   return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
