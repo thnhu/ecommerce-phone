@@ -24,6 +24,26 @@ import axios from "axios";
     }
   }
 
+  export const getRevenueByDate = async () => {
+    try {
+      const response = await api.get("/phone/order/revenue/daily");
+      return response.data;
+    } catch (error) {
+      console.error("Error getting revenue by date:", error);
+      throw error;
+    }
+  }
+
+  export const getRevenueBySummary = async () => {
+    try {
+      const response = await api.get("/phone/order/revenue/summary");
+      return response.data;
+    } catch (error) {
+      console.error("Error getting revenue by date:", error);
+      throw error;
+    }
+  };
+
   const refreshAccessToken = async (expiredAccessToken) => {
     try {
       // console.log('Refreshing token with expired token:', expiredAccessToken);
