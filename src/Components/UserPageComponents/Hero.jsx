@@ -66,7 +66,7 @@ const Hero = () => {
         </div>
 
         {/* Banner bên phải */}
-        <div className="w-4/5 relative h-96 overflow-hidden rounded-lg shadow-md">
+        <div className="w-4/5 relative h-76 overflow-hidden rounded-lg shadow-md">
           {banners.map((banner, index) => (
             <div
               key={index}
@@ -77,7 +77,7 @@ const Hero = () => {
               <img
                 src={banner}
                 alt={`Banner ${index + 1}`}
-                className="w-full h-full object-contain mx-auto" // Thay đổi ở đây
+                className="w-full h-full object-contain mx-auto" 
               />
             </div>
           ))}
@@ -111,7 +111,7 @@ const Hero = () => {
       </div>
 
       {/* Phần dưới giữ nguyên */}
-      <div className="container mx-auto py-12 px-4 text-center">
+      <div className="container mx-auto py-4 px-4 text-center">
         <h1 className="text-4xl font-bold text-gray-800">ĐIỆN THOẠI DI ĐỘNG CHÍNH HÃNG</h1>
         <p className="text-lg text-gray-600 mb-1">
           Hệ thống bán lẻ điện thoại với mạng lưới hàng ngàn cửa hàng trên toàn quốc
