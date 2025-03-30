@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import samsungLogo from "../../assets/images/logo-samsung.png";
 import iPhoneLogo from "../../assets/images/logo-iPhone.png";
 import xiaomiLogo from "../../assets/images/logo-xiaomi.png";
@@ -8,11 +8,12 @@ import banner2 from "../../assets/images/EPromo-iPhone16.png";
 import banner1 from "../../assets/images/promo-iphone14.png";
 import banner4 from "../../assets/images/Promo-Z-Flip6-Tinh-nang-Galaxy-AI-moi-me-1024x576.jpg";
 import { Link } from "react-router-dom";
-import api from '../../services/api';
+import api from "../../services/api";
 const Hero = () => {
   const banners = [banner1, banner2, banner3, banner4];
   const [currentBanner, setCurrentBanner] = useState(0);
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState();
 
   useEffect(() => {
     fetchCategories();
@@ -23,8 +24,9 @@ const Hero = () => {
       const response = await api.get("/phone/category");
       setCategories(response.data);
       setLoading(false);
+      // console.log(categories)
     } catch (err) {
-      setError('Không thể tải danh sách nhà cung cấp');
+      setError("Không thể tải danh sách nhà cung cấp");
       setLoading(false);
     }
   };
@@ -50,16 +52,18 @@ const Hero = () => {
         <div className="w-1/5 bg-white p-4 rounded-lg shadow-md">
           <h2 className="text-lg font-bold mb-4">DANH MỤC SẢN PHẨM</h2>
           <ul className="space-y-2">
-          {categories.map((category) => (
+            {categories.map((category) => (
               <Link
-              key={category.id}
-                  to={`/phone/product/category/${category.id}?page=0&size=10&status=ACTIVE`}>
-                <li 
                 key={category.id}
-                className="text-sm p-2 hover:bg-gray-100 rounded cursor-pointer hover:text-blue-500"
+                // to={`/phone/product/category/${category.id}?page=0&size=10&status=ACTIVE`}
+                to={`/phone/product/category/${category.id}`}
               >
-                {category.name}
-              </li>
+                <li
+                  key={category.id}
+                  className="text-sm p-2 hover:bg-gray-100 rounded cursor-pointer hover:text-blue-500"
+                >
+                  {category.name}
+                </li>
               </Link>
             ))}
           </ul>
@@ -71,7 +75,7 @@ const Hero = () => {
             <div
               key={index}
               className={`absolute inset-0 transition-opacity duration-1000 ${
-                index === currentBanner ? 'opacity-100' : 'opacity-0'
+                index === currentBanner ? "opacity-100" : "opacity-0"
               }`}
             >
               <img
@@ -102,7 +106,7 @@ const Hero = () => {
                 key={index}
                 onClick={() => setCurrentBanner(index)}
                 className={`w-3 h-3 rounded-full ${
-                  index === currentBanner ? 'bg-white' : 'bg-white/50'
+                  index === currentBanner ? "bg-white" : "bg-white/50"
                 }`}
               />
             ))}
@@ -112,19 +116,26 @@ const Hero = () => {
 
       {/* Phần dưới giữ nguyên */}
       <div className="container mx-auto py-12 px-4 text-center">
-        <h1 className="text-4xl font-bold text-gray-800">ĐIỆN THOẠI DI ĐỘNG CHÍNH HÃNG</h1>
+        <h1 className="text-4xl font-bold text-gray-800">
+          ĐIỆN THOẠI DI ĐỘNG CHÍNH HÃNG
+        </h1>
         <p className="text-lg text-gray-600 mb-1">
-          Hệ thống bán lẻ điện thoại với mạng lưới hàng ngàn cửa hàng trên toàn quốc
+          Hệ thống bán lẻ điện thoại với mạng lưới hàng ngàn cửa hàng trên toàn
+          quốc
         </p>
         <div className="flex justify-center gap-4 items-center flex-wrap mt-1">
-          <img className="w-24 object-contain" src={samsungLogo} alt="Samsung" />
+          <img
+            className="w-24 object-contain"
+            src={samsungLogo}
+            alt="Samsung"
+          />
           <img className="h-20 object-contain" src={iPhoneLogo} alt="iPhone" />
           <img className="h-12 object-contain" src={xiaomiLogo} alt="Xiaomi" />
           <img className="h-12 object-contain" src={oppoLogo} alt="Oppo" />
         </div>
-        
-        <div className='w-full flex justify-center mt-4'>
-          <div className='w-1/3 border-b border-gray-400'></div>
+
+        <div className="w-full flex justify-center mt-4">
+          <div className="w-1/3 border-b border-gray-400"></div>
         </div>
       </div>
     </section>
