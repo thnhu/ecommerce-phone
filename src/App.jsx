@@ -13,6 +13,8 @@ import PersonalPage from "./pages/PersonalPage";
 import ReviewPage from "./pages/ReviewPage";
 import OrderPage from "./pages/OrderPage";
 import CategoryPage from "./pages/CategoryPage";
+import VNPaySuccesss from "./pages/vnpaySuccess";
+import VNPayFail from "./pages/VNPayFail";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -62,6 +64,14 @@ const router = createBrowserRouter([
     path: "*",
     element: <NotFoundPage />,
   },
+  {
+    path: "/vnpay/success",
+    element: <VNPaySuccesss/>
+  },
+  {
+    path: "/vnpay/fail",
+    element: <VNPayFail/>
+  }
 ]);
 function App() {
   return <RouterProvider router={router} />;

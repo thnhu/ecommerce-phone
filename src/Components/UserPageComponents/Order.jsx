@@ -2,7 +2,8 @@ import React, { useEffect } from "react";
 import { CheckCircle } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
-import api from "../../services/api";
+import api, { createVNPayUrl } from "../../services/api";
+import vnpay from "../../assets/images/vnpay.png"
 
 //Handle address selection box
 const AddressDropdown = ({
@@ -69,6 +70,11 @@ function Order() {
   const location = useLocation();
   const navigate = useNavigate();
   const { state } = location;
+  
+  const handleVNPAY = async () => {
+    const response = await createVNPayUrl(Number(totalAmount));
+    window.location.href = response.paymentUrl;
+  };
 
   // const orderItems = state?.selectedItems || [];
   // const totalAmount = state?.total || 0;
@@ -297,12 +303,20 @@ function Order() {
       </div>
 
       {/* Nút xác nhận */}
-      <div className="text-right">
+      <div className="text-right flex items-center">
         <button
           onClick={handlePlaceOrder}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium transition-colors shadow-md"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full font-medium transition-colors shadow-md ml-auto"
         >
-          Xác nhận đặt hàng
+          Thanh toán khi nhận hàng
+        </button>
+        <div className="mx-2">Hoặc</div>
+        <button
+          onClick={handleVNPAY}
+          className="text-blue-600 bg-white px-8 py-3 rounded-full font-medium transition-colors shadow-md flex gap-1"
+        >
+          <p>Thanh toán qua VNPay</p>
+          <img className = "w-4 object-cover" src={vnpay} alt="" />
         </button>
       </div>
 

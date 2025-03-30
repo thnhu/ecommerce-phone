@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Navbar from "../Components/UserPageComponents/Navbar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import CustomSnackbar from '../Components/CustomSnackbar'
 const LogInPage = () => {
   const navigate = useNavigate();
   const [reqLogin, setReqLogin] = useState({ phoneNumber: "", password: "" });
@@ -12,20 +12,20 @@ const LogInPage = () => {
   // Xử lý validate
   const validateForm = () => {
     const newErrors = { phone: "", password: "" };
-    const phoneRegex = /^\d{10}$/;
-
+    const phoneRegex = /^0\d{9}$/;
+  
     if (!reqLogin.phoneNumber) {
       newErrors.phone = "Vui lòng nhập số điện thoại";
     } else if (!phoneRegex.test(reqLogin.phoneNumber)) {
-      newErrors.phone = "Số điện thoại phải có 10 chữ số";
+      newErrors.phone = "Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số";
     }
-
+  
     if (!reqLogin.password) {
       newErrors.password = "Vui lòng nhập mật khẩu";
     } else if (reqLogin.password.length < 8) {
       newErrors.password = "Mật khẩu phải có ít nhất 8 ký tự";
     }
-
+  
     setErrors(newErrors);
     return !Object.values(newErrors).some(error => error);
   };

@@ -4,6 +4,26 @@ import axios from "axios";
     baseURL: "http://localhost:8080",
   });
 
+  export const createVNPayUrl = async (amount) => {
+    try {
+      const response = await api.get("/phone/api/vnpay/create-payment", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        params: {
+          amount: amount,
+          orderInfo: "Thanh",
+          orderType: "other",
+          language: "vn",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error creating VNPay URL:", error);
+      throw error;
+    }
+  }
+
   const refreshAccessToken = async (expiredAccessToken) => {
     try {
       // console.log('Refreshing token with expired token:', expiredAccessToken);

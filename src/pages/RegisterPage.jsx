@@ -16,12 +16,20 @@ export default function Signup() {
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  // Hàm validate: kiểm tra dữ liệu nhập vào từng trường
   const validate = () => {
     const errors = {};
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date();
+    const eighteenYearsAgo = new Date();
+    eighteenYearsAgo.setFullYear(today.getFullYear() - 18);
     if (!reqSignup.displayName.trim()) {
       errors.displayName = "Họ và tên không được để trống";
+    } else {
+      const nameRegex = /^[a-zA-ZÀ-ỹ\s]+$/;
+      if (!nameRegex.test(reqSignup.displayName)) {
+        errors.displayName = "Họ tên không được chứa số hoặc ký tự đặc biệt";
+      } else if (reqSignup.displayName.trim().indexOf(' ') === -1) {
+        errors.displayName = "Họ tên phải chứa ít nhất một khoảng trắng";
+      }
     }
     if (!reqSignup.email.trim()) {
       errors.email = "Email không được để trống";
@@ -33,8 +41,11 @@ export default function Signup() {
     }
     if (!reqSignup.phoneNumber.trim()) {
       errors.phoneNumber = "Số điện thoại không được để trống";
-    } else if (reqSignup.phoneNumber.length < 10) {
-      errors.phoneNumber = "Số điện thoại phải có ít nhất 10 số";
+    } else {
+      const phoneRegex = /^0\d{9}$/;
+      if (!phoneRegex.test(reqSignup.phoneNumber)) {
+        errors.phoneNumber = "Số điện thoại phải bắt đầu bằng 0 và có đúng 10 chữ số";
+      }
     }
     if (!reqSignup.password) {
       errors.password = "Mật khẩu không được để trống";
@@ -48,14 +59,20 @@ export default function Signup() {
     }
     if (!reqSignup.dob) {
       errors.dob = "Ngày sinh không được để trống";
+    } else {
+      const dobDate = new Date(reqSignup.dob);
+      if (dobDate > today) {
+        errors.dob = "Ngày sinh không hợp lệ";
+      } else if (dobDate > eighteenYearsAgo) {
+        errors.dob = "Bạn phải đủ 18 tuổi";
+      }
     }
-    if (reqSignup.dob > today) errors.dob = "Ngày sinh không hợp lệ";
     if (!avatar) {
       errors.avatar = "Vui lòng chọn một ảnh";
     }
+  
     return errors;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrors({}); // Reset lỗi trước khi validate

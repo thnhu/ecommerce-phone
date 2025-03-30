@@ -35,20 +35,6 @@ const AdminPage = () => {
             </Link>
           </li>
           <li
-            key="thietbi"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
-              selectedTab === "thietbi" ? "bg-gray-800 rounded-md" : ""
-            }`}
-          >
-            <button
-              id="thietbi"
-              className="md:w-full text-left"
-              onClick={handleClick}
-            >
-              Thiết bị
-            </button>
-          </li>
-          <li
             key="nhacungcap"
             className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
               selectedTab === "nhacungcap" ? "bg-gray-800 rounded-md" : ""
@@ -60,20 +46,6 @@ const AdminPage = () => {
               onClick={handleClick}
             >
               Nhà cung cấp
-            </button>
-          </li>
-          <li
-            key="nguoidung"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
-              selectedTab === "nguoidung" ? "bg-gray-800 rounded-md" : ""
-            }`}
-          >
-            <button
-              id="nguoidung"
-              className="md:w-full text-left"
-              onClick={handleClick}
-            >
-              Người dùng
             </button>
           </li>
           <li
@@ -90,18 +62,19 @@ const AdminPage = () => {
               Quản lý kho
             </button>
           </li>
+
           <li
-            key="nhanvien"
-            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${
-              selectedTab === "nhanvien" ? "bg-gray-800 rounded-md" : ""
+            key="thietbi"
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
+              selectedTab === "thietbi" ? "bg-gray-800 rounded-md" : ""
             }`}
           >
             <button
-              id="nhanvien"
+              id="thietbi"
               className="md:w-full text-left"
               onClick={handleClick}
             >
-              Quản lý nhân viên
+              Thiết bị
             </button>
           </li>
           <li
@@ -116,6 +89,35 @@ const AdminPage = () => {
               onClick={handleClick}
             >
               Quản lý đơn hàng
+            </button>
+          </li>
+
+          <li
+            key="nguoidung"
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
+              selectedTab === "nguoidung" ? "bg-gray-800 rounded-md" : ""
+            }`}
+          >
+            <button
+              id="nguoidung"
+              className="md:w-full text-left"
+              onClick={handleClick}
+            >
+              Quản lý người dùng
+            </button>
+          </li>
+          <li
+            key="nhanvien"
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl ${
+              selectedTab === "nhanvien" ? "bg-gray-800 rounded-md" : ""
+            }`}
+          >
+            <button
+              id="nhanvien"
+              className="md:w-full text-left"
+              onClick={handleClick}
+            >
+              Quản lý nhân viên
             </button>
           </li>
           <li>

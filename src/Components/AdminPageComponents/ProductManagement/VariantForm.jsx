@@ -65,7 +65,7 @@ const VariantForm = ({
       isNaN(formData.stock) ||
       Number(formData.stock) < 0
     ) {
-      newErrors.stock = "Số lượng hàng phải lớn là số dương";
+      newErrors.stock = "Số lượng hàng phải là số dương";
     }
 
     if (actionType === "update") {

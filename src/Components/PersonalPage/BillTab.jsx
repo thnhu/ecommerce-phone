@@ -47,7 +47,7 @@ const Order = ({ orderData, fetchOrderData }) => {
   const handleCancelOrderUpdate = async (order) => {
     try {
       const response = await api.post(
-        `/phone/order/updateStatus/${order.orderId}?status=REFUNDED`
+        `/phone/order/updateStatus/${order.orderId}?status=CANCELLED`
       );
       alert("Cập nhật thành công");
       console.log(response);
@@ -89,6 +89,7 @@ const Order = ({ orderData, fetchOrderData }) => {
               <p className="text-gray-600">Người nhận: {order.receiverName}</p>
               <p className="text-gray-600">Điện thoại: {order.receiverPhone}</p>
               <p className="text-gray-600">Địa chỉ: {order.address}</p>
+              <p className="text-gray-600">Ghi chú: {order.note}</p>
             </div>
           </div>
 
