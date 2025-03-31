@@ -115,7 +115,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-white shadow-lg fixed top-0 left-0 w-full z-50">
+    <nav className="bg-white shadow-lg fixed top-0 left-0 w-full z-10">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
@@ -162,22 +162,23 @@ const Navbar = () => {
               <div className="absolute top-full right-0 w-1/3 bg-white shadow-lg z-10 rounded-b-xl">
                 {products.map((product) => (
                   <Link
-                  key={product.id}
-                  to={`/product/${product.id}`}
-                  className="block">
-                  <div
                     key={product.id}
-                    className="flex items-center p-4 hover:bg-gray-100 rounded-xl"
+                    to={`/product/${product.id}`}
+                    className="block"
                   >
-                    <img
-                      src={`data:image/*;base64,${product.images[0].data}`}
-                      alt={product.name}
-                      className="w-10 h-10 object-cover rounded-lg"
-                    />
-                    <h3 className="md:ml-5 md:text-lg text-sm font-semibold text-center">
-                      {product.name}
-                    </h3>
-                  </div>
+                    <div
+                      key={product.id}
+                      className="flex items-center p-4 hover:bg-gray-100 rounded-xl"
+                    >
+                      <img
+                        src={`data:image/*;base64,${product.images[0].data}`}
+                        alt={product.name}
+                        className="w-10 h-10 object-cover rounded-lg"
+                      />
+                      <h3 className="md:ml-5 md:text-lg text-sm font-semibold text-center">
+                        {product.name}
+                      </h3>
+                    </div>
                   </Link>
                 ))}
               </div>
@@ -190,7 +191,12 @@ const Navbar = () => {
               <IconButton
                 className="sm:block md:hidden"
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                sx={() => {return isSearchOpen}, { color: "black" }}
+                sx={
+                  (() => {
+                    return isSearchOpen;
+                  },
+                  { color: "black" })
+                }
               >
                 <Search />
               </IconButton>
@@ -234,7 +240,8 @@ const Navbar = () => {
                         ? `data:image/*;base64,${userData.avatar.data}`
                         : defaultAvatar
                     }
-                    alt="User Avatar"/>
+                    alt="User Avatar"
+                  />
                 </div>
               </Link>
             )}

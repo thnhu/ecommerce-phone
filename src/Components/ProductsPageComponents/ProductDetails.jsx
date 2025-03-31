@@ -24,6 +24,8 @@ const ProductDetail = ({ product }) => {
     });
   };
   
+  // useEffect(() => {console.log(product.variants[selectedColor].variantId)}, [selectedColor]);
+  
   const updateQuantity = (add) => {
     const stock = product.variants[selectedColor].stock;
     if (stock === 0) {

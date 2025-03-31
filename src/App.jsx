@@ -12,6 +12,7 @@ import StaffPage from "./pages/StaffPage";
 import PersonalPage from "./pages/PersonalPage";
 import ReviewPage from "./pages/ReviewPage";
 import OrderPage from "./pages/OrderPage";
+import CategoryPage from "./pages/CategoryPage";
 import VNPaySuccesss from "./pages/vnpaySuccess";
 import VNPayFail from "./pages/VNPayFail";
 const router = createBrowserRouter([
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
   {
     path: "/product/:productId",
     element: <ProductsPage />,
+  },
+  {
+    path: "/phone/product/category/:categoryId",
+    element: <CategoryPage />,
   },
   {
     path: "/order",

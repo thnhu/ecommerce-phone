@@ -24,10 +24,8 @@ const ProductsPage = () => {
 
   return (
     <>
-      {/* md:bg-slate-400 lg:bg-red-400 */}
       <Navbar></Navbar>
       <div className="md:flex md:flex-col px-[16px] md:px-[150px] mt-20 mb-10">
-
         {!isLoading && <div className="md:flex">
           <ProductImagesSelection productImg={product.images} />
           <ProductDetail product={product} />

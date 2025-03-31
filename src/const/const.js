@@ -8,3 +8,5 @@ export const theme = {
 
   }
 }
+
+//npm install @reduxjs/toolkit react-redux
