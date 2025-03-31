@@ -30,6 +30,7 @@ import ProductVariantMenu from "./ProductVariantsMenu"; // Import the new compon
 import VariantForm from "./VariantForm"; // Import the VariantForm component
 import UpdateDiscountVariant from "./UpdateDiscountVariant";
 import ProductAttributeForm from "./ProductAttributeForm";
+import DiscountHistory from "./DiscountHistory";
 
 const ProductsTable = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -68,10 +69,10 @@ const ProductsTable = () => {
     }));
   };
 
-  const handleDiscountHistory = (variant, product) => {
-    setShowDiscountHistory(!showDiscountHistory)
-    setSelectedVariant(variant)
-  }
+  const handleDiscountHistory = (variant) => {
+    setShowDiscountHistory(!showDiscountHistory);
+    setSelectedVariant(variant);
+  };
 
   const fetchData = async () => {
     try {
@@ -141,7 +142,6 @@ const ProductsTable = () => {
     setSelectedProduct(product);
     setVariantActionType("update"); // Set action to 'update'
     setSelectedVariant(variant); // Set selected variant for update
-    console.log(selectedVariant);
     setOpenVariantForm(true); // Open the variant form
   };
 
@@ -178,7 +178,6 @@ const ProductsTable = () => {
   };
 
   const handleUpdateForm = (product) => {
-    console.log("clicked");
     setDisplayUpdateProductForm(true);
     setUpdatingProduct(product);
   };
@@ -404,7 +403,14 @@ const ProductsTable = () => {
                                     </TableCell>
                                     <TableCell>
                                       <div className="text-blue-500">
-                                        <button onClick={handleDiscountHistory}>Xem lịch sử giảm giá</button>
+                                        <button
+                                          onClick={() =>
+                                            handleDiscountHistory(variant)
+                                          }
+                                        >
+                                          Xem lịch sử giá
+                                        </button>
+                                        {/* <button onClick={() => {console.log(variant)}}>Xem lịch sử giảm giá</button> */}
                                       </div>
                                     </TableCell>
                                   </TableRow>
@@ -565,6 +571,15 @@ const ProductsTable = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      <DiscountHistory
+        handleClose={() => {
+          setShowDiscountHistory(false);
+          setSelectedVariant(null);
+        }}
+        open={showDiscountHistory}
+        selectedVariant={selectedVariant}
+      ></DiscountHistory>
     </div>
   );
 };

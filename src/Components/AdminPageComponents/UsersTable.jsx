@@ -1,32 +1,200 @@
 import { useEffect, useState } from "react";
-import { IconButton } from "@mui/material";
+import React from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { Menu, Search, ShoppingCart, Person } from "@mui/icons-material";
+import {
+  Badge,
+  IconButton,
+  InputBase,
+  MenuItem,
+  Menu as MuiMenu,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from "@mui/material";
 
 import api from "../../services/api";
 // import api from "../../interceptor"
+
+const SearchBar = ({
+  style,
+  fetchData = () => console.log("HI"),
+  searchQuery,
+  setSearchQuery,
+}) => {
+  const [isSearchOpen, setIsSearchOpen] = useState(true);
+  const [debounceTimeout, setDebounceTimeout] = useState(null);
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  useEffect(() => {
+    if (debounceTimeout) {
+      clearTimeout(debounceTimeout); // Clear the previous timeout if any
+    }
+
+    // Set a new debounce timeout for the search query
+    const timeoutId = setTimeout(() => {
+      fetchData();
+    }, 500); // 500ms debounce delay
+
+    setDebounceTimeout(timeoutId); // Store the timeout ID for future cleanup
+
+    // Cleanup the timeout when the component is unmounted or search query changes
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
+
+  return (
+    <div style={style}>
+      {isSearchOpen && (
+        <div>
+          <div className="flex items-center space-x-4">
+            <div className="relative hidden md:flex items-center bg-gray-100 rounded-full px-3 py-1">
+              <Search className="text-gray-500" />
+              <InputBase
+                placeholder="Nhập số điện thoại"
+                className="ml-2"
+                inputProps={{ "aria-label": "search" }}
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const DialogTable = ({ open, handleClose, searchQuery, selectedUser }) => {
+  const [orders, setOrders] = useState([]);
+
+  const fetchDataOrder = async () => {
+    try {
+      const response = await api.get(
+        `/phone/order?status=DELIVERED&pageNumber=0&pageSize=10&userId=${selectedUser.id}`
+      );
+      setOrders(response.data.content);
+    } catch (error) {
+      console.log("Error fetching orders: ", error);
+    }
+  };
+
+  useEffect(() => console.log(orders), [orders]);
+
+  useEffect(() => {
+    if (selectedUser) {
+      fetchDataOrder();
+    }
+  }, [selectedUser]); // ✅ Fetch orders when selectedUser changes
+
+  return (
+    <Dialog open={open} onClose={handleClose}>
+      <DialogTitle>
+        Đơn hàng của người dùng{" "}
+        <strong>{selectedUser?.displayName || "Unknown"}</strong>
+      </DialogTitle>
+      <DialogContent>
+        {orders.length > 0 ? (
+          <div className="grid grid-cols-3 gap-4 border border-gray-300 p-3">
+            <div className="font-semibold bg-gray-200 p-3 text-center border-b flex items-center justify-center">
+              ID đơn hàng
+            </div>
+            <div className="font-semibold bg-gray-200 p-3 text-center border-b flex items-center justify-center">
+              Tổng giá
+            </div>
+            <div className="font-semibold bg-gray-200 p-3 text-center border-b flex items-center justify-center">
+              Ngày đặt hàng
+            </div>
+            {orders.map((order) => (
+              <React.Fragment key={order.id}>
+                <div className="border p-3 text-center flex items-center justify-center">
+                  {order.orderId}
+                </div>
+                <div className="border p-3 text-center flex items-center justify-center">
+                  {order.totalPrice} vnđ
+                </div>
+                <div className="border p-3 text-center flex items-center justify-center">
+                  {new Date(order.orderDate).toLocaleDateString()}
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+        ) : (
+          <p>Chưa có đơn hàng.</p>
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
+          Đóng
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 const UsersTable = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userData, setUserData] = useState([]);
   const [maxIndex, setMaxIndex] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const [selectedUser, setSelectedUser] = useState();
+
   const size = 6;
 
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = async () => {
+    if (searchQuery === "") {
       try {
         const response = await api.get(
           `/phone/user?page=${currentIndex}&size=${size}`
         );
         setUserData(response.data.content);
-        //disable over indexing
         if (response.data.content.length < size) {
           setMaxIndex(currentIndex);
         }
       } catch (error) {
         alert("Error fetching data ", error);
       }
-    };
+    } else {
+      try {
+        console.log(searchQuery);
+        const response = await api.get(
+          `/phone/user/search?phoneNumber=${searchQuery}`
+        );
+        console.log(response);
+      } catch (e) {
+        console.log("Handle phone search error" + e);
+      }
+    }
+  };
+
+  const formatDate = (date) => {
+    if (date == null) return "Chưa có";
+    const [year, month, day] = date.split("-");
+    return `${day}/${month}/${year}`;
+  };
+
+  const handleSearch = (userArg) => {
+    setOpen(true); // Open the dialog when search button is clicked
+    setSelectedUser(userArg);
+  };
+
+  const handleClose = () => {
+    setSelectedUser({});
+    setOpen(false); // Close the dialog
+  };
+
+  useEffect(() => console.log(selectedUser), [selectedUser]);
+
+  useEffect(() => {
     fetchData();
   }, [currentIndex]);
 
@@ -37,10 +205,18 @@ const UsersTable = () => {
       </h1>
       <div className="pt-5 pl-8">
         <p className="text-xl pb-3 hidden md:block">Danh sách người dùng</p>
-        <div>
-          <p className="text-l opacity-80 hidden md:block">
+        <div className="flex justify-end">
+          <p className="text-l opacity-80 hidden md:block w-4/5">
             Danh sách toàn bộ người dùng hệ thống
           </p>
+          <div className="mr-3">
+            <SearchBar
+              fetchData={fetchData}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              selectedUser={selectedUser}
+            ></SearchBar>
+          </div>
         </div>
       </div>
 
@@ -52,11 +228,11 @@ const UsersTable = () => {
           <p className="font-semibold border border-gray-300 p-2 col-span-2 flex items-center justify-center">
             Tên
           </p>
-          <p className="font-semibold border border-gray-300 p-2 col-span-2 hidden md:flex items-center justify-center">
-            Email
-          </p>
           <p className="font-semibold border border-gray-300 p-2 col-span-2 flex items-center justify-center">
             Số điện thoại
+          </p>
+          <p className="font-semibold border border-gray-300 p-2 hidden md:flex items-center justify-center">
+            Lịch sử đặt hàng
           </p>
           <p className="font-semibold border border-gray-300 py-2 px-5 hidden md:block items-center justify-center">
             Ngày sinh
@@ -77,19 +253,32 @@ const UsersTable = () => {
                   <p className="border border-gray-300 p-2 col-span-2 overflow-auto">
                     {user.displayName}
                   </p>
-                  <p className="border border-gray-300 p-2 col-span-2 hidden md:block overflow-auto">
-                    {user.email}
-                  </p>
                   <p className="border border-gray-300 p-2 col-span-2">
                     {user.phoneNumber}
                   </p>
-                  <p className="border border-gray-300 py-2 px-5 hidden md:block text-center">
-                    {user.dob == null ? "Chưa cài đặt" : user.dob}
+                  <button className="border border-gray-300 hidden md:block pt-1 overflow-auto">
+                    <IconButton
+                      onClick={() => handleSearch(user)}
+                      color="primary"
+                    >
+                      <SearchIcon />
+                    </IconButton>
+                  </button>
+                  <p className="border border-gray-300 py-2 px-5 hidden md:block text-center text-nowrap">
+                    {formatDate(user.dob)}
                   </p>
                 </div>
               );
           })}
         </div>
+
+        <DialogTable
+          searchQuery={searchQuery}
+          open={open}
+          handleClose={handleClose}
+          selectedUser={selectedUser}
+        ></DialogTable>
+
         {/* Change index */}
         <div className="flex items-center w-full justify-center px-1 md:px-3">
           <IconButton
