@@ -9,13 +9,28 @@ import {
 } from "@mui/material";
 import { Add, Remove, Delete } from "@mui/icons-material";
 import api from "../../services/api";
+import CustomSnackbar from "../CustomSnackbar";
 const Cart = () => {
   const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState([]);
   const [user, setUser] = useState();
   const [cartItems, setCartItems] = useState([]);
   const [cartWasChanged, setCartWasChanged] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarState, setSnackbarState] = useState({
+    open: false,
+    message: '',
+    severity: 'info', // default value
+  });
+  
+  const showSnackbar = (message, severity = 'info') => {
+    setSnackbarState({
+      open: true,
+      message,
+      severity
+    });
+  };
+  
+  
 
   const handleSelectItem = (id) => {
     setSelectedItems((prev) =>
@@ -23,39 +38,31 @@ const Cart = () => {
     );
   };
 
-  const handleQuantity = (id, action) => {
+  const handleQuantity = (id, newValue) => {
+    const newQuantity = parseInt(newValue);
+  
     setCartItems((prevItems) =>
       prevItems.map((item) => {
         if (item.id === id) {
-          const newQuantity =
-            action === "increase" ? item.quantity + 1 : item.quantity - 1;
-
-          // If it's a decrease action, allow reducing the quantity beyond stock
-          if (action === "decrease" && newQuantity >= 1) {
-            return {
-              ...item,
-              quantity: newQuantity,
-            };
+          // Kiểm tra giá trị nhập vào có hợp lệ
+          if (isNaN(newQuantity) || newQuantity < 1) {
+            return { ...item, quantity: 1 };
           }
-
-          // If it's an increase action, respect the stock limit
-          if (action === "increase" && newQuantity <= item.stock) {
-            return {
-              ...item,
-              quantity: newQuantity,
-            };
+  
+          // Kiểm tra số lượng vượt quá stock
+          if (newQuantity > item.stock) {
+            showSnackbar("Số lượng trong kho không đủ", "error");
+            return { ...item, quantity: item.stock }; // Giữ nguyên số lượng tối đa bằng stock
           }
-
-          // If new quantity exceeds stock, show an error and return the original item
-          setSnackbarOpen(true);
-          return item;
+  
+          return { ...item, quantity: newQuantity };
         }
         return item;
       })
     );
     setCartWasChanged(true);
   };
-
+  
   const handleQuantityChange = (id, value) => {
     if (/^\d*$/.test(value)) {
       setCartItems((prevItems) =>
@@ -124,12 +131,13 @@ const Cart = () => {
               );
               const stock = thisVariant ? thisVariant.stock : 0;
               return {
+                id: item.itemId,
                 ...item,
                 stock: stock, // Add the product data (stock) to each item
               };
             } catch (productError) {
               console.log("Lỗi dữ liệu sản phẩm:", productError);
-              return item;
+              return { ...item, id: item.itemId };
             }
           })
         );
@@ -227,16 +235,11 @@ const Cart = () => {
                           {item.productName}
                         </Link>
                       <p>Màu sắc: {item.productColor}</p>
-                      {/* test this line */}
-                      {/* {<p>{item.stock}</p>} */}
                     </div>
                     <div className="flex flex-wrap items-center gap-3 mt-2">
                       <span className="text-red-600 font-bold text-lg">
                         {formatPrice(item.price)}
                       </span>
-                      {/* <span className="text-gray-400 line-through text-sm">
-                      {formatPrice(item.originalPrice)}
-                    </span> */}
                     </div>
                   </div>
                   <div className="flex flex-col items-center gap-2 mt-2">
@@ -253,7 +256,7 @@ const Cart = () => {
                         onChange={(e) =>
                           handleQuantityChange(item.id, e.target.value)
                         }
-                        inputProps={{ className: "text-center", min: 1 }}
+                        inputProps={{ className: "text-center", min: 1, max:item.stock }}
                         className="w-16"
                       />
                       <IconButton
@@ -311,17 +314,13 @@ const Cart = () => {
           </div>
         </div>
       </div>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={() => setSnackbarOpen(false)}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="error" sx={{ width: "100%" }}>
-          Số lượng trong kho không đủ
-        </Alert>
-      </Snackbar>
-    </div>
+      <CustomSnackbar
+        open={snackbarState.open}
+        onClose={() => setSnackbarState(prev => ({ ...prev, open: false }))}
+        message={snackbarState.message}
+        severity={snackbarState.severity}
+      />    
+      </div>
   );
 };
 
