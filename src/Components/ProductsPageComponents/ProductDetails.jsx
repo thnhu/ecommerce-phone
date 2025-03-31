@@ -23,7 +23,7 @@ const ProductDetail = ({ product }) => {
     });
   };
   
-  useEffect(() => {console.log(product.variants[selectedColor].variantId)}, [selectedColor]);
+  // useEffect(() => {console.log(product.variants[selectedColor].variantId)}, [selectedColor]);
   
   const updateQuantity = (add) => {
     const stock = product.variants[selectedColor].stock;
@@ -68,7 +68,7 @@ const ProductDetail = ({ product }) => {
         setErrorQuantity(true);
       }
     }
-    console.log(product)
+    // console.log(product)
   }, [product]);
 
   useEffect(() => {

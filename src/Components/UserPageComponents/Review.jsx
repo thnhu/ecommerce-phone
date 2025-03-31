@@ -73,6 +73,7 @@ function Review() {
             name: phoneData.name,
             orderId: latestOrders[phoneId].orderId,
             orderDate: formatDate(latestOrders[phoneId].orderDate), // Now formatted
+            productId: phoneId,
             variantId: latestOrders[phoneId].variantId,
             quantity: latestOrders[phoneId].quantity,
             priceAtOrder: latestOrders[phoneId].priceAtOrder,

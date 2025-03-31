@@ -12,7 +12,7 @@ const ProductAttribute = ({ product }) => {
           `/phone/product/${product.id}/attribute`
         );
         setPhoneData(response.data);
-        console.log(response);
+        // console.log(response);
       } catch (e) {
         console.log("Lỗi thuộc tính sản phẩm" + e);
       }
@@ -159,7 +159,7 @@ const ProductTabs = ({ product }) => {
               activeTab === 2 ? "product-active-content" : ""
             }`}
           >
-            <ReviewSection />
+            <ReviewSection product={product}/>
           </div>
           <div
             className={`content p-font text-[20px] w-full ${
