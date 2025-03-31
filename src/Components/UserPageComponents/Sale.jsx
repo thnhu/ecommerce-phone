@@ -57,7 +57,7 @@ function Sale() {
     return null;
   }
 
-  return products?.length > 0 ? (
+  return products.length > 0 ? (
     <section className="text-center p-2 bg-gray-100">
       <h2 className="text-2xl font-bold mb-2">KHUYẾN MÃI HOT</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 px-2">

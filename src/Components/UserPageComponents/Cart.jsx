@@ -38,24 +38,28 @@ const Cart = () => {
     );
   };
 
-  const handleQuantity = (id, newValue) => {
-    const newQuantity = parseInt(newValue);
-  
+  const handleQuantity = (id, action) => {
     setCartItems((prevItems) =>
       prevItems.map((item) => {
         if (item.id === id) {
-          // Kiểm tra giá trị nhập vào có hợp lệ
-          if (isNaN(newQuantity) || newQuantity < 1) {
-            return { ...item, quantity: 1 };
+          let newQuantity = item.quantity;
+          
+          if (action === "increase") {
+            newQuantity += 1;
+          } else if (action === "decrease") {
+            newQuantity -= 1;
           }
   
-          // Kiểm tra số lượng vượt quá stock
-          if (newQuantity > item.stock) {
-            showSnackbar("Số lượng trong kho không đủ", "error");
-            return { ...item, quantity: item.stock }; // Giữ nguyên số lượng tối đa bằng stock
-          }
+          // Kiểm tra giới hạn số lượng
+          newQuantity = Math.max(1, Math.min(newQuantity, item.stock));
   
-          return { ...item, quantity: newQuantity };
+          // Kiểm tra nếu số lượng thay đổi
+            // Hiển thị cảnh báo nếu vượt stock khi tăng
+            if (action === "increase" && newQuantity > item.stock) {
+              showSnackbar("Số lượng trong kho không đủ", "error");
+            }
+            return { ...item, quantity: newQuantity };
+          
         }
         return item;
       })
@@ -82,11 +86,10 @@ const Cart = () => {
       );
       setCartWasChanged(true);
     }
-  };
-
+  };  
   const totalAmount = cartItems
-    .filter((item) => selectedItems.includes(item.id))
-    .reduce((acc, item) => acc + item.price * item.quantity, 0);
+  .filter((item) => selectedItems.includes(item.id))
+  .reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const totalQuantity = cartItems
     .filter((item) => selectedItems.includes(item.id))
@@ -116,10 +119,8 @@ const Cart = () => {
       const userId = userResponse.data.id;
       try {
         const cartResponse = await api.get(`/phone/cart/${userId}`);
-        console.log(cartResponse.data);
         const cartItemsData = cartResponse.data.data.items;
-
-        // Fetch product details for each cart item and update the cart
+  
         const updatedCartItems = await Promise.all(
           cartItemsData.map(async (item) => {
             try {
@@ -129,11 +130,39 @@ const Cart = () => {
               const thisVariant = productResponse.data.variants.find(
                 (variant) => variant.id === item.productVariantId
               );
-              const stock = thisVariant ? thisVariant.stock : 0;
+              
+              // Thêm logic lấy thông tin khuyến mãi
+              let discountValue = 0;
+              let originalPrice = thisVariant.price;
+              let discountEndDate = null;
+              
+              try {
+                const discountResponse = await api.get(
+                  `/phone/product/discount/getActive/${item.productVariantId}`
+                );
+                const discountData = discountResponse.data;
+                if (discountData) {
+                  const now = new Date();
+                  const endDate = new Date(discountData.endDate);
+                  if (endDate > now) {
+                    discountValue = discountData.discountValue;
+                    discountEndDate = discountData.endDate;
+                  }
+                }
+              } catch (error) {
+                console.error("Error fetching discount:", error);
+              }
+  
+              const discountedPrice = originalPrice * (1 - discountValue / 100);
+  
               return {
                 id: item.itemId,
                 ...item,
-                stock: stock, // Add the product data (stock) to each item
+                stock: thisVariant.stock,
+                originalPrice: originalPrice,
+                discountValue: discountValue,
+                discountEndDate: discountEndDate,
+                price: discountedPrice, // Cập nhật giá đã áp dụng khuyến mãi
               };
             } catch (productError) {
               console.log("Lỗi dữ liệu sản phẩm:", productError);
@@ -141,8 +170,7 @@ const Cart = () => {
             }
           })
         );
-
-        // Update the cartItems state with the updated items
+  
         setCartItems(updatedCartItems);
       } catch (cartError) {
         console.log("Lỗi dữ liệu giỏ hàng:", cartError);
@@ -151,7 +179,7 @@ const Cart = () => {
       console.log("Lỗi dữ liệu người dùng:", userError);
     }
   };
-
+  
   const handleRemoveItem = (id) => {
     const deleteItemNth = cartItems.filter((item) => item.id === id);
     setCartItems((prev) => prev.filter((item) => item.id !== id));
@@ -237,11 +265,31 @@ const Cart = () => {
                       <p>Màu sắc: {item.productColor}</p>
                     </div>
                     <div className="flex flex-wrap items-center gap-3 mt-2">
-                      <span className="text-red-600 font-bold text-lg">
-                        {formatPrice(item.price)}
-                      </span>
-                    </div>
-                  </div>
+  {item.discountValue > 0 ? (
+    <div className="flex items-baseline gap-2">
+      <span className="text-red-600 font-bold text-lg">
+        {formatPrice(item.price)}
+      </span>
+      <span className="line-through text-gray-500 text-sm">
+        {formatPrice(item.originalPrice)}
+      </span>
+      <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-xs">
+        -{item.discountValue}%
+      </span>
+      {item.discountEndDate && (
+        <div className="text-red-600 text-xs mt-1">
+          Áp dụng đến {new Date(item.discountEndDate).toLocaleDateString()}
+        </div>
+      )}
+    </div>
+  ) : (
+    <span className="text-red-600 font-bold text-lg">
+      {formatPrice(item.originalPrice)}
+    </span>
+  )}
+</div>
+</div>
+
                   <div className="flex flex-col items-center gap-2 mt-2">
                     <div className="flex items-center gap-2">
                       <IconButton
@@ -261,6 +309,7 @@ const Cart = () => {
                       />
                       <IconButton
                         onClick={() => handleQuantity(item.id, "increase")}
+                        disabled={item.quantity >= item.stock}
                       >
                         <Add />
                       </IconButton>
