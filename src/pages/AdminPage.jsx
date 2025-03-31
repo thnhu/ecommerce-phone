@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import BillManagement from "../Components/AdminPageComponents/OrderManagement/BillManagement";
 import Revenue from "../Components/AdminPageComponents/StaffManagement/Revenue";
 const AdminPage = () => {
-  const [selectedTab, setSelectedTab] = useState("");
+  const [selectedTab, setSelectedTab] = useState("thietbi");
   const handleClick = (e) => {
     setSelectedTab(e.target.id);
   };
