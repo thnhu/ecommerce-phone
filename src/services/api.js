@@ -34,6 +34,26 @@ import axios from "axios";
     }
   }
 
+  export const getRevenueByMonth = async () => {
+    try {
+      const response = await api.get("/phone/order/revenue/monthly");
+      return response.data;
+    } catch (error) {
+      console.error("Error getting revenue by date:", error);
+      throw error;
+    }
+  };
+
+  export const getRevenueByYear = async () => {
+    try {
+      const response = await api.get("/phone/order/revenue/yearly");
+      return response.data;
+    } catch (error) {
+      console.error("Error getting revenue by date:", error);
+      throw error;
+    }
+  };
+
   export const getRevenueBySummary = async () => {
     try {
       const response = await api.get("/phone/order/revenue/summary");
