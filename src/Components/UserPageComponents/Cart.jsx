@@ -20,19 +20,17 @@ const Cart = () => {
   const [cartWasChanged, setCartWasChanged] = useState(false);
   const [snackbarState, setSnackbarState] = useState({
     open: false,
-    message: '',
-    severity: 'info', // default value
+    message: "",
+    severity: "info", // default value
   });
-  
-  const showSnackbar = (message, severity = 'info') => {
+
+  const showSnackbar = (message, severity = "info") => {
     setSnackbarState({
       open: true,
       message,
-      severity
+      severity,
     });
   };
-  
-  
 
   const handleSelectItem = (id) => {
     setSelectedItems((prev) =>
@@ -41,34 +39,34 @@ const Cart = () => {
   };
 
   const handleQuantity = (id, action) => {
+    //id = variantId
     setCartItems((prevItems) =>
       prevItems.map((item) => {
         if (item.id === id) {
           let newQuantity = item.quantity;
-          
+
           if (action === "increase") {
             newQuantity += 1;
           } else if (action === "decrease") {
             newQuantity -= 1;
           }
-  
+
           // Kiểm tra giới hạn số lượng
           newQuantity = Math.max(1, Math.min(newQuantity, item.stock));
-  
+
           // Kiểm tra nếu số lượng thay đổi
-            // Hiển thị cảnh báo nếu vượt stock khi tăng
-            if (action === "increase" && newQuantity > item.stock) {
-              showSnackbar("Số lượng trong kho không đủ", "error");
-            }
-            return { ...item, quantity: newQuantity };
-          
+          // Hiển thị cảnh báo nếu vượt stock khi tăng
+          if (action === "increase" && newQuantity > item.stock) {
+            showSnackbar("Số lượng trong kho không đủ", "error");
+          }
+          return { ...item, quantity: newQuantity };
         }
         return item;
       })
     );
     setCartWasChanged(true);
   };
-  
+
   const handleQuantityChange = (id, value) => {
     if (/^\d*$/.test(value)) {
       setCartItems((prevItems) =>
@@ -149,8 +147,8 @@ const Cart = () => {
   };
 
   const totalAmount = cartItems
-  .filter((item) => selectedItems.includes(item.id))
-  .reduce((acc, item) => acc + item.price * item.quantity, 0);
+    .filter((item) => selectedItems.includes(item.id))
+    .reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const totalQuantity = cartItems
     .filter((item) => selectedItems.includes(item.id))
@@ -245,7 +243,7 @@ const handleCheckout = async() => {
       console.error("Lỗi khi tải giỏ hàng:", error);
     }
   };
-  
+
   const handleRemoveItem = (id) => {
     const deleteItemNth = cartItems.filter((item) => item.id === id);
     setCartItems((prev) => prev.filter((item) => item.id !== id));
@@ -264,37 +262,16 @@ const handleCheckout = async() => {
     }
   };
 
-  const handleUpdateItems = () => {
-    const itemsToDelete = [...cartItems];
-
-    const promises = itemsToDelete.map((item) => {
-      return api
-        .delete(
-          `/phone/cart/deleteItem?userId=${user.id}&itemId=${item.itemId}`
-        )
-        .then(() => {
-          console.log(`Deleted item with id: ${item.itemId}`);
-
-          return api.post(
-            `/phone/cart?userId=${user.id}&variantId=${item.productVariantId}&quantity=${item.quantity}`
-          );
-        })
-        .then(() => {
-          console.log(`Re-added item with id: ${item.itemId}`);
-        })
-        .catch((error) => {
-          console.error(`Error processing item with id: ${item.itemId}`, error);
-        });
-    });
-
-    Promise.all(promises)
-      .then(() => {
-        fetchCart();
-        setCartWasChanged(false);
-      })
-      .catch((error) => {
-        console.error("Error updating cart items:", error);
-      });
+  const handleUpdateItems = async () => {
+    try {
+      const promises = cartItems.map((item) =>
+        api.post(`/phone/cart/updateQuantity?userId=${user.id}&variantId=${item.itemId}&quantity=${item.quantity}`)
+      );
+      await Promise.all(promises);
+      setCartWasChanged(false)
+    } catch (error) {
+      console.error("Error updating cart quantities:", error);
+    }
   };
 
   useEffect(() => {
@@ -387,7 +364,11 @@ const handleCheckout = async() => {
                         onChange={(e) =>
                           handleQuantityChange(item.id, e.target.value)
                         }
-                        inputProps={{ className: "text-center", min: 1, max:item.stock }}
+                        inputProps={{
+                          className: "text-center",
+                          min: 1,
+                          max: item.stock,
+                        }}
                         className="w-16"
                       />
                       <IconButton
@@ -448,11 +429,11 @@ const handleCheckout = async() => {
       </div>
       <CustomSnackbar
         open={snackbarState.open}
-        onClose={() => setSnackbarState(prev => ({ ...prev, open: false }))}
+        onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))}
         message={snackbarState.message}
         severity={snackbarState.severity}
-      />    
-      </div>
+      />
+    </div>
   );
 };
 

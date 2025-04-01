@@ -3,7 +3,7 @@ import { CheckCircle } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import api, { createVNPayUrl } from "../../services/api";
-import vnpay from "../../assets/images/vnpay.png"
+import vnpay from "../../assets/images/vnpay.png";
 
 //Handle address selection box
 const AddressDropdown = ({
@@ -62,18 +62,34 @@ const AddressDropdown = ({
 };
 
 function Order() {
-  const shippingMethod = ["Banking", "COD"];
-
   const [userData, setUserData] = useState();
   const [selectedAddress, setSelectedAddress] = useState(null);
-  const [selectedMethod, setSelectedMethod] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
   const { state } = location;
-  
+
   const handleVNPAY = async () => {
-    const response = await createVNPayUrl(Number(totalAmount));
-    window.location.href = response.paymentUrl;
+    if (selectedAddress) {
+      const stringOfItems = orderItems.map((item) => item.itemId);
+      const note = notes;
+      const address = JSON.stringify(selectedAddress);
+      if (localStorage.getItem("items")) {
+        localStorage.removeItem("items");
+      }
+      if (localStorage.getItem("address")) {
+        localStorage.removeItem("address");
+      }
+      if (localStorage.getItem("note")) {
+        localStorage.removeItem("note");
+      }
+      localStorage.setItem("items", stringOfItems);
+      localStorage.setItem("note", note);
+      localStorage.setItem("address", address);
+      const response = await createVNPayUrl(Number(totalAmount));
+      window.location.href = response.paymentUrl;
+    } else {
+      alert("Vui lòng chọn địa chỉ");
+    }
   };
 
   // const orderItems = state?.selectedItems || [];
@@ -103,17 +119,17 @@ function Order() {
       let reqBody = {
         addressId: selectedAddress.id,
         note: notes,
-        method: selectedMethod,
+        method: "COD",
         itemId: mapItemIds,
       };
-      console.log(reqBody);
+      // console.log(reqBody);
       try {
-        console.log(mapItemIds);
-        console.log(`/phone/order/${userData.id}`)
+        // console.log(mapItemIds);
+        // console.log(`/phone/order/${userData.id}`);
         const response = await api.post(`/phone/order/${userData.id}`, reqBody);
         // await response;
         // reqBody = {};
-        console.log(response)
+        console.log(response);
         setShowSuccess(true);
         navigate("/user");
 
@@ -123,12 +139,8 @@ function Order() {
         console.log("Lỗi đặt hàng. Vui lòng thử lại sau." + e);
       }
     } else {
-      alert("Vui lòng điền đầy đủ thông tin");
+      alert("Vui lòng chọn địa chỉ");
     }
-  };
-
-  const handleMethodChange = (e) => {
-    setSelectedMethod(e.target.value);
   };
 
   const formatPrice = (price) => {
@@ -295,7 +307,7 @@ function Order() {
           className="text-blue-600 bg-white px-8 py-3 rounded-full font-medium transition-colors shadow-md flex gap-1"
         >
           <p>Thanh toán qua VNPay</p>
-          <img className = "w-4 object-cover" src={vnpay} alt="" />
+          <img className="w-4 object-cover" src={vnpay} alt="" />
         </button>
       </div>
 
