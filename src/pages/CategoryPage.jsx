@@ -27,16 +27,6 @@ function MainContent() {
       );
       console.log(response.data.content[0].name);
       const newProducts = response.data.content || [];
-      // Kiểm tra và loại bỏ sản phẩm trùng lặp
-      // setProducts((prev) => {
-      //   const existingIds = new Set(prev.map((p) => p.id)); // Tạo Set chứa các id hiện có
-      //   const filteredNewProducts = newProducts.filter(
-      //     (p) => !existingIds.has(p.id)
-      //   ); // Lọc sản phẩm mới
-      //   return [...prev, ...filteredNewProducts]; // Nối danh sách
-      // });
-
-      //discountDisplayed
       if (isChecked) {
         setProducts(
           newProducts.filter((product) => product.discountDisplayed > 0)
@@ -81,7 +71,15 @@ function MainContent() {
   };
 
   if (loading) {
-    return null;
+    if (loading) {
+      return (
+        <>
+          <div className="min-h-80 bg-gray-100 text-center p-2">
+            <h2 className="text-2xl font-bold mb-2">KHUYẾN MÃI HOT</h2>
+          </div>
+        </>
+      );
+    }
   }
 
   if (products && products?.length == 0) {

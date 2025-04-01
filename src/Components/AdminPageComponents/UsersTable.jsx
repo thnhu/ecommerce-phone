@@ -12,7 +12,7 @@ import {
   DialogActions,
   Button,
 } from "@mui/material";
-
+import BillManagement from "./OrderManagement/BillManagement";
 import api from "../../services/api";
 // import api from "../../interceptor"
 
@@ -66,71 +66,77 @@ const SearchBar = ({
 };
 
 const DialogTable = ({ open, handleClose, searchQuery, selectedUser }) => {
-  const [orders, setOrders] = useState([]);
-
-  const fetchDataOrder = async () => {
-    try {
-      const response = await api.get(
-        `/phone/order?status=DELIVERED&pageNumber=0&pageSize=10&userId=${selectedUser.id}`
-      );
-      setOrders(response.data.content);
-    } catch (error) {
-      console.log("Error fetching orders: ", error);
-    }
-  };
-
-  useEffect(() => console.log(orders), [orders]);
-
-  useEffect(() => {
-    if (selectedUser) {
-      fetchDataOrder();
-    }
-  }, [selectedUser]); // ✅ Fetch orders when selectedUser changes
-
-  return (
-    <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>
-        Đơn hàng của người dùng{" "}
-        <strong>{selectedUser?.displayName || "Unknown"}</strong>
-      </DialogTitle>
-      <DialogContent>
-        {orders.length > 0 ? (
-          <div className="grid grid-cols-3 gap-4 border border-gray-300 p-3">
-            <div className="font-semibold bg-gray-200 p-3 text-center border-b flex items-center justify-center">
-              ID đơn hàng
-            </div>
-            <div className="font-semibold bg-gray-200 p-3 text-center border-b flex items-center justify-center">
-              Tổng giá
-            </div>
-            <div className="font-semibold bg-gray-200 p-3 text-center border-b flex items-center justify-center">
-              Ngày đặt hàng
-            </div>
-            {orders.map((order) => (
-              <React.Fragment key={order.id}>
-                <div className="border p-3 text-center flex items-center justify-center">
-                  {order.orderId}
-                </div>
-                <div className="border p-3 text-center flex items-center justify-center">
-                  {order.totalPrice} vnđ
-                </div>
-                <div className="border p-3 text-center flex items-center justify-center">
-                  {new Date(order.orderDate).toLocaleDateString()}
-                </div>
-              </React.Fragment>
-            ))}
-          </div>
-        ) : (
-          <p>Chưa có đơn hàng.</p>
-        )}
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} color="primary">
-          Đóng
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
+  return <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+    <BillManagement user={selectedUser}></BillManagement>
+  </Dialog>;
 };
+
+// const DialogTable = ({ open, handleClose, searchQuery, selectedUser }) => {
+//   const [orders, setOrders] = useState([]);
+
+//   const fetchDataOrder = async () => {
+//     try {
+//       const response = await api.get(
+//         `/phone/order?status=DELIVERED&pageNumber=0&pageSize=10&userId=${selectedUser.id}`
+//       );
+//       setOrders(response.data.content);
+//     } catch (error) {
+//       console.log("Error fetching orders: ", error);
+//     }
+//   };
+
+//   useEffect(() => console.log(orders), [orders]);
+
+//   useEffect(() => {
+//     if (selectedUser) {
+//       fetchDataOrder();
+//     }
+//   }, [selectedUser]); // ✅ Fetch orders when selectedUser changes
+
+//   return (
+//     <Dialog open={open} onClose={handleClose}>
+//       <DialogTitle>
+//         Đơn hàng của người dùng{" "}
+//         <strong>{selectedUser?.displayName || "Unknown"}</strong>
+//       </DialogTitle>
+//       <DialogContent>
+//         {orders.length > 0 ? (
+//           <div className="grid grid-cols-3 gap-4 border border-gray-300 p-3">
+//             <div className="font-semibold bg-gray-200 p-3 text-center border-b flex items-center justify-center">
+//               ID đơn hàng
+//             </div>
+//             <div className="font-semibold bg-gray-200 p-3 text-center border-b flex items-center justify-center">
+//               Tổng giá
+//             </div>
+//             <div className="font-semibold bg-gray-200 p-3 text-center border-b flex items-center justify-center">
+//               Ngày đặt hàng
+//             </div>
+//             {orders.map((order) => (
+//               <React.Fragment key={order.id}>
+//                 <div className="border p-3 text-center flex items-center justify-center">
+//                   {order.orderId}
+//                 </div>
+//                 <div className="border p-3 text-center flex items-center justify-center">
+//                   {order.totalPrice} vnđ
+//                 </div>
+//                 <div className="border p-3 text-center flex items-center justify-center">
+//                   {new Date(order.orderDate).toLocaleDateString()}
+//                 </div>
+//               </React.Fragment>
+//             ))}
+//           </div>
+//         ) : (
+//           <p>Chưa có đơn hàng.</p>
+//         )}
+//       </DialogContent>
+//       <DialogActions>
+//         <Button onClick={handleClose} color="primary">
+//           Đóng
+//         </Button>
+//       </DialogActions>
+//     </Dialog>
+//   );
+// };
 
 const UsersTable = () => {
   const [currentIndex, setCurrentIndex] = useState(0);

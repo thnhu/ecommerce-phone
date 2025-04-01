@@ -7,25 +7,48 @@ function Sale() {
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [selectedValue, setSelectedValue] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
 
-  const fetchProducts = async (page) => {
+  // const fetchProducts = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await api.get(
+  //       `/phone/product/status?page=${currentPage}&size=5&status=ACTIVE`
+  //     );
+  //     const newProducts = response.data.content || [];
+  //     console.log(newProducts);
+  //     // Kiểm tra và loại bỏ sản phẩm trùng lặp
+  //     setProducts((prev) => {
+  //       const existingIds = new Set(prev.map((p) => p.id)); // Tạo Set chứa các id hiện có
+  //       const filteredNewProducts = newProducts.filter(
+  //         (p) => !existingIds.has(p.id)
+  //       ); // Lọc sản phẩm mới
+  //       return [...prev, ...filteredNewProducts]; // Nối danh sách
+  //     });
+
+  //     setHasMore(newProducts.length === 5); // Kiểm tra còn dữ liệu không
+  //   } catch (error) {
+  //     console.error("Error fetching products:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const fetchProducts = async () => {
     try {
       setLoading(true);
       const response = await api.get(
-        `/phone/product/status?page=${page}&size=5&status=ACTIVE`
+        `/phone/product/filter?status=ACTIVE&sortDirection=${selectedValue}`
       );
       const newProducts = response.data.content || [];
-      console.log(newProducts);
-      // Kiểm tra và loại bỏ sản phẩm trùng lặp
-      setProducts((prev) => {
-        const existingIds = new Set(prev.map((p) => p.id)); // Tạo Set chứa các id hiện có
-        const filteredNewProducts = newProducts.filter(
-          (p) => !existingIds.has(p.id)
-        ); // Lọc sản phẩm mới
-        return [...prev, ...filteredNewProducts]; // Nối danh sách
-      });
-
-      setHasMore(newProducts.length === 5); // Kiểm tra còn dữ liệu không
+      if (isChecked) {
+        setProducts(
+          newProducts.filter((product) => product.discountDisplayed > 0)
+        );
+      } else {
+        setProducts(newProducts);
+      }
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
@@ -35,7 +58,7 @@ function Sale() {
 
   useEffect(() => {
     fetchProducts(0);
-  }, []);
+  }, [currentPage, selectedValue, isChecked]);
 
   const loadMoreProducts = () => {
     const nextPage = currentPage + 1;
@@ -53,17 +76,75 @@ function Sale() {
   };
 
   if (loading) {
-    return null;
+    return (
+      <>
+        <div className="min-h-80 bg-gray-100 text-center p-2">
+          <h2 className="text-2xl font-bold mb-2">KHUYẾN MÃI HOT</h2>
+        </div>
+      </>
+    );
+  }
+
+  if (products && products?.length == 0) {
+    return (
+      <section className="text-center p-10 bg-gray-100">
+        <div className="flex px-2 py-5 items-center">
+          <div className="flex px-3 justify-center">
+            <p className="px-1">Đang giảm giá</p>
+            <input
+              type="checkbox"
+              checked={isChecked}
+              onChange={(e) => setIsChecked(e.target.checked)}
+            ></input>
+          </div>
+
+          <select
+            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={selectedValue}
+            onChange={(e) => setSelectedValue(e.target.value)}
+          >
+            <option disabled selected>
+              Giá
+            </option>
+            <option value="ASC">Tăng dần</option>
+            <option value="DESC">Giảm dần</option>
+          </select>
+        </div>
+        <p>Không có sản phẩm phù hợp</p>
+      </section>
+    );
   }
 
   return products.length > 0 ? (
     <section className="text-center p-2 bg-gray-100">
       <h2 className="text-2xl font-bold mb-2">KHUYẾN MÃI HOT</h2>
+      <div className="flex px-2 py-5 items-center">
+        <div className="flex px-3 justify-center">
+          <p className="px-1">Đang giảm giá</p>
+          <input
+            type="checkbox"
+            checked={isChecked}
+            onChange={(e) => setIsChecked(e.target.checked)}
+          ></input>
+        </div>
+
+        <select
+          className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={selectedValue}
+          onChange={(e) => setSelectedValue(e.target.value)}
+        >
+          <option disabled selected>
+            Giá
+          </option>
+          <option value="ASC">Tăng dần</option>
+          <option value="DESC">Giảm dần</option>
+        </select>
+      </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 px-2">
         {products.map((product) => {
           const imageUrl = product.images[0] || "";
           const hasDiscount = product.discountDisplayed > 0;
-          const variantPrice = product.variants[0].price;
+          const variantPrice = product.variants[0]?.price || 0;
 
           const displayedPrice = hasDiscount
             ? calculateDiscountedPrice(variantPrice, product.discountDisplayed)
@@ -102,15 +183,15 @@ function Sale() {
                     ⭐ {product.rating || "Chưa có đánh giá"}
                   </p>
                   <div className="flex flex-col">
-                  <span className="text-rose-600 text-base font-bold text-lg">
-                    {formatPrice(displayedPrice)}
-                  </span>
-                  {hasDiscount && variantPrice && (
-                    <span className="line-through text-gray-600 font-bold">
-                      {formatPrice(variantPrice)}
+                    <span className="text-rose-600 text-base font-bold text-lg">
+                      {formatPrice(displayedPrice)}
                     </span>
-                  )}
-                </div>                
+                    {hasDiscount && variantPrice && (
+                      <span className="line-through text-gray-600 font-bold">
+                        {formatPrice(variantPrice)}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             </Link>

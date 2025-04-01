@@ -233,7 +233,7 @@ const BillTab = ({ userData }) => {
           )}&pageNumber=${currentIndex}&pageSize=${size}&userId=${userData.id}`
         );
       }
-      console.log(response);
+      // console.log(response);
 
       const totalOrders = response.data.content.length;
       setOrderData(response.data.content);

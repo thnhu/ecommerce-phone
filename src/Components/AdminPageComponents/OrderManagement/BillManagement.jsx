@@ -16,7 +16,8 @@ const shippingStatus = [
   "Đã hoàn tiền",
 ];
 
-const BillManagement = () => {
+//User parem is used for UI manage user's bill
+const BillManagement = ({ user }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTab, setSelectedTab] = useState("Tất cả");
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -50,16 +51,35 @@ const BillManagement = () => {
   const fetchOrderData = async () => {
     try {
       let response;
-      if (selectedTab === "Tất cả") {
-        response = await api.get(
-          `/phone/order/getAll?pageNumber=${currentIndex}&pageSize=${size}`
-        );
+      if (user) {
+        if (selectedTab === "Tất cả") {
+          response = await api.get(
+            `/phone/order?${currentIndex}&pageSize=${size}&userId=${user.id}`
+          );
+        } else {
+          console.log(
+            `/phone/order?status=${formatStatusToEng(
+              selectedTab
+            )}&pageNumber=${currentIndex}&pageSize=${size}&userId=${user.id}`
+          );
+          response = await api.get(
+            `/phone/order?status=${formatStatusToEng(
+              selectedTab
+            )}&pageNumber=${currentIndex}&pageSize=${size}&userId=${user.id}`
+          );
+        }
       } else {
-        response = await api.get(
-          `/phone/order/getAll?status=${formatStatusToEng(
-            selectedTab
-          )}&pageNumber=${currentIndex}&pageSize=${size}`
-        );
+        if (selectedTab === "Tất cả") {
+          response = await api.get(
+            `/phone/order/getAll?pageNumber=${currentIndex}&pageSize=${size}`
+          );
+        } else {
+          response = await api.get(
+            `/phone/order/getAll?status=${formatStatusToEng(
+              selectedTab
+            )}&pageNumber=${currentIndex}&pageSize=${size}`
+          );
+        }
       }
       console.log(response);
 
