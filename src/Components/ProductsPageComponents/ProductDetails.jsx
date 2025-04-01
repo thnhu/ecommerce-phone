@@ -391,7 +391,7 @@ const ProductDetail = ({ product }) => {
           {/* Add to Cart Button */}
           <div className="bg-white rounded-[62px] flex-1 border-2 border-black hover:bg-black hover:text-white">
               <button
-                className="text-xl font-semibold px-4 md:text-[16px] text-black w-full h-[44px] md:h-[52px] hover:bg-black hover:text-white rounded-full"
+                className="text-sm font-semibold px-4 md:text-[16px] text-black w-full h-[44px] md:h-[52px] hover:bg-black hover:text-white rounded-full"
                 onClick={handleAddCart}
                 disabled={errorQuantity || product.variants[selectedColor].stock === 0}
               >
@@ -401,7 +401,7 @@ const ProductDetail = ({ product }) => {
             {/* Buy Now Button */}
             <div className="bg-red-600 rounded-[62px] flex-1">
               <button
-                className="p-font text-xl px-4 md:text-[16px] text-white w-full h-[44px] md:h-[52px]"
+                className="p-font text-sm px-4 md:text-[16px] text-white w-full h-[44px] md:h-[52px]"
                 onClick={handleBuyNow}
                 disabled={errorQuantity || product.variants[selectedColor].stock === 0}
               >

@@ -92,6 +92,7 @@ const ReviewDialog = ({ open, onClose, product }) => {
     }
     const formData = new FormData();
     // console.log(product.productId);
+    
     formData.append(
       "data",
       new Blob(
@@ -106,8 +107,9 @@ const ReviewDialog = ({ open, onClose, product }) => {
         { type: "application/json" }
       )
     );
-    console.log(reviewData.comment);
-    console.log(reviewData.rating);
+    // console.log(reviewData.comment);
+    // console.log(reviewData.rating);
+    console.log(reviewData)
     Array.from(reviewData.imagePaths).forEach((file) => {
       formData.append("files", file);
     });

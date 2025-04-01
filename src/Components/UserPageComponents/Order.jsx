@@ -103,7 +103,7 @@ function Order() {
       let reqBody = {
         addressId: selectedAddress.id,
         note: notes,
-        method: selectedMethod,
+        method: "COD",
         itemId: mapItemIds,
       };
       console.log(reqBody);
@@ -125,10 +125,6 @@ function Order() {
     } else {
       alert("Vui lòng điền đầy đủ thông tin");
     }
-  };
-
-  const handleMethodChange = (e) => {
-    setSelectedMethod(e.target.value);
   };
 
   const formatPrice = (price) => {

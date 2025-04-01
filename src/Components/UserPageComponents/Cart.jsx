@@ -18,19 +18,17 @@ const Cart = () => {
   const [cartWasChanged, setCartWasChanged] = useState(false);
   const [snackbarState, setSnackbarState] = useState({
     open: false,
-    message: '',
-    severity: 'info', // default value
+    message: "",
+    severity: "info", // default value
   });
-  
-  const showSnackbar = (message, severity = 'info') => {
+
+  const showSnackbar = (message, severity = "info") => {
     setSnackbarState({
       open: true,
       message,
-      severity
+      severity,
     });
   };
-  
-  
 
   const handleSelectItem = (id) => {
     setSelectedItems((prev) =>
@@ -39,34 +37,34 @@ const Cart = () => {
   };
 
   const handleQuantity = (id, action) => {
+    //id = variantId
     setCartItems((prevItems) =>
       prevItems.map((item) => {
         if (item.id === id) {
           let newQuantity = item.quantity;
-          
+
           if (action === "increase") {
             newQuantity += 1;
           } else if (action === "decrease") {
             newQuantity -= 1;
           }
-  
+
           // Kiểm tra giới hạn số lượng
           newQuantity = Math.max(1, Math.min(newQuantity, item.stock));
-  
+
           // Kiểm tra nếu số lượng thay đổi
-            // Hiển thị cảnh báo nếu vượt stock khi tăng
-            if (action === "increase" && newQuantity > item.stock) {
-              showSnackbar("Số lượng trong kho không đủ", "error");
-            }
-            return { ...item, quantity: newQuantity };
-          
+          // Hiển thị cảnh báo nếu vượt stock khi tăng
+          if (action === "increase" && newQuantity > item.stock) {
+            showSnackbar("Số lượng trong kho không đủ", "error");
+          }
+          return { ...item, quantity: newQuantity };
         }
         return item;
       })
     );
     setCartWasChanged(true);
   };
-  
+
   const handleQuantityChange = (id, value) => {
     if (/^\d*$/.test(value)) {
       setCartItems((prevItems) =>
@@ -86,17 +84,17 @@ const Cart = () => {
       );
       setCartWasChanged(true);
     }
-  };  
+  };
   const totalAmount = cartItems
-  .filter((item) => selectedItems.includes(item.id))
-  .reduce((acc, item) => acc + item.price * item.quantity, 0);
+    .filter((item) => selectedItems.includes(item.id))
+    .reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   const totalQuantity = cartItems
     .filter((item) => selectedItems.includes(item.id))
     .reduce((acc, item) => acc + item.quantity, 0);
 
-  const handleCheckout = async() => {
-    await handleUpdateItems()
+  const handleCheckout = async () => {
+    await handleUpdateItems();
     navigate("/order", {
       state: {
         selectedItems: cartItems.filter((item) =>
@@ -120,7 +118,7 @@ const Cart = () => {
       try {
         const cartResponse = await api.get(`/phone/cart/${userId}`);
         const cartItemsData = cartResponse.data.data.items;
-  
+
         const updatedCartItems = await Promise.all(
           cartItemsData.map(async (item) => {
             try {
@@ -130,12 +128,12 @@ const Cart = () => {
               const thisVariant = productResponse.data.variants.find(
                 (variant) => variant.id === item.productVariantId
               );
-              
+
               // Thêm logic lấy thông tin khuyến mãi
               let discountValue = 0;
               let originalPrice = thisVariant.price;
               let discountEndDate = null;
-              
+
               try {
                 const discountResponse = await api.get(
                   `/phone/product/discount/getActive/${item.productVariantId}`
@@ -152,9 +150,9 @@ const Cart = () => {
               } catch (error) {
                 console.error("Error fetching discount:", error);
               }
-  
+
               const discountedPrice = originalPrice * (1 - discountValue / 100);
-  
+
               return {
                 id: item.itemId,
                 ...item,
@@ -170,7 +168,7 @@ const Cart = () => {
             }
           })
         );
-  
+
         setCartItems(updatedCartItems);
       } catch (cartError) {
         console.log("Lỗi dữ liệu giỏ hàng:", cartError);
@@ -179,7 +177,7 @@ const Cart = () => {
       console.log("Lỗi dữ liệu người dùng:", userError);
     }
   };
-  
+
   const handleRemoveItem = (id) => {
     const deleteItemNth = cartItems.filter((item) => item.id === id);
     setCartItems((prev) => prev.filter((item) => item.id !== id));
@@ -198,37 +196,16 @@ const Cart = () => {
     }
   };
 
-  const handleUpdateItems = () => {
-    const itemsToDelete = [...cartItems];
-
-    const promises = itemsToDelete.map((item) => {
-      return api
-        .delete(
-          `/phone/cart/deleteItem?userId=${user.id}&itemId=${item.itemId}`
-        )
-        .then(() => {
-          console.log(`Deleted item with id: ${item.itemId}`);
-
-          return api.post(
-            `/phone/cart?userId=${user.id}&variantId=${item.productVariantId}&quantity=${item.quantity}`
-          );
-        })
-        .then(() => {
-          console.log(`Re-added item with id: ${item.itemId}`);
-        })
-        .catch((error) => {
-          console.error(`Error processing item with id: ${item.itemId}`, error);
-        });
-    });
-
-    Promise.all(promises)
-      .then(() => {
-        fetchCart();
-        setCartWasChanged(false);
-      })
-      .catch((error) => {
-        console.error("Error updating cart items:", error);
-      });
+  const handleUpdateItems = async () => {
+    try {
+      const promises = cartItems.map((item) =>
+        api.post(`/phone/cart/updateQuantity?userId=${user.id}&variantId=${item.itemId}&quantity=${item.quantity}`)
+      );
+      await Promise.all(promises);
+      setCartWasChanged(false)
+    } catch (error) {
+      console.error("Error updating cart quantities:", error);
+    }
   };
 
   useEffect(() => {
@@ -256,39 +233,42 @@ const Cart = () => {
                   />
                   <div className="flex-1 min-w-[150px]">
                     <div className="text-sm text-gray-600 mt-2">
-                        <Link
-                          to={`/product/${item.productId}`}
-                          className="text-lg text-black font-semibold inline-block"
-                        >
-                          {item.productName}
-                        </Link>
+                      <Link
+                        to={`/product/${item.productId}`}
+                        className="text-lg text-black font-semibold inline-block"
+                      >
+                        {item.productName}
+                      </Link>
                       <p>Màu sắc: {item.productColor}</p>
                     </div>
                     <div className="flex flex-wrap items-center gap-3 mt-2">
-  {item.discountValue > 0 ? (
-    <div className="flex items-baseline gap-2">
-      <span className="text-red-600 font-bold text-lg">
-        {formatPrice(item.price)}
-      </span>
-      <span className="line-through text-gray-500 text-sm">
-        {formatPrice(item.originalPrice)}
-      </span>
-      <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-xs">
-        -{item.discountValue}%
-      </span>
-      {item.discountEndDate && (
-        <div className="text-red-600 text-xs mt-1">
-          Áp dụng đến {new Date(item.discountEndDate).toLocaleDateString()}
-        </div>
-      )}
-    </div>
-  ) : (
-    <span className="text-red-600 font-bold text-lg">
-      {formatPrice(item.originalPrice)}
-    </span>
-  )}
-</div>
-</div>
+                      {item.discountValue > 0 ? (
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-red-600 font-bold text-lg">
+                            {formatPrice(item.price)}
+                          </span>
+                          <span className="line-through text-gray-500 text-sm">
+                            {formatPrice(item.originalPrice)}
+                          </span>
+                          <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-xs">
+                            -{item.discountValue}%
+                          </span>
+                          {item.discountEndDate && (
+                            <div className="text-red-600 text-xs mt-1">
+                              Áp dụng đến{" "}
+                              {new Date(
+                                item.discountEndDate
+                              ).toLocaleDateString()}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-red-600 font-bold text-lg">
+                          {formatPrice(item.originalPrice)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
 
                   <div className="flex flex-col items-center gap-2 mt-2">
                     <div className="flex items-center gap-2">
@@ -304,7 +284,11 @@ const Cart = () => {
                         onChange={(e) =>
                           handleQuantityChange(item.id, e.target.value)
                         }
-                        inputProps={{ className: "text-center", min: 1, max:item.stock }}
+                        inputProps={{
+                          className: "text-center",
+                          min: 1,
+                          max: item.stock,
+                        }}
                         className="w-16"
                       />
                       <IconButton
@@ -365,11 +349,11 @@ const Cart = () => {
       </div>
       <CustomSnackbar
         open={snackbarState.open}
-        onClose={() => setSnackbarState(prev => ({ ...prev, open: false }))}
+        onClose={() => setSnackbarState((prev) => ({ ...prev, open: false }))}
         message={snackbarState.message}
         severity={snackbarState.severity}
-      />    
-      </div>
+      />
+    </div>
   );
 };
 

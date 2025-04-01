@@ -84,11 +84,12 @@ const ReviewSection = ({ product }) => {
         </div>
 
         {/* Chưa có đánh giá */}
-        <div className="p-font text-[16px] md:text-[18px] lg:text-[20px] border-opacity-10 border-black border-2 rounded-3xl px-10 md:min-h-20 py-1 mt-10 flex items-center justify-center">
+        {reviewData &&
+            reviewData.length == 0 && <div className="p-font text-[16px] md:text-[18px] lg:text-[20px] border-opacity-10 border-black border-2 rounded-3xl px-10 md:min-h-20 py-1 mt-10 flex items-center justify-center">
           <p>Chưa có đánh giá</p>
-        </div>
+        </div>}
 
-        <div className="reviews mt-4 md:grid md:grid-cols-2 md:gap-5">
+        <div className="reviews mt-4 md:grid md:grid-cols-2 md:gap-5 border p-5 rounded-3xl mb-5">
           {reviewData &&
             reviewData.length > 0 &&
             reviewData.map((review, index) => {

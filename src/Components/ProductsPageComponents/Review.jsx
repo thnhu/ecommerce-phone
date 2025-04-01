@@ -16,7 +16,7 @@ const FullScreenImage = ({ imageUrl, onClose }) => {
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-90 z-50">
+    <div className="fixed inset-32 md:inset-x-16 flex items-center justify-center bg-black ">
       <img
         src={`data:image/*;base64,${imageUrl}`}
         alt="Full Screen"
@@ -45,7 +45,7 @@ const Review = ({ starsRating, username, comment, date, images }) => {
             onClose={() => setIsFullScreen(false)}
           />
         )}
-        <div className="review w-full border-[1px] border-opacity-10 border-black rounded-3xl px-5 py-4 my-5 md:col-span-1 flex flex-col justify-between">
+        <div className="review w-full border-[1px] border-opacity-10 border-black rounded-3xl px-8 py-5  md:col-span-1 flex flex-col justify-between">
           <div>
             <div className="flex justify-between items-center w-full">
               <img
