@@ -1,9 +1,8 @@
 import Navbar from "../Components/UserPageComponents/Navbar";
 import Footer from "../Components/UserPageComponents/Footer";
-import { useLocation } from "react-router-dom";
-
+import { useLocation, Link } from "react-router-dom";
+import {Rating} from '@mui/material'
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import api from "../services/api";
 
 function MainContent() {
@@ -27,16 +26,6 @@ function MainContent() {
       );
       console.log(response.data.content[0].name);
       const newProducts = response.data.content || [];
-      // Kiểm tra và loại bỏ sản phẩm trùng lặp
-      // setProducts((prev) => {
-      //   const existingIds = new Set(prev.map((p) => p.id)); // Tạo Set chứa các id hiện có
-      //   const filteredNewProducts = newProducts.filter(
-      //     (p) => !existingIds.has(p.id)
-      //   ); // Lọc sản phẩm mới
-      //   return [...prev, ...filteredNewProducts]; // Nối danh sách
-      // });
-
-      //discountDisplayed
       if (isChecked) {
         setProducts(
           newProducts.filter((product) => product.discountDisplayed > 0)
@@ -189,9 +178,11 @@ function MainContent() {
                 </h3>
 
                 <div className="mt-auto">
-                  <p className="text-yellow-500 text-s mb-1">
-                    ⭐ {product.rating || "Chưa có đánh giá"}
-                  </p>
+                  <Rating
+                    value={product.rating}
+                    size="small"
+                    defaultValue={0} precision={0.5} readOnly
+                  />
                   <div className="flex flex-col">
                     <span className="text-rose-600 text-base font-bold text-lg">
                       {formatPrice(variant.price)}

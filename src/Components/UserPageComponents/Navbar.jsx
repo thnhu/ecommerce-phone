@@ -118,21 +118,21 @@ const Navbar = () => {
     <nav className="bg-white shadow-lg fixed top-0 left-0 w-full z-50">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center">
-            <IconButton
-              edge="start"
-              className="sm:block md:hidden"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <Menu />
-            </IconButton>
+        <div className="flex items-center">
+            <div className="block md:hidden">
+              <IconButton
+                edge="start"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+              >
+                <Menu />
+              </IconButton>
+            </div>
             <a href="/">
               <span className="text-xl font-bold text-gray-800">
                 DIDONGVERSE
               </span>
             </a>
           </div>
-
           <div className="hidden md:flex items-center space-x-4">
             {navLinks.map((link) => (
               <a
