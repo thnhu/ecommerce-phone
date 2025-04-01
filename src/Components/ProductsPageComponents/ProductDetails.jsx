@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { theme } from "../../const/const";
 import stars from "../../assets/stars";
 import PropTypes from "prop-types";
 import api from "../../services/api";
 import CustomSnackbar from '../../Components/CustomSnackbar';
 const ProductDetail = ({ product }) => {
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setColor] = useState(0);
   const [errorQuantity, setErrorQuantity] = useState(false);
   const [productVariantId, setProductVariantId] = useState();
-  const [discount, setDiscount] = useState();
+  const [currentDiscount, setCurrentDiscount] = useState(0);
+  const [discountEndDate, setDiscountEndDate] = useState(null);
   const [snackbarState, setSnackbarState] = useState({
     open: false,
     message: '',
@@ -52,20 +55,21 @@ const ProductDetail = ({ product }) => {
 
   const updateColor = (color) => {
     setColor(color);
+    const variantId = product.variants[color].id;
+    setProductVariantId(variantId);
+    
     const stock = product.variants[color].stock;
-    setProductVariantId(product.variants[selectedColor].id);
     if (quantity > stock) {
       setErrorQuantity(true);
     } else {
       setErrorQuantity(false);
     }
   };
-
   //Preload stock to see if it out of stock
   useEffect(() => {
     if (product && product.variants && product.variants.length > 0) {
       const firstVariant = product.variants[0];
-      setProductVariantId(product.variants[0].id);
+      setProductVariantId(firstVariant.id);
       if (firstVariant.stock === 0) {
         setErrorQuantity(true);
       }
@@ -75,23 +79,29 @@ const ProductDetail = ({ product }) => {
     setProductVariantId(product.variants[0].id);
   }, [product]);
 
-    useEffect(() => {
-      fetchDiscount();
-    }, []);
-  
+  useEffect(() => {
     const fetchDiscount = async () => {
+      if (!productVariantId) return;
+      
       try {
-        const response = await api.get(`/phone/product/discount/getActive/${productVariantId}`);
-        console.log(response.data.discountValue);
-        setDiscount(response.data.discountValue);
-        setLoading(false);
-      } catch (err) {
-        setError('Không thể tải danh sách nhà cung cấp');
-        setLoading(false);
+        const response = await api.get(
+          `/phone/product/discount/getActive/${productVariantId}`
+        );
+        setCurrentDiscount(response.data.discountValue || 0);
+        setDiscountEndDate(response.data.endDate); // Lưu ngày kết thúc
+      } catch (error) {
+        console.error("Error fetching discount:", error);
+        setCurrentDiscount(0);
       }
     };
   
-
+    fetchDiscount();
+  }, [productVariantId]);
+ 
+  const handleInputBlur = () => {
+    const newQuantity = Math.max(1, Math.min(stock, quantity)); // Clamp value between 1 and 5
+    setQuantity(newQuantity);
+  };
   const handleInputChange = (event) => {
     const value = event.target.value;
 
@@ -107,11 +117,6 @@ const ProductDetail = ({ product }) => {
         setErrorQuantity(true);
       }
     }
-  };
-
-  const handleInputBlur = () => {
-    const newQuantity = Math.max(1, Math.min(1000, quantity)); // Clamp value between 1 and 5
-    setQuantity(newQuantity);
   };
 
   //Format and map rating points
@@ -146,37 +151,83 @@ const ProductDetail = ({ product }) => {
     return false;
   };
 
-  const formatNumber = (number) => {
-    return new Intl.NumberFormat("de-DE").format(number);
+  // Hàm định dạng tiền tệ
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat("vi-VN").format(price) + "₫";
+  };
+  const formatDiscountDate = (dateString) => {
+    if (!dateString) return '';
+    
+    const date = new Date(dateString);
+    const time = date.toLocaleString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
+    const datePart = date.toLocaleString('vi-VN', {
+      day: '2-digit',
+      month: '2-digit'
+    });
+  
+    return `${time} | ${datePart}`;
   };
 
+  const addToCart = async () => {
+    const userResponse = await api.get("/phone/user/myInfo");
+    const userId = userResponse.data.id;
+    await api.post(
+      `/phone/cart?userId=${userId}&variantId=${productVariantId}&quantity=${quantity}`
+    );
+  };
+  
   const handleAddCart = async () => {
     if (!errorQuantity) {
-      // Kiểm tra trạng thái đăng nhập qua localStorage
       const isLoggedIn = localStorage.getItem('authToken');
-      
       if (!isLoggedIn) {
         showSnackbar('Vui lòng đăng nhập để sử dụng chức năng này', 'error');
         return;
       }
   
       try {
-        const userResponse = await api.get("/phone/user/myInfo");
-        const userId = userResponse.data.id;
-        try {
-          const cartResponse = await api.post(
-            `/phone/cart?userId=${userId}&variantId=${productVariantId}&quantity=${quantity}`
-          );
-          showSnackbar('Thêm vào giỏ hàng thành công!', 'success');
-        } catch (e) {
-          console.log(e);
-        }
+        await addToCart();
+        showSnackbar('Thêm vào giỏ hàng thành công!', 'success');
       } catch (e) {
         console.log(e);
+        showSnackbar('Có lỗi xảy ra khi thêm vào giỏ hàng', 'error');
       }
     }
-    };
-
+  };
+  
+  const handleBuyNow = async () => {
+    const isLoggedIn = localStorage.getItem('authToken');
+    if (!isLoggedIn) {
+      showSnackbar('Vui lòng đăng nhập để mua hàng', 'error');
+      return;
+    }
+  
+    const stock = product.variants[selectedColor].stock;
+    if (stock === 0 || quantity > stock) {
+      showSnackbar('Số lượng không hợp lệ', 'error');
+      return;
+    }
+  
+    try {
+      await addToCart(); // Thêm vào giỏ hàng trước khi chuyển trang
+      navigate('/order', { 
+        state: { 
+          product: product,
+          variantId: productVariantId,
+          quantity: quantity,
+          color: product.variants[selectedColor].color,
+          price: hasDiscount ? discountedPrice : originalPrice
+        }
+      });
+    } catch (e) {
+      console.log(e);
+      showSnackbar('Có lỗi xảy ra khi xử lý đơn hàng', 'error');
+    }
+  };
+  
   if (!product) {
     return (
       <div className="flex justify-center items-center">
@@ -184,20 +235,12 @@ const ProductDetail = ({ product }) => {
       </div>
     );
   }
-  const hasDiscount = product.variants[selectedColor].discount > 0;
-      // Hàm định dạng tiền tệ
-      const formatPrice = (price) => {
-        return new Intl.NumberFormat('vi-VN').format(price) + '₫';
-    };
-
-    // Hàm tính giá gốc chính xác (nếu discount là phần trăm)
-    const calculateOriginalPrice = (price, discount) => {
-        return price * (1 - discount / 100);
-    };
-    const originalPrice = hasDiscount
-    ? calculateOriginalPrice(product.variants[selectedColor].price, product.variants[selectedColor].discount)
-    : product.variants[selectedColor].price;
-
+  const hasDiscount = currentDiscount > 0;
+  const originalPrice = product.variants[selectedColor].price;
+  const discountedPrice = hasDiscount
+    ? originalPrice * (1 - currentDiscount / 100)
+    : originalPrice;
+    
   return (
     <>
       <div className="md:ml-[40px] md:w-1/2 mt-4 block">
@@ -218,35 +261,45 @@ const ProductDetail = ({ product }) => {
           </div>
 
           <div className="flex flex-col">
-        {hasDiscount ? (
-            <div className="flex items-baseline gap-2">
-                {/* Giá khuyến mãi */}
-                <span className="text-rose-600 text-2xl font-bold">
-                    {formatPrice(product.variants[selectedColor].price)}
+          {hasDiscount ? (
+            <div className="flex flex-col gap-2">
+              {/* Dòng hiển thị giá */}
+              <div className="flex items-baseline gap-3">
+                <span className="text-red-600 text-2xl font-bold">
+                  {formatPrice(discountedPrice)}
                 </span>
-                
-                {/* Giá gốc và % giảm */}
-                <div className="flex items-baseline gap-1">
-                    <span className="line-through text-gray-500 text-xl">
-                        {formatPrice(originalPrice)}
-                    </span>
-                    <span className="text-red-500 font-medium text-xl">
-                        (-{product.variants[selectedColor].discount}%)
-                    </span>
+                <div className="flex items-center gap-2">
+                  <span className="line-through text-gray-500 text-lg">
+                    {formatPrice(originalPrice)}
+                  </span>
+                  <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-sm font-medium">
+                    -{currentDiscount}%
+                  </span>
                 </div>
-            </div>
-        ) : (
-            // Hiển thị giá thường khi không có discount
-            <span className="text-rose-600 text-2xl font-bold">
-                {formatPrice(product.variants[selectedColor].price)}
-            </span>
-        )}
-        </div>
-              <p className="font-normal p-font text-[14px] md:text-[16px] lg:text-[18px] opacity-60 mt-[5px] md:mt-[8px] leading-3 md:leading-5">
-            {product.description || "Chưa có mô tả"}
-          </p>
-        </div>
+              </div>
 
+                {/* Dòng hiển thị thời gian*/}
+                {discountEndDate && (
+                <div className="flex items-center gap-2 text-red-600 text-sm font-medium mt-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd"/>
+                  </svg>
+                  <span>
+                    Giá khuyến mãi dự kiến áp dụng đến{" "}
+                    <span className="font-bold">
+                      {formatDiscountDate(discountEndDate)}
+                    </span>
+                  </span>
+                </div>
+              )}
+            </div>
+          ) : (
+              <span className="text-red-600 text-2xl font-bold">
+              {formatPrice(originalPrice)}
+            </span>
+          )}
+        </div>
+        </div>
         {/* Colors selector */}
         <div className="width-full">
           <div className="border-t-2 mt-[20px] mb-[20px] pt-4 pb-4">
@@ -299,7 +352,7 @@ const ProductDetail = ({ product }) => {
         
                   {/* Tên màu */}
                   <span className="text-sm font-medium text-gray-700 text-center capitalize">
-                    {colorName || "Unknown Color"}
+                    {colorName || "Không xác định"}
                   </span>
                 </div>
               );
@@ -307,11 +360,11 @@ const ProductDetail = ({ product }) => {
         </div>
         
           {/* Add to cart */}
-          <div className="md:border-b-2 mb-[20px] pb-4 flex size-full mt-2">
-            <div
-              className="relative quantity-selector flex justify-center items-center gap-4 w-[170px] h-[52px] rounded-[62px]"
-              style={{ backgroundColor: theme.colors.unselectedButton }}
-            >
+          <div className="md:border-b-2 mb-[20px] pb-4 flex size-full mt-2 gap-3 ">
+          <div
+            className="relative quantity-selector flex justify-center items-center gap-4 w-[170px] h-[52px] rounded-[62px]"
+            style={{ backgroundColor: theme.colors.unselectedButton }}
+          >
               <button
                 className="rounded-full size-12 text-[14px] md:text-[18px]"
                 onClick={() => updateQuantity(-1)}
@@ -323,7 +376,6 @@ const ProductDetail = ({ product }) => {
                 id="quantity"
                 name="quantity"
                 min="1"
-                max="5"
                 value={quantity}
                 onChange={handleInputChange}
                 onBlur={handleInputBlur}
@@ -336,12 +388,24 @@ const ProductDetail = ({ product }) => {
                 +
               </button>
             </div>
-            <div className="bg-black ml-3 rounded-[62px] w-full">
+          {/* Add to Cart Button */}
+          <div className="bg-white rounded-[62px] flex-1 border-2 border-black hover:bg-black hover:text-white">
               <button
-                className="p-font text-xl px-4 md:text-[16px] text-white w-full h-[44px] md:h-[52px]"
+                className="text-xl font-semibold px-4 md:text-[16px] text-black w-full h-[44px] md:h-[52px] hover:bg-black hover:text-white rounded-full"
                 onClick={handleAddCart}
+                disabled={errorQuantity || product.variants[selectedColor].stock === 0}
               >
                 Thêm vào giỏ
+              </button>
+            </div>
+            {/* Buy Now Button */}
+            <div className="bg-red-600 rounded-[62px] flex-1">
+              <button
+                className="p-font text-xl px-4 md:text-[16px] text-white w-full h-[44px] md:h-[52px]"
+                onClick={handleBuyNow}
+                disabled={errorQuantity || product.variants[selectedColor].stock === 0}
+              >
+                Mua ngay
               </button>
             </div>
           </div>

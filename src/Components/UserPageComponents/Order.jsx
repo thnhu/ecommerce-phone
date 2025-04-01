@@ -210,6 +210,7 @@ function Order() {
             <thead className="bg-blue-50">
               <tr>
                 <th className="text-left p-3 font-semibold">Sản phẩm</th>
+                {/* <th className="text-left p-3 font-semibold">Màu</th> */}
                 <th className="text-right p-3 font-semibold">Đơn giá</th>
                 <th className="text-center p-3 font-semibold">Số lượng</th>
                 <th className="text-right p-3 font-semibold">Thành tiền</th>
@@ -219,6 +220,7 @@ function Order() {
               {orderItems.map((item) => (
                 <tr key={item.id}>
                   <td className="p-3 text-gray-800">{item.productName}</td>
+                  {/* <td className="p-3 text-gray-800">{item.product}</td> */}
                   <td className="p-3 text-right text-gray-800">
                     {formatPrice(item.price)}
                   </td>
@@ -241,31 +243,6 @@ function Order() {
               </tr>
             </tbody>
           </table>
-          {/* <div className="w-full flex items-end justify-end pt-5">
-            <select
-              id="address-select"
-              onChange={handleMethodChange}
-              className="border p-2 text-sm"
-            >
-              <option value="" disabled selected className="text-gray-400">
-                Chọn hình thức thanh toán
-              </option>
-              {shippingMethod.map((method, index) => {
-                if (method === "COD") {
-                  return (
-                    <option key={index} value={method}>
-                      {method}
-                    </option>
-                  );
-                } else
-                  return (
-                    <option key={index} disabled value={method}>
-                      {method}
-                    </option>
-                  );
-              })}
-            </select>
-          </div> */}
         </div>
 
         {/* Hiển thị dạng card trên mobile */}

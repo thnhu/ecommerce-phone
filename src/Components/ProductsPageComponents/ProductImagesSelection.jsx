@@ -112,7 +112,7 @@ const ProductImagesSelection = ({ productImg }) => {
                     <img
                       src={`data:image/*;base64,${image.data}`} // Use base64 data
                       alt={`Image ${startIndex + index}`}
-                      className="w-[111px] h-[106px] md:w-[152px] md:h-[167px] object-co"
+                      className="w-[106px] h-[106px] md:w-[167px] md:h-[167px] object-cover rounded-md"
                     />
                   </button>
                 ))}
