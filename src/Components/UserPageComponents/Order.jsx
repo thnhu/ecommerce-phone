@@ -92,8 +92,6 @@ function Order() {
     }
   };
 
-  // const orderItems = state?.selectedItems || [];
-  // const totalAmount = state?.total || 0;
   const [orderItems, setOrderItems] = useState(state?.selectedItems || []);
   const [totalAmount, setTotalAmount] = useState(state?.total || 0);
 
@@ -122,19 +120,11 @@ function Order() {
         method: "COD",
         itemId: mapItemIds,
       };
-      // console.log(reqBody);
       try {
-        // console.log(mapItemIds);
-        // console.log(`/phone/order/${userData.id}`);
         const response = await api.post(`/phone/order/${userData.id}`, reqBody);
-        // await response;
-        // reqBody = {};
         console.log(response);
         setShowSuccess(true);
         navigate("/user");
-
-        // setOrderItems([]);
-        // setTotalAmount(0);
       } catch (e) {
         console.log("Lỗi đặt hàng. Vui lòng thử lại sau." + e);
       }
@@ -171,6 +161,9 @@ function Order() {
       </div>
     );
   }
+  const totalSavings = orderItems.reduce((total, item) => {
+    return total + (item.originalPrice - item.price) * item.quantity
+  }, 0)
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl bg-gray-100 min-h-screen pt-20 mb-4">
@@ -222,7 +215,7 @@ function Order() {
             <thead className="bg-blue-50">
               <tr>
                 <th className="text-left p-3 font-semibold">Sản phẩm</th>
-                {/* <th className="text-left p-3 font-semibold">Màu</th> */}
+                <th className="text-left p-3 font-semibold">Màu</th>
                 <th className="text-right p-3 font-semibold">Đơn giá</th>
                 <th className="text-center p-3 font-semibold">Số lượng</th>
                 <th className="text-right p-3 font-semibold">Thành tiền</th>
@@ -231,52 +224,124 @@ function Order() {
             <tbody className="divide-y divide-gray-200">
               {orderItems.map((item) => (
                 <tr key={item.id}>
-                  <td className="p-3 text-gray-800">{item.productName}</td>
-                  {/* <td className="p-3 text-gray-800">{item.product}</td> */}
-                  <td className="p-3 text-right text-gray-800">
-                    {formatPrice(item.price)}
+                  <td className="p-3 text-gray-800">
+                    <div className="font-medium">{item.productName}</div>
+                    {item.discountPercentage > 0 && (
+                      <div className="mt-1">
+                        <span className="bg-red-100 text-red-600 px-2 py-1 rounded text-sm">
+                          Giảm {item.discountPercentage}%
+                        </span>
+                      </div>
+                    )}
+                  </td>
+                  <td className="p-3 text-gray-800">{item.productColor}</td>
+                  <td className="p-3 text-right">
+                    {item.originalPrice > item.price ? (
+                      <div className="space-y-1">
+                        <div className="line-through text-gray-400 text-sm">
+                          {formatPrice(item.originalPrice)}
+                        </div>
+                        <div className="text-gray-800 font-medium">
+                          {formatPrice(item.price)}
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-gray-800">
+                        {formatPrice(item.price)}
+                      </div>
+                    )}
                   </td>
                   <td className="p-3 text-center text-gray-800">
                     {item.quantity}
                   </td>
-                  <td className="p-3 text-right text-gray-800">
+                  <td className="p-3 text-right text-gray-800 font-medium">
                     {formatPrice(item.price * item.quantity)}
                   </td>
                 </tr>
               ))}
-              <tr className="bg-blue-50">
-                <td colSpan={2} className="p-3 font-semibold">
-                  Tổng cộng
+              
+              {/* Tổng tiền */}
+              <tr className="bg-blue-50 font-semibold">
+                <td colSpan={4} className="p-3 text-right">
+                  Tổng cộng:
                 </td>
-                <td className="p-3 text-center font-semibold"></td>
-                <td className="p-3 text-right font-semibold text-lg">
+                <td className="p-3 text-right text-lg">
                   {formatPrice(totalAmount)}
                 </td>
               </tr>
+              
+              {/* Tổng tiết kiệm */}
+              {totalSavings > 0 && (
+                <tr className="border-t border-gray-200">
+                  <td colSpan={4} className="p-3 text-right text-red-500">
+                    Tiết kiệm:
+                  </td>
+                  <td className="p-3 text-right text-red-500">
+                    {formatPrice(totalSavings)}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
 
-        {/* Hiển thị dạng card trên mobile */}
+        {/* Mobile view */}
         <div className="md:hidden space-y-4">
           {orderItems.map((item) => (
             <div key={item.id} className="bg-gray-50 p-4 rounded-lg shadow-md">
-              <p className="font-medium text-lg">{item.name}</p>
-              <p className="text-gray-600">
-                Đơn giá: {formatPrice(item.price)}
-              </p>
-              <p className="text-gray-600">Số lượng: {item.quantity}</p>
-              <p className="font-semibold text-right text-blue-600">
-                Thành tiền: {formatPrice(item.price * item.quantity)}
-              </p>
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="font-medium text-lg">{item.productName}</p>
+                  <p className="text-gray-600">{item.productColor}</p>
+                </div>
+                {item.discountPercentage > 0 && (
+                  <span className="bg-red-100 text-red-600 px-2 py-1 rounded text-sm">
+                    -{item.discountPercentage}%
+                  </span>
+                )}
+              </div>
+              
+              {item.originalPrice > item.price ? (
+                <div className="mt-2 space-y-1">
+                  <div className="line-through text-gray-400 text-sm">
+                    {formatPrice(item.originalPrice)}
+                  </div>
+                  <div className="text-gray-800 font-medium">
+                    {formatPrice(item.price)}
+                  </div>
+                  <div className="text-green-600 text-sm">
+                    Tiết kiệm {formatPrice(item.originalPrice - item.price)}
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-2 text-gray-800">
+                  {formatPrice(item.price)}
+                </div>
+              )}
+              
+              <div className="mt-2 flex justify-between items-center">
+                <span className="text-gray-600">Số lượng: {item.quantity}</span>
+                <span className="font-medium text-blue-600">
+                  {formatPrice(item.price * item.quantity)}
+                </span>
+              </div>
             </div>
           ))}
-          <div className="p-4 bg-blue-50 rounded-lg font-semibold text-lg text-right">
-            Tổng cộng: {formatPrice(totalAmount)}
+          
+          <div className="p-4 bg-blue-50 rounded-lg space-y-2">
+            <div className="flex justify-between font-semibold">
+              <span>Tổng cộng:</span>
+              <span>{formatPrice(totalAmount)}</span>
+            </div>
+            {totalSavings > 0 && (
+              <div className="flex justify-between text-green-600">
+                <span>Tổng tiết kiệm:</span>
+                <span>{formatPrice(totalSavings)}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
-
       {/* Ghi chú đơn hàng */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <h2 className="text-xl font-bold text-gray-700 mb-4">

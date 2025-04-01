@@ -126,7 +126,7 @@ const VariantForm = ({
             error={Boolean(errors.price)}
             helperText={errors.price}
           />
-          <TextField
+          {/* <TextField
             label="Tổng số mẫu"
             name="stock"
             value={formData.stock}
@@ -136,8 +136,8 @@ const VariantForm = ({
             error={Boolean(errors.stock)}
             helperText={errors.stock}
             disabled={!isChecked && actionType == "update"}
-          />
-          <div>
+          /> */}
+          {/* <div>
             {actionType === "update" && (
               <label className="flex">
                 <input
@@ -163,7 +163,7 @@ const VariantForm = ({
               error={Boolean(errors.sold)}
               helperText={errors.sold}
             />
-          ) : null}
+          ) : null} */}
           <Button type="submit" variant="contained" color="primary" fullWidth>
             {actionType === "create" ? "Tạo mẫu" : "Cập nhật mẫu"}
           </Button>

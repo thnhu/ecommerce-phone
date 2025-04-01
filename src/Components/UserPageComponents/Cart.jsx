@@ -95,7 +95,7 @@ const Cart = () => {
     const newVariant = item.variants.find(v => v.id === newVariantId);
     if (!newVariant) return;
 
-    // Cập nhật thông tin biến thể mới
+    // Cập nhật thông tin màu khác
     const updatedItem = {
       ...item,
       productVariantId: newVariant.id,
@@ -113,7 +113,7 @@ const Cart = () => {
     );
     setCartWasChanged(true);
 
-    // Fetch thông tin khuyến mãi cho biến thể mới
+    // Fetch thông tin khuyến mãi cho mỗi màu 
     try {
       const discountResponse = await api.get(
         `/phone/product/discount/getActive/${newVariantId}`
@@ -154,26 +154,29 @@ const Cart = () => {
     .filter((item) => selectedItems.includes(item.id))
     .reduce((acc, item) => acc + item.quantity, 0);
 
-// Trong hàm handleCheckout của component Cart
-const handleCheckout = async() => {
-  await handleUpdateItems()
-  navigate("/order", {
-    state: {
-      selectedItems: cartItems.filter((item) =>
-        selectedItems.includes(item.id)
-      ).map(item => ({
-        ...item,
-        productName: item.productName,
-        productColor: item.productColor,
-        price: item.price,
-        quantity: item.quantity,
-        itemId: item.itemId // Đảm bảo itemId được truyền đi
-      })),
-      total: totalAmount,
-    },
-  });
-};
-
+    const handleCheckout = async() => {
+      await handleUpdateItems()
+      navigate("/order", {
+        state: {
+          selectedItems: cartItems.filter((item) =>
+            selectedItems.includes(item.id)
+          ).map(item => {
+            // Tách hex code và tên màu từ productColor hiện tại
+            const [hexCode, colorName] = item.productColor.split(" - ")
+            
+            return {
+              ...item,
+              productName: item.productName,
+              productColor: colorName || item.productColor, // Chỉ lấy tên màu
+              price: item.price,
+              quantity: item.quantity,
+              itemId: item.itemId
+            }
+          }),
+          total: totalAmount,
+        },
+      });
+    };
   const formatPrice = (price) => {
     return price.toLocaleString("vi-VN") + "đ";
   };
@@ -306,7 +309,7 @@ const handleCheckout = async() => {
                           {item.productName}
                         </Link>
                         <div>
-                        <FormControl size="small" sx={{ mt: 1, width: 240 }}>
+                        <FormControl size="small" sx={{ mt: 1, width: 160 }}>
                         <InputLabel>Màu sắc</InputLabel>
                         <Select
                           value={item.productVariantId}
@@ -314,14 +317,18 @@ const handleCheckout = async() => {
                           label="Màu sắc"
                           sx={{ maxWidth: 240 }}
                         >
-                          {item.variants.map((variant) => (
-                            <MenuItem key={variant.id} value={variant.id}>
-                              {variant.color}
-                            </MenuItem>
-                          ))}
+                          {item.variants.map((variant) => {
+                            // Tách hex code và tên màu từ chuỗi
+                            const [hexCode, colorName] = variant.color.split(" - ");
+                            
+                            return (
+                              <MenuItem key={variant.id} value={variant.id}>
+                                {colorName || variant.color}
+                              </MenuItem>
+                            );
+                          })}
                         </Select>
                       </FormControl>
-
                         </div>
                     </div>
                     <div className="flex flex-wrap items-center gap-3 mt-2">

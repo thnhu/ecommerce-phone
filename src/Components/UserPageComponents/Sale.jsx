@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import {Rating} from '@mui/material'
 import api from "../../services/api";
 
 function Sale() {
@@ -179,9 +180,11 @@ function Sale() {
                 </h3>
 
                 <div className="mt-auto">
-                  <p className="text-yellow-500 text-s mb-1">
-                    ⭐ {product.rating || "Chưa có đánh giá"}
-                  </p>
+                  <Rating
+                    value={product.rating}
+                    size="small"
+                    defaultValue={0} precision={0.5} readOnly
+                  />
                   <div className="flex flex-col">
                     <span className="text-rose-600 text-base font-bold text-lg">
                       {formatPrice(displayedPrice)}
