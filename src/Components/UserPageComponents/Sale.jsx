@@ -48,9 +48,8 @@ function Sale() {
     return new Intl.NumberFormat("vi-VN").format(price) + "₫";
   };
 
-  // Hàm tính giá gốc chính xác (nếu discount là phần trăm)
-  const calculateOriginalPrice = (price, discount) => {
-    return discount > 0 ? price * (1 - discount / 100) : price;
+  const calculateDiscountedPrice = (originalPrice, discount) => {
+    return discount > 0 ? originalPrice * (1 - discount / 100) : originalPrice;
   };
 
   if (loading) {
@@ -62,17 +61,13 @@ function Sale() {
       <h2 className="text-2xl font-bold mb-2">KHUYẾN MÃI HOT</h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 px-2">
         {products.map((product) => {
-          const variant = product.variants?.[0] || { price: 0 };
           const imageUrl = product.images[0] || "";
           const hasDiscount = product.discountDisplayed > 0;
-          const originalPrice = hasDiscount
-            ? calculateOriginalPrice(
-                product.variants[0].price,
-                product.discountDisplayed
-              )
-            : (product.variants[0])
-            ? product.variants[0].price
-            : "Không có giá";
+          const variantPrice = product.variants[0].price;
+
+          const displayedPrice = hasDiscount
+            ? calculateDiscountedPrice(variantPrice, product.discountDisplayed)
+            : variantPrice || "Không có giá";
           return (
             <Link
               key={product.id}
@@ -89,7 +84,6 @@ function Sale() {
                 {/* Container hình vuông */}
                 <div className="relative pt-[100%] mb-2">
                   {" "}
-                  {/* Tạo tỷ lệ 1:1 */}
                   <div className="absolute top-0 left-0 w-full h-full p-2 flex items-center justify-center">
                     <img
                       src={`data:image/*;base64,${imageUrl.data}`}
@@ -108,15 +102,15 @@ function Sale() {
                     ⭐ {product.rating || "Chưa có đánh giá"}
                   </p>
                   <div className="flex flex-col">
-                    <span className="text-rose-600 text-base font-bold text-lg">
-                      {formatPrice(variant.price)}
+                  <span className="text-rose-600 text-base font-bold text-lg">
+                    {formatPrice(displayedPrice)}
+                  </span>
+                  {hasDiscount && variantPrice && (
+                    <span className="line-through text-gray-600 font-bold">
+                      {formatPrice(variantPrice)}
                     </span>
-                    {hasDiscount && (
-                      <span className="line-through text-gray-600 font-bold">
-                        {formatPrice(originalPrice)}
-                      </span>
-                    )}
-                  </div>
+                  )}
+                </div>                
                 </div>
               </div>
             </Link>

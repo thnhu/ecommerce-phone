@@ -4,8 +4,10 @@ import {
   Checkbox,
   IconButton,
   TextField,
-  Snackbar,
-  Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { Add, Remove, Delete } from "@mui/icons-material";
 import api from "../../services/api";
@@ -87,6 +89,65 @@ const Cart = () => {
       setCartWasChanged(true);
     }
   };  
+
+  const handleColorChange = async (itemId, newVariantId) => {
+    const item = cartItems.find(item => item.id === itemId);
+    if (!item) return;
+
+    const newVariant = item.variants.find(v => v.id === newVariantId);
+    if (!newVariant) return;
+
+    // Cập nhật thông tin biến thể mới
+    const updatedItem = {
+      ...item,
+      productVariantId: newVariant.id,
+      productColor: newVariant.color,
+      stock: newVariant.stock,
+      originalPrice: newVariant.price,
+      price: newVariant.price,
+      quantity: Math.min(item.quantity, newVariant.stock),
+      discountValue: 0,
+      discountEndDate: null,
+    };
+
+    setCartItems(prev => 
+      prev.map(item => item.id === itemId ? updatedItem : item)
+    );
+    setCartWasChanged(true);
+
+    // Fetch thông tin khuyến mãi cho biến thể mới
+    try {
+      const discountResponse = await api.get(
+        `/phone/product/discount/getActive/${newVariantId}`
+      );
+      const discountData = discountResponse.data;
+      
+      if (discountData) {
+        const now = new Date();
+        const endDate = new Date(discountData.endDate);
+        if (endDate > now) {
+          const discountedPrice = newVariant.price * (1 - discountData.discountValue / 100);
+          
+          setCartItems(prev => 
+            prev.map(item => {
+              if (item.id === itemId && item.productVariantId === newVariantId) {
+                return {
+                  ...item,
+                  discountValue: discountData.discountValue,
+                  discountEndDate: discountData.endDate,
+                  price: discountedPrice,
+                };
+              }
+              return item;
+            })
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Lỗi khi lấy thông tin khuyến mãi:", error);
+    }
+  };
+
   const totalAmount = cartItems
   .filter((item) => selectedItems.includes(item.id))
   .reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -95,17 +156,25 @@ const Cart = () => {
     .filter((item) => selectedItems.includes(item.id))
     .reduce((acc, item) => acc + item.quantity, 0);
 
-  const handleCheckout = async() => {
-    await handleUpdateItems()
-    navigate("/order", {
-      state: {
-        selectedItems: cartItems.filter((item) =>
-          selectedItems.includes(item.id)
-        ),
-        total: totalAmount,
-      },
-    });
-  };
+// Trong hàm handleCheckout của component Cart
+const handleCheckout = async() => {
+  await handleUpdateItems()
+  navigate("/order", {
+    state: {
+      selectedItems: cartItems.filter((item) =>
+        selectedItems.includes(item.id)
+      ).map(item => ({
+        ...item,
+        productName: item.productName,
+        productColor: item.productColor,
+        price: item.price,
+        quantity: item.quantity,
+        itemId: item.itemId // Đảm bảo itemId được truyền đi
+      })),
+      total: totalAmount,
+    },
+  });
+};
 
   const formatPrice = (price) => {
     return price.toLocaleString("vi-VN") + "đ";
@@ -117,66 +186,63 @@ const Cart = () => {
       const userResponse = await api.get("/phone/user/myInfo");
       setUser(userResponse.data);
       const userId = userResponse.data.id;
-      try {
-        const cartResponse = await api.get(`/phone/cart/${userId}`);
-        const cartItemsData = cartResponse.data.data.items;
-  
-        const updatedCartItems = await Promise.all(
-          cartItemsData.map(async (item) => {
+      
+      const cartResponse = await api.get(`/phone/cart/${userId}`);
+      const cartItemsData = cartResponse.data.data.items;
+
+      const updatedCartItems = await Promise.all(
+        cartItemsData.map(async (item) => {
+          try {
+            const productResponse = await api.get(
+              `/phone/product/${item.productId}`
+            );
+            const variants = productResponse.data.variants;
+            const thisVariant = variants.find(v => v.id === item.productVariantId);
+
+            // Thêm logic lấy thông tin khuyến mãi
+            let discountValue = 0;
+            let originalPrice = thisVariant.price;
+            let discountEndDate = null;
+            
             try {
-              const productResponse = await api.get(
-                `/phone/product/${item.productId}`
+              const discountResponse = await api.get(
+                `/phone/product/discount/getActive/${item.productVariantId}`
               );
-              const thisVariant = productResponse.data.variants.find(
-                (variant) => variant.id === item.productVariantId
-              );
-              
-              // Thêm logic lấy thông tin khuyến mãi
-              let discountValue = 0;
-              let originalPrice = thisVariant.price;
-              let discountEndDate = null;
-              
-              try {
-                const discountResponse = await api.get(
-                  `/phone/product/discount/getActive/${item.productVariantId}`
-                );
-                const discountData = discountResponse.data;
-                if (discountData) {
-                  const now = new Date();
-                  const endDate = new Date(discountData.endDate);
-                  if (endDate > now) {
-                    discountValue = discountData.discountValue;
-                    discountEndDate = discountData.endDate;
-                  }
+              const discountData = discountResponse.data;
+              if (discountData) {
+                const now = new Date();
+                const endDate = new Date(discountData.endDate);
+                if (endDate > now) {
+                  discountValue = discountData.discountValue;
+                  discountEndDate = discountData.endDate;
                 }
-              } catch (error) {
-                console.error("Error fetching discount:", error);
               }
-  
-              const discountedPrice = originalPrice * (1 - discountValue / 100);
-  
-              return {
-                id: item.itemId,
-                ...item,
-                stock: thisVariant.stock,
-                originalPrice: originalPrice,
-                discountValue: discountValue,
-                discountEndDate: discountEndDate,
-                price: discountedPrice, // Cập nhật giá đã áp dụng khuyến mãi
-              };
-            } catch (productError) {
-              console.log("Lỗi dữ liệu sản phẩm:", productError);
-              return { ...item, id: item.itemId };
+            } catch (error) {
+              console.error("Error fetching discount:", error);
             }
-          })
-        );
-  
-        setCartItems(updatedCartItems);
-      } catch (cartError) {
-        console.log("Lỗi dữ liệu giỏ hàng:", cartError);
-      }
-    } catch (userError) {
-      console.log("Lỗi dữ liệu người dùng:", userError);
+
+            const discountedPrice = originalPrice * (1 - discountValue / 100);
+
+            return {
+              ...item,
+              id: item.itemId,
+              variants: variants,
+              stock: thisVariant.stock,
+              originalPrice: originalPrice,
+              discountValue: discountValue,
+              discountEndDate: discountEndDate,
+              price: discountedPrice, // Cập nhật giá đã áp dụng khuyến mãi
+            };
+          } catch (error) {
+            console.error("Lỗi xử lý sản phẩm:", error);
+            return item;
+          }
+        })
+      );
+
+      setCartItems(updatedCartItems);
+    } catch (error) {
+      console.error("Lỗi khi tải giỏ hàng:", error);
     }
   };
   
@@ -262,33 +328,50 @@ const Cart = () => {
                         >
                           {item.productName}
                         </Link>
-                      <p>Màu sắc: {item.productColor}</p>
+                        <div>
+                        <FormControl size="small" sx={{ mt: 1, width: 240 }}>
+                        <InputLabel>Màu sắc</InputLabel>
+                        <Select
+                          value={item.productVariantId}
+                          onChange={(e) => handleColorChange(item.id, e.target.value)}
+                          label="Màu sắc"
+                          sx={{ maxWidth: 240 }}
+                        >
+                          {item.variants.map((variant) => (
+                            <MenuItem key={variant.id} value={variant.id}>
+                              {variant.color}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+
+                        </div>
                     </div>
                     <div className="flex flex-wrap items-center gap-3 mt-2">
-  {item.discountValue > 0 ? (
-    <div className="flex items-baseline gap-2">
-      <span className="text-red-600 font-bold text-lg">
-        {formatPrice(item.price)}
-      </span>
-      <span className="line-through text-gray-500 text-sm">
-        {formatPrice(item.originalPrice)}
-      </span>
-      <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-xs">
-        -{item.discountValue}%
-      </span>
-      {item.discountEndDate && (
-        <div className="text-red-600 text-xs mt-1">
-          Áp dụng đến {new Date(item.discountEndDate).toLocaleDateString()}
-        </div>
-      )}
-    </div>
-  ) : (
-    <span className="text-red-600 font-bold text-lg">
-      {formatPrice(item.originalPrice)}
-    </span>
-  )}
-</div>
-</div>
+                    {item.discountValue > 0 ? (
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-red-600 font-bold text-lg">
+                          {formatPrice(item.price)}
+                        </span>
+                        <span className="line-through text-gray-500 text-sm">
+                          {formatPrice(item.originalPrice)}
+                        </span>
+                        <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-xs">
+                          -{item.discountValue}%
+                        </span>
+                        {item.discountEndDate && (
+                          <div className="text-red-600 text-xs mt-1">
+                            Dự kiến áp dụng đến {new Date(item.discountEndDate).toLocaleDateString()}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-red-600 font-bold text-lg">
+                        {formatPrice(item.originalPrice)}
+                      </span>
+                    )}
+                  </div>
+                  </div>
 
                   <div className="flex flex-col items-center gap-2 mt-2">
                     <div className="flex items-center gap-2">

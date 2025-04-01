@@ -104,8 +104,8 @@ const Navbar = () => {
     const fetchCart = async () => {
       if (userData) {
         try {
-          const cartResponse = await api.get(`/phone/cart/${userData.id}`);
-          setCartQuantity(cartResponse.data.data.items.length);
+          const cartResponse = await api.get(`/phone/cart/${userData}`);
+          setCartQuantity(cartResponse.data.items.length);
         } catch (e) {
           // console.log("Lỗi giỏ hàng" + e);
         }

@@ -171,63 +171,34 @@ const ProductDetail = ({ product }) => {
   
     return `${time} | ${datePart}`;
   };
-
-  const addToCart = async () => {
-    const userResponse = await api.get("/phone/user/myInfo");
-    const userId = userResponse.data.id;
-    await api.post(
-      `/phone/cart?userId=${userId}&variantId=${productVariantId}&quantity=${quantity}`
-    );
-  };
   
   const handleAddCart = async () => {
     if (!errorQuantity) {
+      // Kiểm tra trạng thái đăng nhập qua localStorage
       const isLoggedIn = localStorage.getItem('authToken');
+      
       if (!isLoggedIn) {
         showSnackbar('Vui lòng đăng nhập để sử dụng chức năng này', 'error');
         return;
       }
   
       try {
-        await addToCart();
-        showSnackbar('Thêm vào giỏ hàng thành công!', 'success');
+        const userResponse = await api.get("/phone/user/myInfo");
+        const userId = userResponse.data.id;
+        try {
+          const cartResponse = await api.post(
+            `/phone/cart?userId=${userId}&variantId=${productVariantId}&quantity=${quantity}`
+          );
+          showSnackbar('Thêm vào giỏ hàng thành công!', 'success');
+        } catch (e) {
+          console.log(e);
+        }
       } catch (e) {
         console.log(e);
-        showSnackbar('Có lỗi xảy ra khi thêm vào giỏ hàng', 'error');
       }
     }
-  };
-  
-  const handleBuyNow = async () => {
-    const isLoggedIn = localStorage.getItem('authToken');
-    if (!isLoggedIn) {
-      showSnackbar('Vui lòng đăng nhập để mua hàng', 'error');
-      return;
-    }
-  
-    const stock = product.variants[selectedColor].stock;
-    if (stock === 0 || quantity > stock) {
-      showSnackbar('Số lượng không hợp lệ', 'error');
-      return;
-    }
-  
-    try {
-      await addToCart(); // Thêm vào giỏ hàng trước khi chuyển trang
-      navigate('/order', { 
-        state: { 
-          product: product,
-          variantId: productVariantId,
-          quantity: quantity,
-          color: product.variants[selectedColor].color,
-          price: hasDiscount ? discountedPrice : originalPrice
-        }
-      });
-    } catch (e) {
-      console.log(e);
-      showSnackbar('Có lỗi xảy ra khi xử lý đơn hàng', 'error');
-    }
-  };
-  
+    };
+      
   if (!product) {
     return (
       <div className="flex justify-center items-center">
@@ -389,26 +360,15 @@ const ProductDetail = ({ product }) => {
               </button>
             </div>
           {/* Add to Cart Button */}
-          <div className="bg-white rounded-[62px] flex-1 border-2 border-black hover:bg-black hover:text-white">
+          <div className="bg-black ml-3 rounded-[62px] w-full hover:bg-neutral-600">
               <button
-                className="text-xl font-semibold px-4 md:text-[16px] text-black w-full h-[44px] md:h-[52px] hover:bg-black hover:text-white rounded-full"
+                className="p-font text-[14px] px-4 md:text-[16px] text-white w-full h-[44px] md:h-[52px]"
                 onClick={handleAddCart}
-                disabled={errorQuantity || product.variants[selectedColor].stock === 0}
               >
                 Thêm vào giỏ
               </button>
             </div>
-            {/* Buy Now Button */}
-            <div className="bg-red-600 rounded-[62px] flex-1">
-              <button
-                className="p-font text-xl px-4 md:text-[16px] text-white w-full h-[44px] md:h-[52px]"
-                onClick={handleBuyNow}
-                disabled={errorQuantity || product.variants[selectedColor].stock === 0}
-              >
-                Mua ngay
-              </button>
-            </div>
-          </div>
+        </div>
         </div>
         <CustomSnackbar
         open={snackbarState.open}
