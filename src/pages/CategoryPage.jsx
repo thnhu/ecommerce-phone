@@ -11,31 +11,46 @@ function MainContent() {
   const [currentPage, setCurrentPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [currentCategory, setCurrentCategory] = useState()
+  const [currentCategory, setCurrentCategory] = useState();
+  const [selectedValue, setSelectedValue] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
   const location = useLocation();
-  const size = 10
+  const size = 10;
 
-  const fetchProducts = async (page) => {
+  const fetchProducts = async () => {
     try {
       setLoading(true);
       const pathName = location.pathname;
-      const categoryId = pathName.slice(pathName.lastIndexOf("/") + 1)
+      const categoryId = pathName.slice(pathName.lastIndexOf("/") + 1);
       const response = await api.get(
-        `/phone/product/category/${categoryId}?page=${currentPage}&size=${size}&status=ACTIVE`
+        `/phone/product/filter?categoryId=${categoryId}&status=ACTIVE&sortDirection=${selectedValue}`
       );
+      console.log(response.data.content[0].name);
       const newProducts = response.data.content || [];
       // Kiểm tra và loại bỏ sản phẩm trùng lặp
-      setProducts((prev) => {
-        const existingIds = new Set(prev.map((p) => p.id)); // Tạo Set chứa các id hiện có
-        const filteredNewProducts = newProducts.filter(
-          (p) => !existingIds.has(p.id)
-        ); // Lọc sản phẩm mới
-        return [...prev, ...filteredNewProducts]; // Nối danh sách
-      });
+      // setProducts((prev) => {
+      //   const existingIds = new Set(prev.map((p) => p.id)); // Tạo Set chứa các id hiện có
+      //   const filteredNewProducts = newProducts.filter(
+      //     (p) => !existingIds.has(p.id)
+      //   ); // Lọc sản phẩm mới
+      //   return [...prev, ...filteredNewProducts]; // Nối danh sách
+      // });
 
-      const categoryResponse = await api.get('/phone/category')
-      setCurrentCategory(categoryResponse.data.filter((category) => category.id == categoryId))
-      console.log(currentCategory[0].name)
+      //discountDisplayed
+      if (isChecked) {
+        setProducts(
+          newProducts.filter((product) => product.discountDisplayed > 0)
+        );
+      } else {
+        setProducts(newProducts);
+      }
+
+      //Lấy thông tin category đang xài
+      const categoryResponse = await api.get("/phone/category");
+      setCurrentCategory(
+        categoryResponse.data.filter((category) => category.id == categoryId)
+      );
+      console.log(currentCategory[0].name);
       setHasMore(newProducts.length === 5); // Kiểm tra còn dữ liệu không
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -45,8 +60,9 @@ function MainContent() {
   };
 
   useEffect(() => {
-    fetchProducts(0);
-  }, []);
+    fetchProducts();
+    console.log(selectedValue);
+  }, [selectedValue, isChecked]);
 
   const loadMoreProducts = () => {
     const nextPage = currentPage + 1;
@@ -68,9 +84,67 @@ function MainContent() {
     return null;
   }
 
+  if (products && products?.length == 0) {
+    return (
+      <section className="text-center p-10 bg-gray-100">
+        <h2 className="text-2xl font-bold mb-2 mt-40 md:mt-10">
+          THƯƠNG HIỆU {currentCategory?.[0]?.name || "Không xác định"}
+        </h2>
+        <div className="flex px-2 py-5 items-center">
+          <div className="flex px-3 justify-center">
+            <p className="px-1">Đang giảm giá</p>
+            <input
+              type="checkbox"
+              checked={isChecked}
+              onChange={(e) => setIsChecked(e.target.checked)}
+            ></input>
+          </div>
+
+          <select
+            className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={selectedValue}
+            onChange={(e) => setSelectedValue(e.target.value)}
+          >
+            <option disabled selected>
+              Giá
+            </option>
+            <option value="ASC">Tăng dần</option>
+            <option value="DESC">Giảm dần</option>
+          </select>
+        </div>
+        <p>Không có sản phẩm phù hợp</p>
+      </section>
+    );
+  }
+
   return products?.length > 0 ? (
     <section className="text-center p-10 bg-gray-100">
-      <h2 className="text-2xl font-bold mb-2 mt-10">THƯƠNG HIỆU {currentCategory[0].name}</h2>
+      <h2 className="text-2xl font-bold mb-2 mt-40 md:mt-10">
+        THƯƠNG HIỆU {currentCategory[0].name}
+      </h2>
+      {/* Filter bar */}
+      <div className="flex px-2 py-5 items-center">
+        <div className="flex px-3 justify-center">
+          <p className="px-1">Đang giảm giá</p>
+          <input
+            type="checkbox"
+            checked={isChecked}
+            onChange={(e) => setIsChecked(e.target.checked)}
+          ></input>
+        </div>
+
+        <select
+          className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          value={selectedValue}
+          onChange={(e) => setSelectedValue(e.target.value)}
+        >
+          <option disabled selected>
+            Giá
+          </option>
+          <option value="ASC">Tăng dần</option>
+          <option value="DESC">Giảm dần</option>
+        </select>
+      </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 px-2">
         {products.map((product) => {
           const variant = product.variants?.[0] || { price: 0 };

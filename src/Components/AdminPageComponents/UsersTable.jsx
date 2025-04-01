@@ -2,14 +2,8 @@ import { useEffect, useState } from "react";
 import React from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import { Menu, Search, ShoppingCart, Person } from "@mui/icons-material";
-import {
-  Badge,
-  IconButton,
-  InputBase,
-  MenuItem,
-  Menu as MuiMenu,
-} from "@mui/material";
+import { Search } from "@mui/icons-material";
+import { IconButton, InputBase } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import {
   Dialog,
@@ -37,17 +31,15 @@ const SearchBar = ({
 
   useEffect(() => {
     if (debounceTimeout) {
-      clearTimeout(debounceTimeout); // Clear the previous timeout if any
+      clearTimeout(debounceTimeout);
     }
 
-    // Set a new debounce timeout for the search query
     const timeoutId = setTimeout(() => {
       fetchData();
-    }, 500); // 500ms debounce delay
+    }, 500);
 
-    setDebounceTimeout(timeoutId); // Store the timeout ID for future cleanup
+    setDebounceTimeout(timeoutId);
 
-    // Cleanup the timeout when the component is unmounted or search query changes
     return () => clearTimeout(timeoutId);
   }, [searchQuery]);
 
@@ -147,6 +139,7 @@ const UsersTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState();
+  const [checkQuery, setCheckQuery] = useState();
 
   const size = 6;
 
@@ -165,13 +158,13 @@ const UsersTable = () => {
       }
     } else {
       try {
-        console.log(searchQuery);
         const response = await api.get(
           `/phone/user/search?phoneNumber=${searchQuery}`
         );
-        console.log(response);
+        setUserData([response.data]);
       } catch (e) {
         console.log("Handle phone search error" + e);
+        setCheckQuery("Không tìm thấy người dùng");
       }
     }
   };
@@ -198,6 +191,10 @@ const UsersTable = () => {
     fetchData();
   }, [currentIndex]);
 
+  useEffect(() => {
+    setCheckQuery("");
+  }, [searchQuery]);
+
   return (
     <div className="pt-3 md:pt-5 w-full">
       <h1 className="text-xl md:text-xl lg:text-3xl text-gray-600 font-medium md:px-5 px-2 flex items-center justify-center">
@@ -216,6 +213,7 @@ const UsersTable = () => {
               setSearchQuery={setSearchQuery}
               selectedUser={selectedUser}
             ></SearchBar>
+            <p className="text-red-500 px-4">{checkQuery}</p>
           </div>
         </div>
       </div>

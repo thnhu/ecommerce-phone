@@ -21,7 +21,6 @@ import {
   MoreVert,
   ExpandMore,
   ExpandLess,
-  LocalOffer,
 } from "@mui/icons-material";
 import CreateProductForm from "./CreateProductForm";
 import UpdateProductForm from "./UpdateProductForm";

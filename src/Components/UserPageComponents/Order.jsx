@@ -98,8 +98,8 @@ function Order() {
   }, []);
 
   const handlePlaceOrder = async () => {
-    const mapItemIds = orderItems.map((item) => item.itemId + 1);
-    if (selectedAddress && selectedMethod) {
+    const mapItemIds = orderItems.map((item) => item.itemId);
+    if (selectedAddress) {
       let reqBody = {
         addressId: selectedAddress.id,
         note: notes,
@@ -109,9 +109,11 @@ function Order() {
       console.log(reqBody);
       try {
         console.log(mapItemIds);
-        const response = api.post(`/phone/order/${userData.id}`, reqBody);
-        await response;
-        reqBody = {};
+        console.log(`/phone/order/${userData.id}`)
+        const response = await api.post(`/phone/order/${userData.id}`, reqBody);
+        // await response;
+        // reqBody = {};
+        console.log(response)
         setShowSuccess(true);
         navigate("/user");
 
@@ -239,7 +241,7 @@ function Order() {
               </tr>
             </tbody>
           </table>
-          <div className="w-full flex items-end justify-end pt-5">
+          {/* <div className="w-full flex items-end justify-end pt-5">
             <select
               id="address-select"
               onChange={handleMethodChange}
@@ -263,7 +265,7 @@ function Order() {
                   );
               })}
             </select>
-          </div>
+          </div> */}
         </div>
 
         {/* Hiển thị dạng card trên mobile */}

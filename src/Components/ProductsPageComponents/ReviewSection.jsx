@@ -30,7 +30,7 @@ const ReviewSection = ({ product }) => {
       const response = await api.get(
         `/phone/review?page=${currentPage}&size=${size}&productId=${product.id}`
       );
-      console.log(product.id)
+      console.log(product.id);
       setReviewData(response.data.content);
       // console.log(reviewData)
       setLoading(false);
@@ -84,8 +84,9 @@ const ReviewSection = ({ product }) => {
         </div>
 
         {/* Chưa có đánh giá */}
-        <p className="p-font text-[16px] md:text-[18px] lg:text-[20px] border-opacity-10 border-black border-2 rounded-3xl px-5 py-1">Chưa có đánh giá</p>
-
+        <div className="p-font text-[16px] md:text-[18px] lg:text-[20px] border-opacity-10 border-black border-2 rounded-3xl px-10 md:min-h-20 py-1 mt-10 flex items-center justify-center">
+          <p>Chưa có đánh giá</p>
+        </div>
 
         <div className="reviews mt-4 md:grid md:grid-cols-2 md:gap-5">
           {reviewData &&
@@ -103,14 +104,15 @@ const ReviewSection = ({ product }) => {
               );
             })}
         </div>
-        <div className="flex items-center justify-center">
+        {reviewData &&
+            reviewData.length > 0 && <div className="flex items-center justify-center">
           <button
             className="p-font text-[16px] md:text-[18px] lg:text-[20px] border-opacity-10 border-black border-2 rounded-3xl px-5 py-1"
             onClick={() => setSize((prevPage) => prevPage + 4)}
           >
             Xem thêm đánh giá
           </button>
-        </div>
+        </div>}
       </div>
     </>
   );
