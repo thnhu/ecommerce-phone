@@ -28,7 +28,7 @@ const Navbar = () => {
   const navLinks = [
     { title: "Trang chủ", path: "/" },
     { title: "Giảm giá", path: "/promotion" },
-    { title: "Hàng mới về", path: "/newarrivals" },
+    // { title: "Hàng mới về", path: "/newarrivals" },
     { title: "Thương hiệu", path: "/category" },
   ];
 
@@ -228,7 +228,7 @@ const Navbar = () => {
                 to={
                   userData.role.name === "ADMIN"
                     ? "/admin"
-                    : userData.role.name === "STAFF"
+                    : userData.role.name === "EMPLOYEE"
                     ? "/staff"
                     : "/user"
                 }

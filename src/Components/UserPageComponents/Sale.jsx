@@ -118,7 +118,7 @@ function Sale() {
 
   return products.length > 0 ? (
     <section className="text-center p-2 bg-gray-100">
-      <h2 className="text-2xl font-bold mb-2">KHUYẾN MÃI HOT</h2>
+      {/* <h2 className="text-2xl font-bold mb-2">SẢN PHẨM HOT</h2> */}
       <div className="flex px-2 py-5 items-center">
         <div className="flex px-3 justify-center">
           <p className="px-1">Đang giảm giá</p>

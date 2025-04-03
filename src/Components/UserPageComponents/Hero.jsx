@@ -41,7 +41,6 @@ const Hero = () => {
       const response = await api.get("/phone/category");
       setCategories(response.data);
       setLoading(false);
-      // console.log(categories)
     } catch (err) {
       setError("Không thể tải danh sách nhà cung cấp");
       setLoading(false);
@@ -76,7 +75,7 @@ const Hero = () => {
               >
                 <li
                   key={category.id}
-                  className="text-sm p-2 hover:bg-gray-100 rounded cursor-pointer hover:text-blue-500"
+                  className="text-sm font-semibold p-2 hover:bg-gray-100 rounded cursor-pointer hover:text-blue-500"
                 >
                   {category.name}
                 </li>

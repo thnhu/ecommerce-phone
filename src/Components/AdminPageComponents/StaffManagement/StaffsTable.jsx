@@ -12,7 +12,6 @@ const UsersTable = () => {
   const [openCreateForm, setOpenCreateForm] = useState(false);
   const size = 6;
 
-  useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await api.get(
@@ -27,8 +26,9 @@ const UsersTable = () => {
         alert("Error fetching data ", error);
       }
     };
-    fetchData();
-  }, [currentIndex]);
+    useEffect(() => {
+      fetchData();
+      }, [currentIndex]); 
 
   return (
     <div className="pt-3 md:pt-5 w-full">
@@ -119,8 +119,9 @@ const UsersTable = () => {
     >
       <CreateStaffForm
         onSuccess={() => {
+          fetchData();
           setOpenCreateForm(false);
-          setCurrentPage(0); // Load lại dữ liệu từ đầu
+          //setCurrentPage(0); // Load lại dữ liệu từ đầu
         }}
         onClose={() => setOpenCreateForm(false)}
       />

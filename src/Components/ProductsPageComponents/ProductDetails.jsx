@@ -185,13 +185,25 @@ const ProductDetail = ({ product }) => {
       try {
         const userResponse = await api.get("/phone/user/myInfo");
         const userId = userResponse.data.id;
-        try {
-          const cartResponse = await api.post(
-            `/phone/cart?userId=${userId}&variantId=${productVariantId}&quantity=${quantity}`
-          );
-          showSnackbar('Thêm vào giỏ hàng thành công!', 'success');
-        } catch (e) {
-          console.log(e);
+
+        // console.log(product)
+        console.log(productVariantId)
+        const variantSelected = product.variants.filter((variant) => (variant.id == productVariantId))
+        console.log(variantSelected)
+        console.log(quantity + " " + variantSelected[0].stock)
+        
+        // console.log(productVariantId)
+        if(variantSelected[0].stock >= quantity){
+          try {
+            const cartResponse = await api.post(
+              `/phone/cart?userId=${userId}&variantId=${productVariantId}&quantity=${quantity}`
+            );
+            showSnackbar('Thêm vào giỏ hàng thành công!', 'success');
+          } catch (e) {
+            console.log(e);
+          }
+        } else {
+          alert("Số lượng tối đa của màu này là: " + variantSelected[0].stock)
         }
       } catch (e) {
         console.log(e);
@@ -270,6 +282,9 @@ const ProductDetail = ({ product }) => {
             </span>
           )}
         </div>
+        <p className="p-font text-[14px] md:text-[16px] lg:text-[18px] opacity-60 mt-[5px] md:mt-[8px] leading-3 md:leading-5">
+            {product.description || "Chưa có mô tả"}
+          </p>
         </div>
         {/* Colors selector */}
         <div className="width-full">

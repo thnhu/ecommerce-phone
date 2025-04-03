@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import { Close, RateReview } from "@mui/icons-material";
 import api from "../../services/api";
-const ReviewDialog = ({ open, onClose, product }) => {
+const ReviewDialog = ({ open, onClose, product = null, productId = null }) => {
   const [reviewData, setReviewData] = useState({
     productId: "",
     userId: "",
@@ -91,42 +91,61 @@ const ReviewDialog = ({ open, onClose, product }) => {
       console.log("error fetching userdata" + error);
     }
     const formData = new FormData();
-    // console.log(product.productId);
     
-    formData.append(
-      "data",
-      new Blob(
-        [
-          JSON.stringify({
-            prdId: product.productId,
-            userId: reviewData.userId,
-            comment: reviewData.comment,
-            rating: reviewData.rating,
-          }),
-        ],
-        { type: "application/json" }
-      )
-    );
+    // console.log(productId);
+    // console.log(product.productId);
+    if(product){
+      formData.append(
+        "data",
+        new Blob(
+          [
+            JSON.stringify({
+              prdId: product.productId,
+              userId: reviewData.userId,
+              comment: reviewData.comment,
+              rating: reviewData.rating,
+            }),
+          ],
+          { type: "application/json" }
+        )
+      );
+    } else {
+      formData.append(
+        "data",
+        new Blob(
+          [
+            JSON.stringify({
+              prdId: productId,
+              userId: reviewData.userId,
+              comment: reviewData.comment,
+              rating: reviewData.rating,
+            }),
+          ],
+          { type: "application/json" }
+        )
+      );
+    }
     // console.log(reviewData.comment);
     // console.log(reviewData.rating);
-    console.log(reviewData)
+    // console.log(reviewData)
+    
     Array.from(reviewData.imagePaths).forEach((file) => {
       formData.append("files", file);
     });
 
     // **Debug: Log FormData contents**
-    console.log("FormData content:");
-    for (let pair of formData.entries()) {
-      if (pair[1] instanceof Blob) {
-        const reader = new FileReader();
-        reader.onload = function () {
-          console.log(pair[0], reader.result); // Logs Blob content as text
-        };
-        reader.readAsText(pair[1]); // Read blob content
-      } else {
-        console.log(pair[0], pair[1]);
-      }
-    }
+    // console.log("FormData content:");
+    // for (let pair of formData.entries()) {
+    //   if (pair[1] instanceof Blob) {
+    //     const reader = new FileReader();
+    //     reader.onload = function () {
+    //       console.log(pair[0], reader.result); // Logs Blob content as text
+    //     };
+    //     reader.readAsText(pair[1]); // Read blob content
+    //   } else {
+    //     console.log(pair[0], pair[1]);
+    //   }
+    // }
 
     try {
       const response = await api.post("/phone/review", formData, {
@@ -136,6 +155,7 @@ const ReviewDialog = ({ open, onClose, product }) => {
       });
       alert("Đánh giá thành công");
       console.log("API Response:", response);
+      onClose()
     } catch (error) {
       console.error("API Error:", error);
     }

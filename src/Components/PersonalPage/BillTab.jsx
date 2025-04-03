@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import api from "../../services/api";
+import ReviewDialog from "../UserPageComponents/ReviewDialog";
 
 import { IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -19,6 +20,8 @@ const shippingStatus = [
 const Order = ({ orderData, fetchOrderData }) => {
   // State to keep track of which order is expanded
   const [expandedOrderId, setExpandedOrderId] = useState(null);
+  const [selectedPhone, setSelectedPhone] = useState(null);
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
 
   const toggleCollapse = (orderId) => {
     setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
@@ -142,6 +145,9 @@ const Order = ({ orderData, fetchOrderData }) => {
                     <th className="p-4 text-left">Số lượng</th>
                     <th className="p-4 text-left">Đơn giá</th>
                     <th className="p-4 text-left">Tổng giá</th>
+                    {order.status === 'DELIVERED' ? (
+                      <th className="p-4 text-left">Review</th>
+                    ) : ""}
                   </tr>
                 </thead>
                 <tbody>
@@ -155,6 +161,21 @@ const Order = ({ orderData, fetchOrderData }) => {
                       <td className="p-4">
                         {item.calculatePrice.toLocaleString()} VND
                       </td>
+                      {order.status === 'DELIVERED' ? (
+                      <td className="p-4 text-left">
+
+
+                        <button className="bg-sky-400 px-2 rounded-xl text-white" onClick={() => {console.log(item); setIsReviewOpen(true)}}>Đánh giá</button>
+                        <ReviewDialog
+                          open={isReviewOpen}
+                          onClose={() => setIsReviewOpen(false)}
+                          product={selectedPhone}
+                          productId={item.prdId}
+                        />
+
+
+                      </td>
+                    ) : ""}
                     </tr>
                   ))}
                 </tbody>

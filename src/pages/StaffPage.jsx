@@ -1,15 +1,30 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CategorisTable from '../Components/AdminPageComponents/CategoriesTable'
 import ProductsTable from '../Components/AdminPageComponents/ProductManagement/ProductsTable'
 import StockTable from '../Components/AdminPageComponents/StockManagement/StockTable'
 import LogoutButton from "../Components/UserPageComponents/LogoutButton";
 import { Link } from "react-router-dom";
+import api from '../services/api';
+import NotFoundPage from './NotFoundPage';
 const StaffPage = () => {
-  const [selectedTab, setSelectedTab] = useState("");
+  const [selectedTab, setSelectedTab] = useState("thietbi");
   const handleClick = (e) => {
     setSelectedTab(e.target.id);
   };
+  const [userRole, setUserRole] = useState();
+  useEffect(() => {
+    const fetchData = async() => {
+      const response = await api.get("/phone/user/myInfo");
+      console.log(response.data.role.name);
+      setUserRole(response.data.role.name)
+    }
+    fetchData();
 
+  }
+  ,[]);
+  if (userRole && userRole !== "EMPLOYEE") {
+    return <NotFoundPage/>
+  }
   const SideBar = () => {
     return (
       <aside className="lg:w-1/6 bg-gray-900 min-w-[100px] md:min-w-[200px] text-white pl-4 pr-1 md:pt-3 h-full">
@@ -83,18 +98,16 @@ const StaffPage = () => {
 
   return (
     <>
-      {/* Full height container */}
-      <div className="w-full h-screen flex">
-        {/* Sidebar will take full height of screen */}
+      {userRole && <div className="w-full h-screen flex">
         <SideBar />
+        
 
-        {/* Main content with flexible height */}
         <div className="flex-grow h-full overflow-auto">
           {selectedTab === "nhacungcap" && <CategorisTable />}
           {selectedTab === "thietbi" && <ProductsTable />}
           {selectedTab === "kho" && <StockTable />}
         </div>
-      </div>
+      </div>}
     </>
   );
 };

@@ -7,6 +7,7 @@ import { ContactMail, CreditCard } from "@mui/icons-material";
 import LogoutButton from "../Components/UserPageComponents/LogoutButton.jsx";
 import InfoTab from "../Components/PersonalPage/InfoTab";
 import BillTab from "../Components/PersonalPage/BillTab";
+import NotFoundPage from "./NotFoundPage.jsx";
 
 const SideBar = ({ userData, setSelectedTab }) => {
   return (
@@ -39,11 +40,13 @@ const PersonalPage = () => {
   const [userData, setUserData] = useState({});
   // const [selectedTab, setSelectedTab] = useState("thongtincanhan");
   const [selectedTab, setSelectedTab] = useState("donhangdamua");
+  const [userRole, setUserRole] = useState()
 
   const fetchPersonalInfo = async () => {
     try {
       const response = await api.get("/phone/user/myInfo");
       setUserData(() => ({ ...response.data }));
+      setUserRole(response.data.role.name)
     } catch (error) {
       if (error.response && error.response.status === 404) {
         console.log("Không tìm thấy người dùng.");
@@ -57,21 +60,27 @@ const PersonalPage = () => {
     fetchPersonalInfo();
   }, []);
 
+  if (userRole && userRole !== "USER") {
+    return <NotFoundPage/>
+  }
+
   return (
     <>
-      <Navbar />
-      <div className="flex flex-wrap p-5 mt-20">
-        <SideBar userData={userData} setSelectedTab={setSelectedTab}></SideBar>
-        {selectedTab == "thongtincanhan" ? (
-          <InfoTab
+      {userData && userRole && <div>
+        <Navbar />
+        <div className="flex flex-wrap p-5 mt-20">
+          <SideBar userData={userData} setSelectedTab={setSelectedTab}></SideBar>
+          {selectedTab == "thongtincanhan" ? (
+            <InfoTab
             userData={userData}
             fetchPersonalInfo={fetchPersonalInfo}
-          ></InfoTab>
-        ) : selectedTab == "donhangdamua" ? (
-          <BillTab userData={userData}></BillTab>
-        ) : null}
-      </div>
-      <Footer />
+            ></InfoTab>
+          ) : selectedTab == "donhangdamua" ? (
+            <BillTab userData={userData}></BillTab>
+          ) : null}
+        </div>
+        <Footer />
+      </div>}
     </>
   );
 };

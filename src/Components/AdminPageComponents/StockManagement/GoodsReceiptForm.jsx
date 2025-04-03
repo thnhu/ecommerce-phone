@@ -38,7 +38,7 @@ const GoodsReceiptForm = ({ open, handleClose, handleSubmit }) => {
         }));
 
         // Lấy danh sách sản phẩm với variants
-        const productResponse = await api.get("/phone/product?page=0&size=10");
+        const productResponse = await api.get("/phone/product?page=0&size=100");
         setProducts(productResponse.data.content);
         //console.log(products[5].variants[0].color);
       } catch (err) {

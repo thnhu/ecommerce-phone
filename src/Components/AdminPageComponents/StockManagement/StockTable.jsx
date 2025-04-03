@@ -15,7 +15,7 @@ export default function StockTable() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
+
     const fetchStocks = async () => {
       try {
         setLoading(true);
@@ -30,8 +30,9 @@ export default function StockTable() {
       }
     };
 
+  useEffect(() => {
     fetchStocks();
-  }, [currentIndex]);
+    }, [currentIndex]);
 
   // Hàm định dạng ngày tháng
   const formatDate = (dateString) => {
@@ -64,7 +65,7 @@ export default function StockTable() {
               <TableCell className="font-bold">Ngày nhập</TableCell>
               <TableCell className="font-bold">Người nhập</TableCell>
               <TableCell className="font-bold">Tên sản phẩm</TableCell>
-              <TableCell className="font-bold">Phiên bản</TableCell>
+              <TableCell className="font-bold">Màu</TableCell>
               <TableCell className="font-bold">Số lượng</TableCell>
               <TableCell className="font-bold">Giá nhập</TableCell>
             </TableRow>
@@ -122,9 +123,9 @@ export default function StockTable() {
           open={openCreateForm} 
           handleClose={() => setOpenCreateForm(false)}
           onSuccess={() => {
+            fetchStocks();
             setOpenCreateForm(false);
-            setCurrentIndex(0); // Reset về trang đầu tiên
-          }}
+         }}
         />
       </Dialog>
     </div>

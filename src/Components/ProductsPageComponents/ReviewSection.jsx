@@ -75,11 +75,11 @@ const ReviewSection = ({ product }) => {
               />
             </button> */}
             {/* <DropdownButton /> */}
-            <Link to={"/review"}>
+            {/* <Link to={"/review"}>
               <button className="p-font text-white text-[12px] md:text-[16px] lg:text-[20px] bg-black px-4 py-2 lg:px-5 rounded-[62px] whitespace-nowrap">
                 <p>Viết đánh giá</p>
               </button>
-            </Link>
+            </Link> */}
           </div>
         </div>
 
