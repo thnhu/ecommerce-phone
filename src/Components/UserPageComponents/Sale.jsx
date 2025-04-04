@@ -36,20 +36,56 @@ function Sale() {
   //   }
   // };
 
-  const fetchProducts = async () => {
+  // const fetchProducts = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const response = await api.get(
+  //       `/phone/product/filter?status=ACTIVE&sortDirection=${selectedValue}`
+  //     );
+  //     const newProducts = response.data.content || [];
+  //     if (isChecked) {
+  //       setProducts(
+  //         newProducts.filter((product) => product.discountDisplayed > 0)
+  //       );
+  //     } else {
+  //       setProducts(newProducts);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching products:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchProducts(0);
+  // }, [currentPage, selectedValue, isChecked]);
+
+  // const loadMoreProducts = () => {
+  //   const nextPage = currentPage + 1;
+  //   setCurrentPage(nextPage);
+  //   fetchProducts(nextPage);
+  // };
+  const fetchProducts = async (page) => {
     try {
       setLoading(true);
       const response = await api.get(
-        `/phone/product/filter?status=ACTIVE&sortDirection=${selectedValue}`
+        `/phone/product/filter?status=ACTIVE&sortDirection=${selectedValue}&page=${page}&size=5`
       );
+      
       const newProducts = response.data.content || [];
-      if (isChecked) {
-        setProducts(
-          newProducts.filter((product) => product.discountDisplayed > 0)
-        );
+      const filteredProducts = isChecked 
+        ? newProducts.filter(product => product.discountDisplayed > 0)
+        : newProducts;
+
+      // Reset products when filters change or first load
+      if (page === 0) {
+        setProducts(filteredProducts);
       } else {
-        setProducts(newProducts);
+        setProducts(prev => [...prev, ...filteredProducts]);
       }
+
+      setHasMore(!response.data.last);
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
@@ -58,14 +94,21 @@ function Sale() {
   };
 
   useEffect(() => {
+    // Reset to first page when filters change
+    setCurrentPage(0);
     fetchProducts(0);
-  }, [currentPage, selectedValue, isChecked]);
+  }, [selectedValue, isChecked]);
+
+  useEffect(() => {
+    if (currentPage > 0) {
+      fetchProducts(currentPage);
+    }
+  }, [currentPage]);
 
   const loadMoreProducts = () => {
-    const nextPage = currentPage + 1;
-    setCurrentPage(nextPage);
-    fetchProducts(nextPage);
+    setCurrentPage(prev => prev + 1);
   };
+
 
   // Hàm định dạng tiền tệ
   const formatPrice = (price) => {
@@ -202,15 +245,13 @@ function Sale() {
         })}
       </div>
 
-      {hasMore && (
-        <button
-          onClick={loadMoreProducts}
-          disabled={loading}
-          className="mt-4 bg-white text-black border border-black hover:bg-blue-500 hover:text-white px-8 py-3 rounded-full font-medium transition-colors disabled:opacity-50"
-        >
-          {loading ? "Đang tải..." : "Xem thêm sản phẩm"}
-        </button>
-      )}
+      {hasMore && !loading && (
+      <button
+        onClick={loadMoreProducts}
+        className="mt-4 bg-white text-black border border-black hover:bg-blue-500 hover:text-white px-8 py-3 rounded-full font-medium transition-colors"
+      >
+        Xem thêm sản phẩm
+      </button>      )}
     </section>
   ) : null;
 }

@@ -9,11 +9,12 @@ const VNPaySuccesss = () => {
   const [userData, setUserData] = useState();
 
   useEffect(() => {
+    console.log("HI")
     const fetchUser = async () => {
       try {
         const userResponse = await api.get("/phone/user/myInfo");
         setUserData(userResponse.data);
-        console.log(userData);
+        console.log(userData);  
       } catch (userError) {
         console.log("Lỗi dữ liệu người dùng:", userError);
       }
@@ -28,6 +29,7 @@ const VNPaySuccesss = () => {
       const mapItemIds = JSON.parse(localStorage.getItem("items"));
       const mapItemIdsArray = Array.isArray(mapItemIds) ? mapItemIds : [mapItemIds];
 
+      console.log(reqBody);
 
       const notes = localStorage.getItem("note");
       let reqBody = {
@@ -36,7 +38,6 @@ const VNPaySuccesss = () => {
         method: "BANKING",
         itemId: mapItemIdsArray,
       };
-      console.log(reqBody);
       try {
         const response = await api.post(`/phone/order/${userData.id}`, reqBody);
         localStorage.removeItem('address')

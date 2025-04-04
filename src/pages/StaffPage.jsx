@@ -3,6 +3,7 @@ import CategorisTable from '../Components/AdminPageComponents/CategoriesTable'
 import ProductsTable from '../Components/AdminPageComponents/ProductManagement/ProductsTable'
 import StockTable from '../Components/AdminPageComponents/StockManagement/StockTable'
 import LogoutButton from "../Components/UserPageComponents/LogoutButton";
+import BillManagement from "../Components/AdminPageComponents/OrderManagement/BillManagement";
 import { Link } from "react-router-dom";
 import api from '../services/api';
 import NotFoundPage from './NotFoundPage';
@@ -88,6 +89,21 @@ const StaffPage = () => {
               Thiết bị
             </button>
           </li>
+          <li
+            key="donhang"
+            className={`md:w-full md:px-5 px-1 py-3 text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md ${
+              selectedTab === "donhang" ? "bg-gray-800 rounded-md" : ""
+            }`}
+          >
+            <button
+              id="donhang"
+              className="md:w-full text-left"
+              onClick={handleClick}
+            >
+              Quản lý đơn hàng
+            </button>
+          </li>
+
           <li>
             <LogoutButton style={'md:w-full md:px-5 px-1 py-3 md:w-full text-left text-sm lg:text-xl hover:bg-slate-400 hover:rounded-md'}></LogoutButton>
           </li>
@@ -106,6 +122,8 @@ const StaffPage = () => {
           {selectedTab === "nhacungcap" && <CategorisTable />}
           {selectedTab === "thietbi" && <ProductsTable />}
           {selectedTab === "kho" && <StockTable />}
+          {selectedTab === "donhang" && <BillManagement />}
+
         </div>
       </div>}
     </>
